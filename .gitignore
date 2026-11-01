@@ -44,3 +44,8 @@ Thumbs.db
 # Supabase
 supabase/.branches
 supabase/.temp
+
+# Vercel (CLI tự thêm khi link project)
+.vercel
+.env*
+!.env.example
