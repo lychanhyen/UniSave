@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Plus,
@@ -27,7 +27,7 @@ const TABS = [
 ];
 
 export default function GroupDealsPage() {
-  const { deals, currentUser, joinDeal, leaveDeal, declarePayment, reviewPayment, removeDeal } = useDeals();
+  const { deals, currentUser, joinDeal, leaveDeal, declarePayment, reviewPayment, attachBill, removeDeal } = useDeals();
   // Quản trị viên chỉ kiểm duyệt, không đăng tin hay tạo kèo.
   const canPost = currentUser.role !== 'admin' && Boolean(currentUser.is_verified);
   const [query, setQuery] = useState('');
@@ -238,6 +238,8 @@ export default function GroupDealsPage() {
               onDelete={handleDelete}
               onDeclarePayment={handleDeclarePayment}
               onReviewPayment={handleReviewPayment}
+              onAttachBill={attachBill}
+              isAdmin={currentUser.role === 'admin'}
             />
           ))}
         </div>

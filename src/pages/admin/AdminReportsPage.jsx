@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -289,14 +289,25 @@ export default function AdminReportsPage() {
                       <p className="text-sm font-extrabold text-ink-900">{report.reason}</p>
                       {statusChip(report.status)}
                       <span className="chip bg-ink-50 text-ink-500">
-                        {report.target_type === 'post' ? 'Tin đăng' : 'Người dùng'}
+                        {report.target_type === 'post' ? 'Tin đăng' : report.target_type === 'deal' ? 'Kèo gom đơn' : 'Người dùng'}
                       </span>
                     </div>
 
                     <div className="mt-2 rounded-xl bg-ink-50 px-3 py-2">
                       <p className="text-[11px] font-semibold text-ink-700">
-                        {report.target_type === 'post' ? 'Tin bị tố cáo: ' : 'Người bị tố cáo: '}
-                        {post ? (
+                        {report.target_type === 'post'
+                          ? 'Tin bị tố cáo: '
+                          : report.target_type === 'deal'
+                            ? 'Kèo bị tố cáo: '
+                            : 'Người bị tố cáo: '}
+                        {report.target_type === 'deal' ? (
+                          <Link
+                            to="/deals"
+                            className="text-brand-700 underline-offset-2 hover:underline"
+                          >
+                            {report.target_label || 'Kèo gom đơn'} (mở trang kèo để xem bill)
+                          </Link>
+                        ) : post ? (
                           <Link
                             to={`/marketplace/${post.id}`}
                             className="text-brand-700 underline-offset-2 hover:underline"
@@ -426,7 +437,7 @@ export default function AdminReportsPage() {
                 {modal.details}
               </p>
               <p className="mt-2 text-[10px] font-semibold text-ink-400">
-                {modal.target_type === 'post' ? 'Tin đăng' : 'Người dùng'}:{' '}
+                {modal.target_type === 'post' ? 'Tin đăng' : modal.target_type === 'deal' ? 'Kèo gom đơn' : 'Người dùng'}:{' '}
                 {modal.target_label || modal.target_id}
               </p>
             </div>

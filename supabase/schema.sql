@@ -142,7 +142,7 @@ create table if not exists public.reports (
   id uuid primary key default gen_random_uuid(),
   reporter_id uuid not null references public.profiles (id) on delete cascade,
   reporter_name text not null default '',
-  target_type text not null check (target_type in ('post', 'user')),
+  target_type text not null check (target_type in ('post', 'user', 'deal')),
   target_id text not null,
   target_label text not null default '',
   reason text not null,

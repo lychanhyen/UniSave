@@ -1,4 +1,4 @@
-﻿import { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   BadgeCheck,
   Banknote,
@@ -7,6 +7,7 @@ import {
   Clock3,
   Copy,
   Eye,
+  Flag,
   LogOut,
   Paperclip,
   ShoppingBag,
@@ -24,6 +25,7 @@ import { getDealMembers } from '../../lib/demoData';
 import { resolveDealBillUrl } from '../../lib/api';
 import { compressImageFile } from '../../lib/image';
 import Avatar from '../ui/Avatar';
+import ReportDialog from '../reports/ReportDialog';
 
 const STATUS = {
   open: { label: 'Đang mở', className: 'bg-brand-50 text-brand-700 ring-brand-100' },
@@ -48,6 +50,7 @@ export default function DealCard({
   const [billViewer, setBillViewer] = useState(null);
   const [billSrc, setBillSrc] = useState('');
   const [billLoading, setBillLoading] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const billInputRef = useRef(null);
 
   async function openBill(member) {
@@ -109,6 +112,10 @@ export default function DealCard({
   const allConfirmed = others.length > 0 && confirmedOthers.length === others.length;
   const pendingCash = perMember * declaredOthers.length;
   const missing = Math.max(0, (Number(deal.min_members) || 0) - memberCount);
+  // Bill chỉ hiện với người tải, chủ kèo và quản trị viên.
+  const visibleBills = others.filter(
+    (member) => member.bill_url && (isOwner || isAdmin || member.id === currentUserId)
+  );
 
   async function copyBank() {
     try {
@@ -251,6 +258,24 @@ export default function DealCard({
             className={cn('h-3.5 w-3.5 transition-transform', showSplit && 'rotate-180')}
           />
         </button>
+
+        {visibleBills.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-brand-200 bg-white px-2.5 py-2">
+            <Paperclip className="h-3 w-3 shrink-0 text-brand-600" />
+            <span className="text-[10px] font-bold text-ink-600">Bill chuyển khoản:</span>
+            {visibleBills.map((member) => (
+              <button
+                key={member.id}
+                type="button"
+                onClick={() => openBill(member)}
+                className="inline-flex items-center gap-1 rounded-md bg-ink-900 px-1.5 py-0.5 text-[9px] font-bold text-white transition hover:bg-ink-800"
+              >
+                <Eye className="h-2.5 w-2.5" />
+                {member.name?.split(' ').slice(-1)[0] || 'Xem'}
+              </button>
+            ))}
+          </div>
+        )}
 
         {showSplit && (
           <div className="mt-2 rounded-2xl border border-brand-200/70 bg-ink-50/70 p-3">
@@ -491,6 +516,18 @@ export default function DealCard({
             </button>
           )}
 
+          {!isOwner && (
+            <button
+              type="button"
+              onClick={() => setReportOpen(true)}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-brand-200/70 text-ink-400 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+              title="Tố cáo kèo có dấu hiệu lừa đảo"
+              aria-label="Tố cáo kèo"
+            >
+              <Flag className="h-4 w-4" />
+            </button>
+          )}
+
           {isOwner && (
             <button
               type="button"
@@ -564,6 +601,14 @@ export default function DealCard({
           </div>
         </div>
       )}
+      <ReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        targetType="deal"
+        targetId={deal.id}
+        targetLabel={`Kèo gom đơn · ${deal.title}`}
+        onSubmitted={() => toast.success('Đã gửi tố cáo tới quản trị viên')}
+      />
     </article>
   );
 }

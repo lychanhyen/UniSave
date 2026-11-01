@@ -22,6 +22,7 @@ export default function ReportDialog({ open, onClose, targetType, targetId, targ
   if (!open) return null;
 
   const isUser = targetType === 'user';
+  const isDeal = targetType === 'deal';
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -65,7 +66,7 @@ export default function ReportDialog({ open, onClose, targetType, targetId, targ
             </span>
             <div>
               <p className="text-sm font-bold text-ink-900">
-                {isUser ? 'Tố cáo người dùng' : 'Tố cáo tin đăng'}
+                {isUser ? 'Tố cáo người dùng' : isDeal ? 'Tố cáo kèo gom đơn' : 'Tố cáo tin đăng'}
               </p>
               <p className="text-[11px] text-ink-400">
                 Gửi tới quản trị viên UniSave để xem xét.
@@ -83,7 +84,7 @@ export default function ReportDialog({ open, onClose, targetType, targetId, targ
         </div>
 
         <p className="mt-4 line-clamp-2 rounded-xl bg-ink-50 px-3 py-2 text-xs font-medium text-ink-600">
-          {targetLabel || (isUser ? 'Người dùng UniSave' : 'Tin đăng')}
+          {targetLabel || (isUser ? 'Người dùng UniSave' : isDeal ? 'Kèo gom đơn' : 'Tin đăng')}
         </p>
 
         <label className="label mt-4">Lý do tố cáo</label>
