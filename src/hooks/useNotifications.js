@@ -21,6 +21,11 @@ export function useNotifications({ surface = 'all' } = {}) {
   const [loading, setLoading] = useState(isRemote());
 
   const refresh = useCallback(async () => {
+    if (!currentUser.id) {
+      setNotifications([]);
+      setLoading(false);
+      return;
+    }
     if (!isRemote()) {
       setNotifications(
         loadNotifications().filter((item) => item.recipient_id === currentUser.id)
@@ -38,6 +43,7 @@ export function useNotifications({ surface = 'all' } = {}) {
 
   useEffect(() => {
     refresh();
+    if (!currentUser.id) return undefined;
     if (!isRemote()) {
       const handler = () => refresh();
       window.addEventListener('unisave:notifications', handler);

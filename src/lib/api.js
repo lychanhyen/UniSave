@@ -411,6 +411,8 @@ export async function saveBudgetRemote(userId, budget) {
 /* ------------------------------ Notifications ----------------------------- */
 
 export async function fetchNotifications(userId) {
+  // Guest chưa đăng nhập: không có recipient_id nên không được truy vấn UUID rỗng.
+  if (!userId) return [];
   if (!isRemote()) return loadNotifications();
   const { data, error } = await supabase
     .from('notifications')
