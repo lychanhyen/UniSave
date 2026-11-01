@@ -1,4 +1,4 @@
--- ============================================================================
+﻿-- ============================================================================
 -- UniSave – Supabase schema
 -- Chạy toàn bộ file này trong Supabase Dashboard → SQL Editor.
 -- Sau khi chạy, điền VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env.local.
@@ -64,6 +64,8 @@ create table if not exists public.posts (
 alter table public.posts add column if not exists deleted_at timestamptz;
 alter table public.posts add column if not exists deleted_by uuid references public.profiles (id) on delete set null;
 alter table public.posts add column if not exists cover_position text not null default '50% 50%';
+-- Chợ chỉ hiện tin 7 ngày; bumped_at là lần gia hạn gần nhất (created_at giữ nguyên cho lịch sử).
+alter table public.posts add column if not exists bumped_at timestamptz;
 
 create table if not exists public.post_inquiries (
   id uuid primary key default gen_random_uuid(),

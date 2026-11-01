@@ -10,6 +10,7 @@ import {
   deletePost,
   createInquiry,
   restorePost,
+  renewPost,
   pushNotification,
 } from '../lib/api';
 import { loadPosts, savePosts } from '../lib/demoData';
@@ -221,6 +222,26 @@ export function useMarketplace() {
   const markSold = useCallback((id) => setStatus(id, 'sold'), [setStatus]);
   const relistPost = useCallback((id) => setStatus(id, 'active'), [setStatus]);
 
+  /** Gia hạn tin quá 7 ngày: hiện lại trên chợ thêm 7 ngày nữa. */
+  const renewPostListing = useCallback(
+    async (id) => {
+      const patch = { bumped_at: new Date().toISOString() };
+      if (!isRemote()) {
+        persistDemo(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
+        return;
+      }
+      const snapshot = posts;
+      setPosts((prev) => prev.map((post) => (post.id === id ? { ...post, ...patch } : post)));
+      try {
+        await renewPost(id);
+      } catch (error) {
+        setPosts(snapshot);
+        toast.error(`Không thể gia hạn tin: ${error.message}`);
+      }
+    },
+    [persistDemo, posts]
+  );
+
   const sendInquiry = useCallback(
     async (postId, message) => {
       const post = (isRemote() ? posts : loadPosts()).find((item) => item.id === postId);
@@ -260,6 +281,7 @@ export function useMarketplace() {
     undeletePost,
     markSold,
     relistPost,
+    renewPostListing,
     sendInquiry,
   };
 }

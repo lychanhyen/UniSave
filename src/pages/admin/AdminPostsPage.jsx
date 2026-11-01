@@ -23,7 +23,7 @@ import { useAdminUsers } from '../../hooks/useAdminUsers';
 import { sendUserNotification } from '../../lib/api';
 import { POST_CATEGORIES, POST_CATEGORY_MAP } from '../../lib/constants';
 import { useCampuses } from '../../context/CampusContext';
-import { cn, formatCurrency, formatRelativeTime } from '../../lib/utils';
+import { cn, formatCurrency, formatRelativeTime, isPostExpired } from '../../lib/utils';
 
 const STATUS_TABS = [
   { value: 'all', label: 'Tất cả' },
@@ -31,6 +31,7 @@ const STATUS_TABS = [
   { value: 'sold', label: 'Đã bán' },
   { value: 'reported', label: 'Có tố cáo' },
   { value: 'deleted', label: 'Đã xoá' },
+  { value: 'expired', label: 'Hết hạn' },
 ];
 
 const ACTION_META = {
@@ -105,6 +106,7 @@ export default function AdminPostsPage() {
       if (tab === 'active' && post.status !== 'active') return false;
       if (tab === 'sold' && post.status !== 'sold' && post.status !== 'done') return false;
       if (tab === 'reported' && !openReportCounts[post.id]) return false;
+      if (tab === 'expired' && !(post.status !== 'deleted' && isPostExpired(post))) return false;
       if (category !== 'all' && post.category !== category) return false;
       if (!q) return true;
       return `${post.title} ${post.owner_name} ${post.description || ''}`
@@ -120,6 +122,7 @@ export default function AdminPostsPage() {
       sold: livePosts.filter((post) => post.status === 'sold' || post.status === 'done').length,
       reported: livePosts.filter((post) => openReportCounts[post.id]).length,
       deleted: deletedPosts.length,
+      expired: livePosts.filter((post) => isPostExpired(post)).length,
     }),
     [livePosts, deletedPosts, openReportCounts]
   );
@@ -131,6 +134,7 @@ export default function AdminPostsPage() {
       sold: stats.sold,
       reported: stats.reported,
       deleted: stats.deleted,
+      expired: stats.expired,
     }),
     [livePosts.length, stats]
   );
@@ -190,6 +194,7 @@ export default function AdminPostsPage() {
           { label: 'Đang bán', value: stats.active, tone: 'text-brand-700' },
           { label: 'Đã bán', value: stats.sold, tone: 'text-ink-500' },
           { label: 'Có tố cáo chờ', value: stats.reported, tone: 'text-rose-600' },
+      { label: 'Quá 7 ngày', value: stats.expired, tone: 'text-amber-600' },
         ].map((item) => (
           <div key={item.label} className="card p-4">
             <p className={`text-2xl font-extrabold tracking-tight ${item.tone}`}>{item.value}</p>
@@ -275,6 +280,7 @@ export default function AdminPostsPage() {
             const owner = users.find((user) => user.id === post.owner_id);
             const isSold = post.status === 'sold' || post.status === 'done';
             const isDeleted = post.status === 'deleted';
+            const isExpired = !isDeleted && isPostExpired(post);
             const deletedByAdmin =
               isDeleted && post.deleted_by && post.deleted_by !== post.owner_id;
             const openReports = openReportCounts[post.id] || 0;
@@ -306,6 +312,11 @@ export default function AdminPostsPage() {
                       ) : (
                         <span className="chip bg-brand-50 text-brand-700 ring-1 ring-brand-100">
                           <BadgeCheck className="h-3.5 w-3.5" /> Đang bán
+                        </span>
+                      )}
+                      {isExpired && (
+                        <span className="chip bg-amber-50 text-amber-700 ring-1 ring-amber-100">
+                          <Clock3 className="h-3.5 w-3.5" /> Quá 7 ngày
                         </span>
                       )}
                       {openReports > 0 && (

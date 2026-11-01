@@ -29,6 +29,7 @@ import { useDeals } from '../hooks/useDeals';
 import { requestVerification, updateOwnProfile, uploadAvatar, uploadStudentCard } from '../lib/api';
 import { compressImageFile } from '../lib/image';
 import { useCampuses } from '../context/CampusContext';
+import { isPostExpired } from '../lib/utils';
 
 export default function ProfilePage() {
   const { logout, refreshUser, demoMode } = useAuth();
@@ -80,7 +81,7 @@ export default function ProfilePage() {
   const stats = useMemo(() => {
     const ownerId = profile.id;
     return {
-      posts: posts.filter((p) => p.owner_id === ownerId && p.status !== 'deleted').length,
+      posts: posts.filter((p) => p.owner_id === ownerId && p.status !== 'deleted' && !isPostExpired(p)).length,
       deals: deals.filter((d) => d.owner_id === ownerId).length,
     };
   }, [profile.id, posts, deals]);

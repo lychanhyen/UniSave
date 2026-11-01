@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -18,9 +18,8 @@ import {
 import toast from 'react-hot-toast';
 import { useBudgetStore } from '../hooks/useBudgetStore';
 import { useCurrentUser } from '../hooks/useCurrentUser';
-import { useMarketplace } from '../hooks/useMarketplace';
 import { CATEGORY_MAP, FUND_STATUS, TONES } from '../lib/constants';
-import { cn, formatCurrency, formatDate, formatRelativeTime, monthLabel } from '../lib/utils';
+import { cn, formatCurrency, formatDate, monthLabel } from '../lib/utils';
 import BudgetForm from '../components/budget/BudgetForm';
 import ExpenseForm from '../components/budget/ExpenseForm';
 import PiggyBankCard from '../components/budget/PiggyBankCard';
@@ -50,33 +49,8 @@ function Figure({ label, value, tone = 'text-ink-900', note }) {
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
   const { budget, expenses, state, addExpense, removeExpense, updateBudget } = useBudgetStore();
-  const { posts } = useMarketplace();
   const [showBudget, setShowBudget] = useState(false);
   const formRef = useRef(null);
-
-  /** Lịch sử đăng tin: giữ cả tin đã bán và tin đã xoá khỏi chợ. */
-  const myPosts = useMemo(
-    () =>
-      posts
-        .filter((post) => post.owner_id === currentUser.id)
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
-    [posts, currentUser.id]
-  );
-
-  const historyCounts = useMemo(
-    () =>
-      myPosts.reduce(
-        (acc, post) => {
-          acc.total += 1;
-          if (post.status === 'deleted') acc.deleted += 1;
-          else if (post.status === 'sold' || post.status === 'done') acc.sold += 1;
-          else acc.active += 1;
-          return acc;
-        },
-        { total: 0, active: 0, sold: 0, deleted: 0 }
-      ),
-    [myPosts]
-  );
 
   const displayName = currentUser.full_name || 'Sinh viên';
   const shortName = displayName.trim().split(/\s+/).slice(-1)[0];
@@ -279,110 +253,6 @@ export default function DashboardPage() {
           </section>
 
           <WeekChart expenses={expenses} />
-
-          {/* Lịch sử đăng tin: giữ lại cả tin đã xoá khỏi chợ. */}
-          <section className="card-strong px-5 py-5 sm:px-6">
-            <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
-              <div>
-                <h2 className="section-title">Lịch sử đăng tin</h2>
-                <p className="mt-1 text-[11px] text-ink-400">
-                  Tin đã xoá khỏi chợ vẫn được lưu ở đây để bạn xem lại và đăng lại.
-                </p>
-              </div>
-              <Link
-                to="/marketplace"
-                className="text-[11px] font-bold text-brand-600 transition-colors hover:text-brand-700"
-              >
-                Xem chợ
-              </Link>
-            </div>
-
-            {myPosts.length === 0 ? (
-              <div className="flex flex-col items-center py-10 text-center">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-ink-100 text-ink-400">
-                  <Store className="h-5 w-5" />
-                </span>
-                <p className="mt-3 text-sm font-semibold text-ink-700">Chưa đăng tin nào</p>
-                <p className="mt-1 text-xs text-ink-400">
-                  Pass lại đồ cũ hoặc cho thuê đồ học tập ngay trong trường.
-                </p>
-                <Link to="/marketplace/new" className="btn-secondary mt-4 py-2 text-xs">
-                  <Plus className="h-3.5 w-3.5" />
-                  Đăng tin đầu tiên
-                </Link>
-              </div>
-            ) : (
-              <>
-                <div className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
-                  <span className="chip bg-ink-100 text-ink-600">{historyCounts.total} tin</span>
-                  <span className="chip bg-brand-50 text-brand-700">
-                    {historyCounts.active} chưa bán
-                  </span>
-                  <span className="chip bg-ink-100 text-ink-500">{historyCounts.sold} đã bán</span>
-                  {historyCounts.deleted > 0 && (
-                    <span className="chip bg-rose-50 text-rose-700">
-                      {historyCounts.deleted} đã xoá
-                    </span>
-                  )}
-                </div>
-
-                <ul>
-                  {myPosts.slice(0, 8).map((post) => {
-                    const deleted = post.status === 'deleted';
-                    const sold = post.status === 'sold' || post.status === 'done';
-                    const deletedByAdmin =
-                      deleted && post.deleted_by && post.deleted_by !== post.owner_id;
-                    const label = deleted
-                      ? deletedByAdmin
-                        ? 'Admin đã xoá'
-                        : 'Bạn đã xoá'
-                      : sold
-                        ? 'Đã bán'
-                        : 'Chưa bán';
-                    const chipTone = deleted
-                      ? 'bg-rose-50 text-rose-700'
-                      : sold
-                        ? 'bg-ink-100 text-ink-500'
-                        : 'bg-brand-50 text-brand-700';
-                    return (
-                      <li
-                        key={post.id}
-                        className="flex items-center gap-3 border-t border-brand-200/60 py-3 first:border-t-0 first:pt-0"
-                      >
-                        <span className={cn('chip shrink-0 text-[10px]', chipTone)}>{label}</span>
-                        <div className="min-w-0 flex-1">
-                          <Link
-                            to={`/marketplace/${post.id}`}
-                            className={cn(
-                              'block truncate text-[13px] font-semibold transition-colors hover:text-brand-700',
-                              deleted ? 'text-ink-400 line-through' : 'text-ink-900'
-                            )}
-                          >
-                            {post.title}
-                          </Link>
-                          <p className="text-[11px] text-ink-400">
-                            {formatRelativeTime(post.created_at)} · {formatCurrency(post.price)}
-                            {deleted && ' · không hiện trên chợ'}
-                          </p>
-                        </div>
-                        <ArrowUpRight className="h-4 w-4 shrink-0 text-ink-300" />
-                      </li>
-                    );
-                  })}
-                </ul>
-
-                {myPosts.length > 8 && (
-                  <Link
-                    to="/marketplace"
-                    className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-brand-600 hover:text-brand-700"
-                  >
-                    Xem tất cả {myPosts.length} tin
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Link>
-                )}
-              </>
-            )}
-          </section>
         </div>
 
         {/* ------------------------------------------------------------- Cột phụ */}

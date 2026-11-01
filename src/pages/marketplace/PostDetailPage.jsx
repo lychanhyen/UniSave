@@ -36,6 +36,9 @@ import {
   formatCurrency,
   formatDateTime,
   formatRelativeTime,
+  isPostExpired,
+  postDaysLeft,
+  POST_VISIBLE_DAYS,
   zaloLink,
 } from '../../lib/utils';
 
@@ -56,6 +59,7 @@ export default function PostDetailPage() {
     markSold,
     relistPost,
     undeletePost,
+    renewPostListing,
     sendInquiry,
   } = useMarketplace();
   const [activeImage, setActiveImage] = useState(0);
@@ -74,6 +78,7 @@ export default function PostDetailPage() {
         (p) =>
           p.id !== post.id &&
           p.status === 'active' &&
+          !isPostExpired(p) &&
           p.category === post.category
       )
       .slice(0, 3);
@@ -132,6 +137,31 @@ export default function PostDetailPage() {
     );
   }
 
+  // Tin quá hạn hiển thị: chỉ chủ tin và quản trị viên còn xem được.
+  if (
+    post.status !== 'deleted' &&
+    isPostExpired(post) &&
+    post.owner_id !== currentUser.id &&
+    currentUser.role !== 'admin'
+  ) {
+    return (
+      <div className="mx-auto max-w-3xl">
+        <div className="card">
+          <EmptyState
+            icon={Clock3}
+            title="Tin đã hết hạn hiển thị"
+            description={`Tin đăng chỉ hiện trên chợ ${POST_VISIBLE_DAYS} ngày. Người bán có thể gia hạn để tin xuất hiện lại.`}
+            action={
+              <Link to="/marketplace" className="btn-primary">
+                Xem tin còn hạn
+              </Link>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
   const category = POST_CATEGORY_MAP[post.category] || POST_CATEGORY_MAP.other;
   const Icon = category.icon;
   const gradient = POST_GRADIENTS[category.tone] || POST_GRADIENTS.slate;
@@ -139,6 +169,7 @@ export default function PostDetailPage() {
   const isOwner = post.owner_id === currentUser.id;
   const isSold = post.status === 'sold' || post.status === 'done';
   const isDeleted = post.status === 'deleted';
+  const isExpired = !isDeleted && isPostExpired(post);
   // Tin bị quản trị viên xoá thì sinh viên không tự đăng lại được.
   const deletedByAdmin = isDeleted && post.deleted_by && post.deleted_by !== post.owner_id;
   const canRestore = isDeleted && (currentUser.role === 'admin' || !deletedByAdmin);
@@ -156,6 +187,11 @@ export default function PostDetailPage() {
   async function handleRestore() {
     await undeletePost(post.id);
     toast.success('Đã đăng lại tin lên chợ');
+  }
+
+  async function handleRenew() {
+    await renewPostListing(post.id);
+    toast.success(`Đã gia hạn tin thêm ${POST_VISIBLE_DAYS} ngày trên chợ`);
   }
 
   async function handleMarkSold() {
@@ -205,6 +241,31 @@ export default function PostDetailPage() {
         <ArrowLeft className="h-4 w-4" />
         Quay lại chợ sinh viên
       </Link>
+
+      {isExpired && (
+        <div className="animate-in mb-5 flex flex-col gap-3 rounded-3xl border-2 border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white text-amber-600">
+              <Clock3 className="h-4 w-4" />
+            </span>
+            <div>
+              <p className="text-[13px] font-bold text-amber-900">Tin đã hết hạn hiển thị</p>
+              <p className="mt-0.5 text-[11px] text-amber-800/80">
+                Tin chỉ hiện trên chợ {POST_VISIBLE_DAYS} ngày nên tin này đã tự ẩn. Gia hạn để đưa
+                lại lên chợ — dữ liệu vẫn được lưu.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleRenew}
+            className="btn-secondary shrink-0 py-2.5 text-xs"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Gia hạn {POST_VISIBLE_DAYS} ngày
+          </button>
+        </div>
+      )}
 
       {isDeleted && (
         <div className="animate-in mb-5 flex flex-col gap-3 rounded-3xl border-2 border-rose-200 bg-rose-50 p-4 sm:flex-row sm:items-center sm:justify-between">

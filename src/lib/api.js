@@ -156,6 +156,18 @@ export async function deletePost(id, actorId = '') {
   if (error) throw error;
 }
 
+/** Gia hạn hiển thị 7 ngày cho tin đã quá hạn (đặt lại bumped_at). */
+export async function renewPost(id) {
+  const patch = { bumped_at: new Date().toISOString() };
+  if (!isRemote()) {
+    savePosts(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
+    return patch;
+  }
+  const { error } = await supabase.from('posts').update(patch).eq('id', id);
+  if (error) throw error;
+  return patch;
+}
+
 /** Đăng lại tin đã xoá: quay về trạng thái chưa bán. */
 export async function restorePost(id) {
   const patch = { status: 'active', deleted_at: null, deleted_by: null };

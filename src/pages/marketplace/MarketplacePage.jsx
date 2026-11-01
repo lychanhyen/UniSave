@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
@@ -17,7 +17,7 @@ import PostCard from '../../components/marketplace/PostCard';
 import FilterTabs from '../../components/marketplace/FilterTabs';
 import { useMarketplace } from '../../hooks/useMarketplace';
 import { POST_CATEGORY_MAP } from '../../lib/constants';
-import { formatCompact } from '../../lib/utils';
+import { formatCompact, isPostExpired, POST_VISIBLE_DAYS } from '../../lib/utils';
 
 export default function MarketplacePage() {
   const { posts, loading, currentUser, removePost, markSold, relistPost } = useMarketplace();
@@ -31,7 +31,11 @@ export default function MarketplacePage() {
   const [mine, setMine] = useState(false);
   const [nearby, setNearby] = useState(true);
 
-  const livePosts = useMemo(() => posts.filter((post) => post.status !== 'deleted'), [posts]);
+  // Chợ chỉ hiện tin còn hạn 7 ngày và chưa bị xoá.
+  const livePosts = useMemo(
+    () => posts.filter((post) => post.status !== 'deleted' && !isPostExpired(post)),
+    [posts]
+  );
 
   const stats = useMemo(() => {
     const active = livePosts.filter((p) => p.status !== 'sold' && p.status !== 'done');
@@ -96,7 +100,7 @@ export default function MarketplacePage() {
       <PageHeader
         eyebrow="Chợ sinh viên"
         title="Đồ cũ qua tay, tiền mới về ví"
-        subtitle="Mua bán, pass lại đồ dùng học tập và thuê đồ giá sinh viên trong cùng trường."
+        subtitle={`Mua bán, pass lại đồ dùng học tập và thuê đồ giá sinh viên trong cùng trường. Tin tự ẩn sau ${POST_VISIBLE_DAYS} ngày để chợ dễ tìm.`}
         actions={
           canPost ? (
             <Link to="/marketplace/new" className="btn-primary">

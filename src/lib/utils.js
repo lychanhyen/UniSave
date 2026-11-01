@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+﻿import clsx from 'clsx';
 
 export function cn(...inputs) {
   return clsx(...inputs);
@@ -54,6 +54,30 @@ export function formatRelativeTime(date) {
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days} ngày trước`;
   return formatDate(date);
+}
+
+/**
+ * Tin đăng chỉ hiện trên chợ trong 7 ngày để chợ không bị rối.
+ * Dữ liệu không bị xoá: quản trị viên vẫn xem lại toàn bộ trong lịch sử.
+ */
+export const POST_VISIBLE_DAYS = 7;
+
+export function isPostExpired(post) {
+  const base = post?.bumped_at || post?.created_at;
+  if (!base) return false;
+  const created = new Date(base).getTime();
+  if (Number.isNaN(created)) return false;
+  return Date.now() - created > POST_VISIBLE_DAYS * 24 * 60 * 60 * 1000;
+}
+
+/** Số ngày còn lại trên chợ (0 = đã hết hạn). */
+export function postDaysLeft(post) {
+  const base = post?.bumped_at || post?.created_at;
+  if (!base) return POST_VISIBLE_DAYS;
+  const created = new Date(base).getTime();
+  if (Number.isNaN(created)) return POST_VISIBLE_DAYS;
+  const left = POST_VISIBLE_DAYS * 24 * 60 * 60 * 1000 - (Date.now() - created);
+  return Math.max(0, Math.ceil(left / (24 * 60 * 60 * 1000)));
 }
 
 export function timeLeft(date) {
