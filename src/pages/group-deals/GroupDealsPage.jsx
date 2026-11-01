@@ -1,0 +1,257 @@
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Plus,
+  ShoppingBag,
+  Search,
+  X,
+  Users,
+  Sparkles,
+  TrendingDown,
+  Flame,
+  ShieldAlert,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
+import PageHeader from '../../components/ui/PageHeader';
+import EmptyState from '../../components/ui/EmptyState';
+import FloatingActionButton from '../../components/ui/FloatingActionButton';
+import DealCard from '../../components/group/DealCard';
+import { useDeals } from '../../hooks/useDeals';
+import { cn, formatCompact } from '../../lib/utils';
+
+const TABS = [
+  { value: 'all', label: 'Tất cả' },
+  { value: 'open', label: 'Đang mở' },
+  { value: 'full', label: 'Đủ người' },
+  { value: 'mine', label: 'Kèo của tôi' },
+];
+
+export default function GroupDealsPage() {
+  const { deals, currentUser, joinDeal, leaveDeal, togglePayment, removeDeal } = useDeals();
+  const canPost = Boolean(currentUser.is_verified);
+  const [query, setQuery] = useState('');
+  const [tab, setTab] = useState('all');
+
+  const stats = useMemo(() => {
+    const active = deals.filter((d) => d.status === 'open');
+    const members = deals.reduce((sum, d) => sum + (d.current_members || 0), 0);
+    const maxDiscount = deals.reduce((max, d) => {
+      if (!d.original_price) return max;
+      return Math.max(max, Math.round((1 - d.deal_price / d.original_price) * 100));
+    }, 0);
+    return { open: active.length, members, maxDiscount };
+  }, [deals]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return deals
+      .filter((deal) => {
+        if (tab === 'open' && deal.status !== 'open') return false;
+        if (tab === 'full' && deal.status !== 'full') return false;
+        if (
+          tab === 'mine' &&
+          deal.owner_id !== currentUser.id &&
+          !(deal.joined_ids || []).includes(currentUser.id)
+        )
+          return false;
+        if (!q) return true;
+        return `${deal.title} ${deal.description} ${deal.owner_name}`.toLowerCase().includes(q);
+      })
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }, [deals, query, tab, currentUser.id]);
+
+  async function handleJoin(id) {
+    const next = await joinDeal(id);
+    if (next) {
+      toast.success('Đã tham gia kèo, nhớ theo dõi hạn chót nhé!');
+      if (next.status === 'full') {
+        toast('Kèo đã đủ người, mở công cụ chia tiền để xem số tiền cần chuyển.', { icon: '💰' });
+      }
+    }
+  }
+
+  async function handleLeave(id) {
+    await leaveDeal(id);
+    toast('Bạn đã rời kèo gom đơn', { icon: '👋' });
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm('Xóa kèo gom đơn này? Hành động không thể hoàn tác.')) return;
+    await removeDeal(id);
+    toast.success('Đã xóa kèo');
+  }
+
+  function handleTogglePayment(dealId, memberId, paid) {
+    togglePayment(dealId, memberId, paid);
+    if (paid) toast.success('Đã đánh dấu chuyển khoản');
+  }
+
+  return (
+    <div className="mx-auto max-w-6xl">
+      <PageHeader
+        eyebrow="Gom đơn"
+        title="Mua chung, rẻ hơn một nửa"
+        subtitle="Rủ bạn cùng lớp gom đơn để được giá sỉ, freeship và nhiều ưu đãi hơn."
+        actions={
+          canPost ? (
+            <Link to="/deals/new" className="btn-primary">
+              <Plus className="h-4 w-4" />
+              Tạo kèo
+            </Link>
+          ) : (
+            <Link to="/profile" className="btn-secondary">
+              <ShieldAlert className="h-4 w-4 text-amber-600" />
+              Cần xác minh để tạo kèo
+            </Link>
+          )
+        }
+      />
+
+      <div className="animate-in relative mb-6 overflow-hidden rounded-4xl bg-gradient-to-br from-brand-700 via-brand-600 to-emerald-700 p-6 text-white shadow-glow sm:p-7">
+        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -bottom-24 left-1/4 h-48 w-48 rounded-full bg-emerald-300/20 blur-3xl" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-lg">
+            <span className="chip bg-white/15 text-white backdrop-blur">
+              <Flame className="h-3.5 w-3.5" />
+              Kèo đang hot
+            </span>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+              Một người mua thì đắt,
+              <br className="hidden sm:block" /> cả nhóm mua thì hời.
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-brand-50/90">
+              Tham gia kèo có sẵn hoặc tự tạo kèo cho lớp, ký túc xá của bạn.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
+            {[
+              { label: 'Kèo đang mở', value: stats.open, icon: ShoppingBag },
+              { label: 'Người tham gia', value: stats.members, icon: Users },
+              { label: 'Giảm tối đa', value: `${stats.maxDiscount}%`, icon: TrendingDown },
+            ].map(({ label, value, icon: Icon }) => (
+              <div
+                key={label}
+                className="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur-sm"
+              >
+                <Icon className="h-4 w-4 text-brand-100" />
+                <p className="mt-2 text-xl font-extrabold tracking-tight">
+                  {typeof value === 'number' ? formatCompact(value) : value}
+                </p>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-100/80">
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="animate-in-delay-1 card mb-6 space-y-4 p-4 sm:p-5">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-ink-400" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Tìm kèo trà sữa, giáo trình, đồ ăn vặt…"
+            className="input pl-11 pr-10"
+            aria-label="Tìm kèo gom đơn"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="absolute right-3 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+              aria-label="Xóa tìm kiếm"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="no-scrollbar flex gap-1 overflow-x-auto rounded-2xl bg-ink-100 p-1">
+            {TABS.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setTab(item.value)}
+                className={cn(
+                  'shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all',
+                  tab === item.value
+                    ? 'bg-white text-ink-900 shadow-soft'
+                    : 'text-ink-500 hover:text-ink-800'
+                )}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <span className="hidden shrink-0 text-xs font-medium text-ink-400 sm:block">
+            {filtered.length} kèo phù hợp
+          </span>
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="card animate-in-delay-2">
+          <EmptyState
+            icon={ShoppingBag}
+            title={tab === 'mine' ? 'Bạn chưa tạo kèo nào' : 'Chưa có kèo phù hợp'}
+            description={
+              tab === 'mine'
+                ? 'Tạo kèo đầu tiên và rủ bạn bè cùng tham gia để tiết kiệm hơn.'
+                : 'Thử đổi từ khóa hoặc chuyển sang tab khác xem sao.'
+            }
+            action={
+              canPost ? (
+                <Link to="/deals/new" className="btn-primary">
+                  <Plus className="h-4 w-4" />
+                  Tạo kèo ngay
+                </Link>
+              ) : (
+                <Link to="/profile" className="btn-secondary">
+                  <ShieldAlert className="h-4 w-4 text-amber-600" />
+                  Gửi yêu cầu xác minh
+                </Link>
+              )
+            }
+          />
+        </div>
+      ) : (
+        <div className="animate-in-delay-2 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((deal) => (
+            <DealCard
+              key={deal.id}
+              deal={deal}
+              joined={(deal.joined_ids || []).includes(currentUser.id)}
+              isOwner={deal.owner_id === currentUser.id}
+              currentUserId={currentUser.id}
+              onJoin={handleJoin}
+              onLeave={handleLeave}
+              onDelete={handleDelete}
+              onTogglePayment={handleTogglePayment}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="mt-8 flex items-start gap-3 rounded-3xl border border-ink-200/70 bg-white/70 p-5 backdrop-blur-sm">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-600">
+          <Sparkles className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="text-sm font-bold text-ink-900">Bí kíp gom đơn an toàn</p>
+          <p className="mt-1 text-xs leading-relaxed text-ink-500">
+            Chỉ tham gia kèo có người tạo rõ ràng, thống nhất cách chia tiền trước khi đặt hàng và
+            ưu tiên thanh toán khi nhận hàng. Khi kèo đủ người, mở “Chia tiền” trên thẻ kèo để xem
+            đúng số tiền mỗi thành viên cần chuyển cho chủ kèo. UniSave không giữ tiền của bạn.
+          </p>
+        </div>
+      </div>
+
+      {canPost && <FloatingActionButton to="/deals/new" label="Tạo kèo" className="lg:hidden" />}
+    </div>
+  );
+}

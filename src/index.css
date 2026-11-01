@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-900: #0f172a;
+
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 40px -12px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(16, 185, 129, 0.08), 0 12px 32px -8px rgba(16, 185, 129, 0.35);
+
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink-50 text-ink-900 font-sans;
+    background-image:
+      radial-gradient(1200px 600px at 100% -10%, rgba(16, 185, 129, 0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(59, 130, 246, 0.08), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink-300 rounded-full border-2 border-transparent bg-clip-content;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-400;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white/90 backdrop-blur-sm rounded-3xl border border-ink-200/70 shadow-soft;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
+      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
+      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
+      bg-brand-600 text-white shadow-glow hover:bg-brand-700;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
+      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
+      bg-white text-ink-700 border border-ink-200 hover:bg-ink-50 hover:border-ink-300;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
+      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
+      text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
+      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
+      bg-rose-600 text-white hover:bg-rose-700;
+  }
+
+  .input {
+    @apply w-full rounded-2xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900
+      placeholder:text-ink-400 transition-all duration-200
+      focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-semibold text-ink-700;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .section-title {
+    @apply text-lg font-bold tracking-tight text-ink-900;
+  }
+}
+
+@layer utilities {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-in-delay-1 {
+    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  }
+
+  .animate-in-delay-2 {
+    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+  }
+
+  .animate-in-delay-3 {
+    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+  }
+
+  /* Popover cần xuất hiện nhanh, tránh cảm giác "trong suốt" khi mở. */
+  .animate-pop {
+    animation: pop-in 0.16s ease-out both;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
