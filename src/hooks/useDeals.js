@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 import {
@@ -8,7 +8,8 @@ import {
   createDeal,
   joinDealRemote,
   leaveDealRemote,
-  setDealPaidRemote,
+  declareDealPayment,
+  reviewDealPayment,
   deleteDeal,
   pushNotification,
 } from '../lib/api';
@@ -191,43 +192,62 @@ export function useDeals() {
     [currentUser, deals, persistDemo, reload]
   );
 
-  const togglePayment = useCallback(
-    async (id, memberId, paid) => {
+  /** Người tham gia báo đã chuyển tiền — chưa phải là "đã trả", chờ chủ kèo xác nhận. */
+  const declarePayment = useCallback(
+    async (id) => {
+      const apply = (deal) => ({
+        ...deal,
+        members: (deal.members || []).map((member) =>
+          member.id === currentUser.id && !member.is_owner
+            ? { ...member, paid: false, payment_status: 'declared' }
+            : member
+        ),
+      });
+
       if (!isRemote()) {
-        persistDemo(
-          loadDeals().map((deal) => {
-            if (deal.id !== id) return deal;
-            const paidIds = new Set(deal.paid_ids || []);
-            if (paid) paidIds.add(memberId);
-            else paidIds.delete(memberId);
-            return { ...deal, paid_ids: Array.from(paidIds) };
-          })
-        );
+        persistDemo(loadDeals().map((deal) => (deal.id === id ? apply(deal) : deal)));
         return;
       }
-      setDeals((prev) =>
-        prev.map((deal) => {
-          if (deal.id !== id) return deal;
-          const paidIds = new Set(deal.paid_ids || []);
-          if (paid) paidIds.add(memberId);
-          else paidIds.delete(memberId);
-          return {
-            ...deal,
-            paid_ids: Array.from(paidIds),
-            members: (deal.members || []).map((member) =>
-              member.id === memberId ? { ...member, paid } : member
-            ),
-          };
-        })
-      );
+
+      const snapshot = deals;
+      setDeals((prev) => prev.map((deal) => (deal.id === id ? apply(deal) : deal)));
       try {
-        await setDealPaidRemote(id, memberId, paid);
+        await declareDealPayment(id);
       } catch (error) {
-        toast.error(`Không thể cập nhật thanh toán: ${error.message}`);
-        reload();
+        setDeals(snapshot);
+        toast.error(`Không ghi nhận được: ${error.message}`);
       }
     },
-    [persistDemo, reload]
+    [currentUser.id, persistDemo, deals]
+  );
+
+  /** Chủ kèo xác nhận đã nhận tiền (accept) hoặc báo chưa nhận (dispute). */
+  const reviewPayment = useCallback(
+    async (id, memberId, accept) => {
+      const apply = (deal) => ({
+        ...deal,
+        members: (deal.members || []).map((member) =>
+          member.id === memberId
+            ? { ...member, paid: accept, payment_status: accept ? 'confirmed' : 'disputed' }
+            : member
+        ),
+      });
+
+      if (!isRemote()) {
+        persistDemo(loadDeals().map((deal) => (deal.id === id ? apply(deal) : deal)));
+        return;
+      }
+
+      const snapshot = deals;
+      setDeals((prev) => prev.map((deal) => (deal.id === id ? apply(deal) : deal)));
+      try {
+        await reviewDealPayment(id, memberId, accept);
+      } catch (error) {
+        setDeals(snapshot);
+        toast.error(`Không cập nhật được thanh toán: ${error.message}`);
+      }
+    },
+    [persistDemo, deals]
   );
 
   const removeDeal = useCallback(
@@ -256,7 +276,8 @@ export function useDeals() {
     addDeal,
     joinDeal,
     leaveDeal,
-    togglePayment,
+    declarePayment,
+    reviewPayment,
     removeDeal,
   };
 }

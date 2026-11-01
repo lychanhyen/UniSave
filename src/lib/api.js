@@ -222,6 +222,10 @@ function mapDeal(row, participants, profiles) {
       verified: Boolean(profile.is_verified ?? fallback.verified),
       is_owner: participant.user_id === row.owner_id,
       paid: Boolean(participant.paid),
+      payment_status:
+        participant.payment_status || (participant.paid ? 'confirmed' : 'unpaid'),
+      declared_at: participant.declared_at || null,
+      confirmed_at: participant.confirmed_at || null,
     };
   });
   const owner = members.find((member) => member.is_owner) || {};
@@ -255,7 +259,7 @@ export async function fetchDeals() {
   if (ids.length) {
     const { data, error: participantError } = await supabase
       .from('deal_participants')
-      .select('deal_id, user_id, paid')
+      .select('deal_id, user_id, paid, payment_status, declared_at, confirmed_at')
       .in('deal_id', ids);
     if (participantError) throw participantError;
     participants = data || [];
@@ -336,6 +340,24 @@ export async function setDealPaidRemote(dealId, userId, paid) {
     .update({ paid })
     .eq('deal_id', dealId)
     .eq('user_id', userId);
+  if (error) throw error;
+}
+
+/** Người tham gia báo đã chuyển tiền cho chủ kèo (chờ chủ kèo xác nhận). */
+export async function declareDealPayment(dealId) {
+  if (!isRemote()) return;
+  const { error } = await supabase.rpc('deal_declare_payment', { p_deal: dealId });
+  if (error) throw error;
+}
+
+/** Chủ kèo xác nhận đã nhận tiền (accept = true) hoặc báo chưa nhận (false). */
+export async function reviewDealPayment(dealId, userId, accept) {
+  if (!isRemote()) return;
+  const { error } = await supabase.rpc('deal_review_payment', {
+    p_deal: dealId,
+    p_user: userId,
+    p_accept: accept,
+  });
   if (error) throw error;
 }
 

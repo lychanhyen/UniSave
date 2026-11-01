@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Plus,
@@ -27,7 +27,7 @@ const TABS = [
 ];
 
 export default function GroupDealsPage() {
-  const { deals, currentUser, joinDeal, leaveDeal, togglePayment, removeDeal } = useDeals();
+  const { deals, currentUser, joinDeal, leaveDeal, declarePayment, reviewPayment, removeDeal } = useDeals();
   const canPost = Boolean(currentUser.is_verified);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('all');
@@ -81,9 +81,16 @@ export default function GroupDealsPage() {
     toast.success('Đã xóa kèo');
   }
 
-  function handleTogglePayment(dealId, memberId, paid) {
-    togglePayment(dealId, memberId, paid);
-    if (paid) toast.success('Đã đánh dấu chuyển khoản');
+  async function handleDeclarePayment(dealId) {
+    await declarePayment(dealId);
+    toast.success('Đã báo chuyển khoản, chờ chủ kèo xác nhận');
+  }
+
+  async function handleReviewPayment(dealId, memberId, accept) {
+    await reviewPayment(dealId, memberId, accept);
+    toast.success(
+      accept ? 'Đã xác nhận nhận tiền' : 'Đã báo chưa nhận được tiền'
+    );
   }
 
   return (
@@ -228,7 +235,8 @@ export default function GroupDealsPage() {
               onJoin={handleJoin}
               onLeave={handleLeave}
               onDelete={handleDelete}
-              onTogglePayment={handleTogglePayment}
+              onDeclarePayment={handleDeclarePayment}
+              onReviewPayment={handleReviewPayment}
             />
           ))}
         </div>

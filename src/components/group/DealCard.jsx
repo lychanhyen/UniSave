@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import {
   BadgeCheck,
   Banknote,
@@ -33,7 +33,8 @@ export default function DealCard({
   onJoin,
   onLeave,
   onDelete,
-  onTogglePayment,
+  onDeclarePayment,
+  onReviewPayment,
 }) {
   const [showSplit, setShowSplit] = useState(false);
   const progress = Math.min(100, percentOf(deal.current_members, deal.min_members));
@@ -57,14 +58,15 @@ export default function DealCard({
   const others = members.filter((member) => !member.is_owner);
   const perMember = Number(deal.deal_price) || 0;
   const ownerReceives = perMember * others.length;
-  const paidOthers = others.filter((member) => member.paid);
-  const collected = perMember * paidOthers.length;
-  const allPaid = others.length > 0 && paidOthers.length === others.length;
+  // "Đã thu" chỉ tính phần chủ kèo đã xác nhận nhận tiền.
+  const statusOf = (member) =>
+    member.payment_status || (member.paid ? 'confirmed' : 'unpaid');
+  const confirmedOthers = others.filter((member) => statusOf(member) === 'confirmed');
+  const declaredOthers = others.filter((member) => statusOf(member) === 'declared');
+  const collected = perMember * confirmedOthers.length;
+  const allConfirmed = others.length > 0 && confirmedOthers.length === others.length;
+  const pendingCash = perMember * declaredOthers.length;
   const missing = Math.max(0, (Number(deal.min_members) || 0) - memberCount);
-
-  function canToggle(member) {
-    return isOwner || member.id === currentUserId;
-  }
 
   async function copyBank() {
     try {
@@ -274,37 +276,88 @@ export default function DealCard({
                     <p className="text-[10px] text-ink-400">
                       {member.is_owner
                         ? 'Tự trả phần của mình'
-                        : member.paid
-                          ? 'Đã chuyển cho chủ kèo'
-                          : 'Chưa chuyển khoản'}
+                        : statusOf(member) === 'confirmed'
+                          ? 'Chủ kèo đã xác nhận nhận tiền'
+                          : statusOf(member) === 'declared'
+                            ? 'Báo đã chuyển · chờ chủ kèo xác nhận'
+                            : statusOf(member) === 'disputed'
+                              ? 'Chủ kèo báo chưa nhận được tiền'
+                              : 'Chưa chuyển khoản'}
                     </p>
                   </div>
                   {member.is_owner ? (
                     <span className="chip bg-ink-200 text-[10px] text-ink-600">—</span>
+                  ) : isOwner ? (
+                    /* Chủ kèo là người duy nhất chốt được "đã nhận tiền". */
+                    statusOf(member) === 'confirmed' ? (
+                      <span className="chip shrink-0 border border-brand-200 bg-brand-50 text-[10px] text-brand-700">
+                        <Check className="h-3 w-3" />
+                        Đã nhận
+                      </span>
+                    ) : statusOf(member) === 'declared' || statusOf(member) === 'disputed' ? (
+                      <span className="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => onReviewPayment?.(deal.id, member.id, true)}
+                          className="chip border border-brand-600 bg-brand-600 text-[10px] text-white transition hover:bg-brand-700"
+                          title="Tôi đã thấy khoản chuyển này trong tài khoản"
+                        >
+                          <Check className="h-3 w-3" />
+                          Xác nhận
+                        </button>
+                        {statusOf(member) === 'declared' && (
+                          <button
+                            type="button"
+                            onClick={() => onReviewPayment?.(deal.id, member.id, false)}
+                            className="chip border border-rose-200 bg-rose-50 text-[10px] text-rose-700 transition hover:bg-rose-100"
+                            title="Chưa thấy tiền trong tài khoản"
+                          >
+                            Chưa nhận
+                          </button>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="chip shrink-0 border border-brand-200/70 bg-white text-[10px] text-ink-500">
+                        Chưa chuyển
+                      </span>
+                    )
+                  ) : member.id === currentUserId ? (
+                    statusOf(member) === 'confirmed' ? (
+                      <span className="chip shrink-0 border border-brand-200 bg-brand-50 text-[10px] text-brand-700">
+                        <Check className="h-3 w-3" />
+                        Đã nhận
+                      </span>
+                    ) : statusOf(member) === 'declared' ? (
+                      <span className="chip shrink-0 border border-amber-200 bg-amber-50 text-[10px] text-amber-700">
+                        <Clock3 className="h-3 w-3" />
+                        Chờ xác nhận
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => onDeclarePayment?.(deal.id)}
+                        className="chip shrink-0 border border-brand-600 bg-brand-600 text-[10px] text-white transition hover:bg-brand-700"
+                      >
+                        Tôi đã chuyển
+                      </button>
+                    )
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => onTogglePayment?.(deal.id, member.id, !member.paid)}
-                      disabled={!canToggle(member)}
+                    <span
                       className={cn(
-                        'chip shrink-0 border text-[10px] transition',
-                        member.paid
+                        'chip shrink-0 border text-[10px]',
+                        statusOf(member) === 'confirmed'
                           ? 'border-brand-200 bg-brand-50 text-brand-700'
-                          : 'border-brand-200/70 bg-white text-ink-500',
-                        canToggle(member)
-                          ? 'hover:border-brand-300 hover:text-brand-700'
-                          : 'cursor-not-allowed opacity-60'
+                          : statusOf(member) === 'declared'
+                            ? 'border-amber-200 bg-amber-50 text-amber-700'
+                            : 'border-brand-200/70 bg-white text-ink-500'
                       )}
                     >
-                      {member.paid ? (
-                        <>
-                          <Check className="h-3 w-3" />
-                          Đã chuyển
-                        </>
-                      ) : (
-                        'Chưa chuyển'
-                      )}
-                    </button>
+                      {statusOf(member) === 'confirmed'
+                        ? 'Đã nhận'
+                        : statusOf(member) === 'declared'
+                          ? 'Chờ xác nhận'
+                          : 'Chưa chuyển'}
+                    </span>
                   )}
                 </li>
               ))}
@@ -313,17 +366,28 @@ export default function DealCard({
             <div
               className={cn(
                 'mt-2 rounded-xl px-2.5 py-2 text-[10px] font-semibold',
-                allPaid
+                allConfirmed
                   ? 'bg-brand-100/70 text-brand-800'
-                  : 'bg-white text-ink-500 ring-1 ring-ink-100'
+                  : declaredOthers.length > 0
+                    ? 'bg-amber-50 text-amber-800 ring-1 ring-amber-100'
+                    : 'bg-white text-ink-500 ring-1 ring-ink-100'
               )}
             >
-              {allPaid
-                ? 'Đã thu đủ tiền. Chủ kèo có thể đặt hàng!'
-                : `Đã thu ${formatCurrency(collected)} / ${formatCurrency(ownerReceives)}. ${
-                    isFull ? 'Nhắc các bạn còn lại chuyển khoản nhé.' : `Cần thêm ${missing} người để chốt.`
-                  }`}
+              {allConfirmed
+                ? 'Chủ kèo đã xác nhận nhận đủ tiền. Có thể đặt hàng!'
+                : declaredOthers.length > 0
+                  ? `${declaredOthers.length} bạn báo đã chuyển (${formatCurrency(pendingCash)}) nhưng chưa được chủ kèo xác nhận. Đã nhận thực tế ${formatCurrency(collected)} / ${formatCurrency(ownerReceives)}.`
+                  : `Đã nhận ${formatCurrency(collected)} / ${formatCurrency(ownerReceives)}. ${
+                      isFull ? 'Nhắc các bạn còn lại chuyển khoản nhé.' : `Cần thêm ${missing} người để chốt.`
+                    }`}
             </div>
+
+            {declaredOthers.length > 0 && (
+              <p className="mt-1.5 text-[10px] leading-relaxed text-amber-700">
+                Tự báo “đã chuyển” chưa được tính là đã trả. Chủ kèo kiểm tra tài khoản rồi bấm
+                “Xác nhận” ở từng bạn.
+              </p>
+            )}
 
             <p className="mt-2 text-[10px] leading-relaxed text-ink-400">
               UniSave không giữ tiền. Thành viên chuyển khoản trực tiếp cho chủ kèo

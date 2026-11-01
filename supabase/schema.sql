@@ -95,6 +95,11 @@ create table if not exists public.deal_participants (
   deal_id uuid not null references public.deals (id) on delete cascade,
   user_id uuid not null references public.profiles (id) on delete cascade,
   paid boolean not null default false,
+  payment_status text not null default 'unpaid'
+    check (payment_status in ('unpaid', 'declared', 'confirmed', 'disputed')),
+  declared_at timestamptz,
+  confirmed_at timestamptz,
+  confirmed_by uuid references public.profiles (id) on delete set null,
   joined_at timestamptz not null default now(),
   primary key (deal_id, user_id)
 );

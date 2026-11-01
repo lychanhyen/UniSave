@@ -40,14 +40,18 @@ export function getDealMembers(deal = {}) {
     new Set([...(deal.joined_ids || []), deal.owner_id].filter(Boolean))
   );
   const paid = new Set(deal.paid_ids || []);
+  const declared = new Set(deal.declared_ids || []);
   return ids.map((id) => {
     const info = memberInfo(id);
+    const isPaid = paid.has(id);
     return {
       id,
       name: id === deal.owner_id ? deal.owner_name || info.name : info.name,
       verified: info.verified,
       is_owner: id === deal.owner_id,
-      paid: paid.has(id),
+      paid: isPaid,
+      // Chế độ demo: chưa có bảng thanh toán nên suy ra từ danh sách id.
+      payment_status: isPaid ? 'confirmed' : declared.has(id) ? 'declared' : 'unpaid',
     };
   });
 }
