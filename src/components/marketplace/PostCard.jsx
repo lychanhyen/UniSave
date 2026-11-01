@@ -43,9 +43,7 @@ export default function PostCard({
             />
           ) : (
             <div className="relative grid h-full place-items-center text-white/95">
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/15 blur-2xl" />
-              <div className="absolute -bottom-10 -left-6 h-28 w-28 rounded-full bg-black/10 blur-2xl" />
-              <Icon className="h-14 w-14 drop-shadow-sm" strokeWidth={1.4} />
+              <Icon className="h-14 w-14 opacity-90" strokeWidth={1.4} />
             </div>
           )}
 

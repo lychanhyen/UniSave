@@ -1,83 +1,231 @@
+﻿import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
-  BadgeCheck,
-  CalendarDays,
-  CheckCircle2,
-  Coins,
-  MapPin,
   PiggyBank,
-  ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Store,
-  TrendingUp,
-  Users,
   Wallet,
-  Zap,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const FEATURES = [
-  {
-    icon: Wallet,
-    title: 'Ngân sách thông minh',
-    description:
-      'Hạn mức mỗi ngày tự co giãn theo số tiền còn lại. Khoản đột xuất được trải đều cả tháng, không đánh sập quỹ ăn uống.',
-    tone: 'from-brand-500 to-emerald-600',
-    to: '/dashboard',
-  },
-  {
-    icon: Store,
-    title: 'Chợ sinh viên',
-    description:
-      'Pass lại đồ cũ, thuê đồ học tập theo trường hoặc ký túc xá. Tin gần bạn được ưu tiên, giao dịch không phí ship.',
-    tone: 'from-amber-500 to-orange-500',
-    to: '/marketplace',
-  },
-  {
-    icon: ShoppingBag,
-    title: 'Gom đơn tiết kiệm',
-    description:
-      'Rủ bạn cùng lớp gom đơn để được giá sỉ, freeship. Công cụ chia tiền cho biết từng người cần chuyển bao nhiêu.',
-    tone: 'from-blue-500 to-indigo-600',
-    to: '/deals',
-  },
-];
+/* --------------------------------------------------------------------------
+   Reveal on scroll. Transform + opacity only; reduced motion shows content.
+   -------------------------------------------------------------------------- */
+function useReveal() {
+  const root = useRef(null);
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return undefined;
+    const targets = Array.from(el.querySelectorAll('[data-reveal]'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      targets.forEach((t) => t.classList.add('is-in'));
+      return undefined;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+    );
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, []);
+  return root;
+}
 
-const STEPS = [
-  {
-    number: '01',
-    title: 'Đặt ngân sách tháng',
-    description: 'Nhập số tiền bạn có. UniSave tự trích 10% vào heo đất và chia hạn mức cho từng ngày.',
-  },
-  {
-    number: '02',
-    title: 'Ghi chi tiêu mỗi ngày',
-    description: 'Thêm khoản chi trong vài giây. Thẻ quỹ đổi màu xanh – vàng – đỏ để bạn biết mình đang ở đâu.',
-  },
-  {
-    number: '03',
-    title: 'Cuối tháng nhận heo đất',
-    description: 'Phần chưa tiêu tự chảy vào heo đất. Dự báo cuối tháng cho bạn thấy mình sắp tiết kiệm được bao nhiêu.',
-  },
-];
-
-function Brand({ light = false }) {
+/* --------------------------------------------------------------------------
+   Cropped interface fragments — the product showing itself.
+   -------------------------------------------------------------------------- */
+function LedgerFragment() {
   return (
-    <Link to="/" className="group flex items-center gap-3">
-      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-glow transition-transform group-hover:scale-105">
-        <PiggyBank className="h-5 w-5" strokeWidth={2.2} />
-      </span>
-      <span className="flex flex-col leading-none">
-        <span className={light ? 'text-lg font-extrabold tracking-tight text-white' : 'text-lg font-extrabold tracking-tight text-ink-900'}>
-          UniSave
+    <div data-ui className="rounded-2xl border border-brand-200 bg-white shadow-card">
+      <div className="flex items-center justify-between px-5 pb-1 pt-5">
+        <p className="text-[13px] font-semibold text-ink-500">Tháng 11 · còn 85%</p>
+        <span className="rounded-md bg-brand-50 px-2 py-1 text-[12px] font-bold text-brand-700">
+          An toàn
         </span>
-        <span className={light ? 'mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-200' : 'mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600'}>
-          Student finance
+      </div>
+
+      <div className="px-5 pb-4 pt-2">
+        <p className="text-[13px] text-ink-500">Ngân sách còn lại</p>
+        <p className="mt-1 text-[38px] font-extrabold leading-none tracking-[-0.045em] tabular-nums text-ink-900">
+          4.235.000<span className="ml-1 text-[20px] font-bold text-ink-500">₫</span>
+        </p>
+
+        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-ink-100">
+          <div className="h-full w-[15%] rounded-full bg-brand-600" />
+        </div>
+        <p className="mt-2 text-[13px] text-ink-500">Đã chi 765.000 ₫ trên 5.000.000 ₫</p>
+
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {[
+            ['Hạn mức hôm nay', '137.226'],
+            ['Chi hôm nay', '30.000'],
+            ['Heo đất', '4.127.774'],
+          ].map(([k, v]) => (
+            <div key={k} className="rounded-lg bg-ink-50 px-2.5 py-2">
+              <p className="text-[12px] leading-tight text-ink-500">{k}</p>
+              <p className="mt-1 text-[14px] font-bold tabular-nums text-ink-900">{v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-ink-100 px-5 py-3">
+        {[
+          ['Ăn trưa căn tin', 'Ăn uống', '35.000'],
+          ['Photo giáo trình', 'Sách vở', '12.000'],
+          ['Gửi xe tháng', 'Đi lại', '5.000'],
+        ].map(([note, cat, amount]) => (
+          <div key={note} className="flex items-center gap-3 py-2">
+            <span className="grid h-7 w-7 place-items-center rounded-md bg-ink-50 text-ink-500">
+              <Wallet className="h-3.5 w-3.5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-semibold text-ink-900">{note}</p>
+              <p className="text-[12px] text-ink-500">{cat}</p>
+            </div>
+            <span className="text-[13px] font-bold tabular-nums text-ink-900">−{amount} ₫</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MarketFragment() {
+  return (
+    <div data-ui className="rounded-2xl border border-brand-200 bg-white p-4">
+      <div className="flex items-center justify-between">
+        <p className="text-[13px] font-semibold text-ink-500">Chợ KTX Khu A</p>
+        <span className="text-[12px] font-bold text-brand-700">12 tin mới</span>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        {[
+          ['Giáo trình Kinh tế vĩ mô', '120.000', 'Sách vở'],
+          ['Áo khoác gió size L', '150.000', 'Quần áo'],
+        ].map(([title, price, cat]) => (
+          <div key={title} className="rounded-xl bg-ink-50 p-3">
+            <div className="grid h-16 place-items-center rounded-lg bg-brand-100 text-brand-700">
+              <Store className="h-6 w-6" />
+            </div>
+            <p className="mt-2 line-clamp-2 text-[13px] font-semibold leading-snug text-ink-900">
+              {title}
+            </p>
+            <p className="mt-1 text-[14px] font-bold tabular-nums text-brand-700">{price} ₫</p>
+            <p className="text-[12px] text-ink-500">{cat}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DealFragment() {
+  return (
+    <div data-ui className="rounded-2xl border border-brand-200 bg-white p-4">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2.5">
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white">
+            <ShoppingBag className="h-4 w-4" />
+          </span>
+          <div>
+            <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">
+              Đang mở
+            </span>
+            <p className="mt-1 text-[12px] text-ink-500">Còn 2 ngày 14 giờ</p>
+          </div>
+        </div>
+        <span className="rounded-md bg-rose-700 px-2 py-1 text-[12px] font-bold text-white">
+          −30%
         </span>
-      </span>
-    </Link>
+      </div>
+      <p className="mt-3 text-[14px] font-bold text-ink-900">Gom đơn cơm văn phòng</p>
+      <p className="mt-1 text-[13px] text-ink-500">8/12 người · mỗi người 42.000 ₫</p>
+      <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-ink-100">
+        <div className="h-full w-2/3 rounded-full bg-brand-600" />
+      </div>
+      <div className="mt-3 flex items-center justify-between">
+        <div className="flex -space-x-1.5">
+          {['TH', 'MQ', 'BN', 'AL'].map((n) => (
+            <span
+              key={n}
+              className="grid h-7 w-7 place-items-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-700 ring-2 ring-white"
+            >
+              {n.charAt(0)}
+            </span>
+          ))}
+        </div>
+        <span className="text-[12px] text-ink-500">còn 4 suất</span>
+      </div>
+    </div>
+  );
+}
+
+function ChartFragment() {
+  const bars = [42, 18, 65, 30, 88, 14, 26];
+  const max = Math.max(...bars);
+  return (
+    <div data-ui className="rounded-2xl border border-brand-200 bg-white p-4">
+      <div className="flex items-baseline justify-between">
+        <p className="text-[13px] font-semibold text-ink-500">7 ngày qua</p>
+        <p className="text-[14px] font-bold tabular-nums text-ink-900">283.000 ₫</p>
+      </div>
+      <div className="mt-4 flex h-32 items-end gap-2">
+        {bars.map((v, i) => (
+          <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+            <div
+              className={
+                'w-full rounded-sm ' +
+                (i === 4 ? 'bg-brand-600' : v > 0 ? 'bg-ink-300' : 'bg-ink-200')
+              }
+              style={{ height: `${Math.max(8, Math.round((v / max) * 100))}%` }}
+            />
+            <span className="text-[12px] text-ink-500">{['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'][i]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SplitBillFragment() {
+  const rows = [
+    ['Thu Hà', '42.000'],
+    ['Minh Quân', '42.000'],
+    ['Bảo Ngọc', '42.000'],
+  ];
+  return (
+    <div data-ui className="rounded-2xl border border-brand-200 bg-white p-4">
+      <div className="flex items-center justify-between">
+        <p className="text-[13px] font-semibold text-ink-500">Chia tiền kèo gom đơn</p>
+        <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[12px] font-bold text-brand-700">
+          126.000 ₫
+        </span>
+      </div>
+      <div className="mt-3 space-y-2">
+        {rows.map(([name, amount]) => (
+          <div key={name} className="flex items-center gap-3 rounded-lg bg-ink-50 px-3 py-2.5">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-brand-100 text-[13px] font-bold text-brand-700">
+              {name.charAt(0)}
+            </span>
+            <p className="min-w-0 flex-1 truncate text-[13px] font-semibold text-ink-900">{name}</p>
+            <span className="text-[13px] font-bold tabular-nums text-ink-900">{amount} ₫</span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 flex items-center gap-1.5 text-[12px] text-ink-500">
+        <span className="h-1.5 w-1.5 rounded-full bg-brand-600" />
+        Mỗi người chuyển đúng số tiền của mình
+      </p>
+    </div>
   );
 }
 
@@ -85,6 +233,7 @@ export default function LandingPage() {
   const { user } = useAuth();
   const loggedIn = Boolean(user);
   const isAdmin = user?.role === 'admin';
+  const reveal = useReveal();
 
   const primaryTo = loggedIn ? (isAdmin ? '/admin' : '/dashboard') : '/register';
   const primaryLabel = loggedIn
@@ -96,31 +245,29 @@ export default function LandingPage() {
   const secondaryLabel = loggedIn ? 'Khám phá chợ sinh viên' : 'Đăng nhập';
 
   return (
-    <div className="min-h-screen bg-[#f7faf8] text-ink-900">
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-ink-200/60 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Brand />
-          <nav className="hidden items-center gap-6 text-sm font-semibold text-ink-500 md:flex">
-            <a href="#tinh-nang" className="transition hover:text-brand-600">Tính năng</a>
-            <a href="#cach-hoat-dong" className="transition hover:text-brand-600">Cách hoạt động</a>
-            <a href="#vi-sao" className="transition hover:text-brand-600">Vì sao UniSave</a>
-          </nav>
-          <div className="flex items-center gap-2">
+    <div ref={reveal} className="min-h-screen bg-ink-50 text-ink-900">
+      {/* ------------------------------------------------------------------ Bar */}
+      <header className="sticky top-0 z-30 bg-ink-50/95 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+          <Link to="/" className="flex items-center gap-2.5">
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white">
+              <PiggyBank className="h-4 w-4" strokeWidth={2.4} />
+            </span>
+            <span className="text-[17px] font-extrabold tracking-[-0.03em]">UniSave</span>
+          </Link>
+
+          <div className="flex items-center gap-1.5">
             {loggedIn ? (
-              <Link
-                to={isAdmin ? '/admin' : '/dashboard'}
-                className="btn-primary px-4 py-2 text-xs sm:text-sm"
-              >
-                {isAdmin ? 'Trang quản trị' : 'Vào Dashboard'}
+              <Link to={primaryTo} className="btn-primary px-4 py-2.5 text-[15px]">
+                {primaryLabel}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             ) : (
               <>
-                <Link to="/login" className="btn-ghost px-3 py-2 text-xs sm:text-sm">
+                <Link to="/login" className="btn-ghost px-3 py-2.5 text-[15px]">
                   Đăng nhập
                 </Link>
-                <Link to="/register" className="btn-primary px-4 py-2 text-xs sm:text-sm">
+                <Link to="/register" className="btn-primary px-4 py-2.5 text-[15px]">
                   Đăng ký
                 </Link>
               </>
@@ -129,319 +276,335 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-24 top-16 h-72 w-72 rounded-full bg-brand-200/40 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 top-40 h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl" />
+      {/* ----------------------------------------------------------------- Hero */}
+      <section className="mx-auto grid max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14 lg:pb-24 lg:pt-16">
+        <div>
+          <h1 className="text-balance text-[clamp(2.4rem,4.3vw,3.5rem)] font-extrabold leading-[0.98] tracking-[-0.05em]">
+            Cuối tháng vẫn dư.
+          </h1>
 
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pb-24 lg:pt-20">
-          <div className="animate-in">
-            <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-brand-700 shadow-soft">
-              <Sparkles className="h-3.5 w-3.5" />
-              Dành cho sinh viên Việt Nam
-            </span>
+          <p className="mt-5 max-w-lg text-[18px] leading-relaxed text-ink-700">
+            Tiền về đúng ví. UniSave chia ngân sách theo từng ngày, tự trích 10% vào heo đất, và nối
+            bạn với chợ đồ cũ của chính trường mình.
+          </p>
 
-            <h1 className="mt-5 text-balance text-4xl font-extrabold leading-[1.08] tracking-tight text-ink-900 sm:text-5xl lg:text-[3.4rem]">
-              Tiền về đúng ví,
-              <br />
-              <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">
-                cuối tháng vẫn dư.
-              </span>
-            </h1>
-
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-ink-500 sm:text-base">
-              UniSave giúp bạn chia ngân sách, nuôi heo đất, pass đồ và gom đơn cùng sinh viên
-              cùng trường — tất cả trong một ứng dụng nhẹ nhàng, dễ dùng mỗi ngày.
-            </p>
-
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link to={primaryTo} className="btn-primary justify-center px-6 py-3.5 text-sm sm:text-base">
-                {primaryLabel}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to={secondaryTo} className="btn-secondary justify-center px-6 py-3.5 text-sm sm:text-base">
-                {secondaryLabel}
-              </Link>
-            </div>
-
-            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-ink-500">
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-brand-600" />
-                Miễn phí cho sinh viên
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-brand-600" />
-                Quản trị viên duyệt sinh viên thật
-              </span>
-            </div>
+          <div className="mt-8 flex flex-col gap-2.5 sm:flex-row">
+            <Link to={primaryTo} className="btn-primary justify-center px-7 py-4 text-[16px]">
+              {primaryLabel}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to={secondaryTo}
+              className="btn-secondary justify-center px-7 py-4 text-[16px]"
+            >
+              {secondaryLabel}
+            </Link>
           </div>
 
-          {/* Mock dashboard */}
-          <div className="animate-in-delay-1 relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="absolute -right-4 -top-4 hidden rounded-2xl border border-white/70 bg-white/90 p-3 shadow-card backdrop-blur sm:block">
-              <div className="flex items-center gap-2">
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-amber-50 text-amber-600">
-                  <PiggyBank className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Heo đất</p>
-                  <p className="text-sm font-extrabold text-ink-900">4.127.774 ₫</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-white/80 bg-white p-3 shadow-[0_30px_80px_-30px_rgba(5,150,105,0.45)] sm:p-4">
-              <div className="relative overflow-hidden rounded-[1.5rem] bg-gradient-to-br from-brand-600 via-brand-600 to-emerald-700 p-5 text-white sm:p-6">
-                <div className="absolute -right-10 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-                <div className="absolute -bottom-16 left-1/3 h-40 w-40 rounded-full bg-emerald-300/20 blur-2xl" />
-                <div className="relative">
-                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.14em] text-brand-100">
-                    <span className="inline-flex items-center gap-1.5">
-                      <CalendarDays className="h-3.5 w-3.5" />
-                      Tháng 10/2026
-                    </span>
-                    <span className="rounded-full bg-white/15 px-2.5 py-1">Còn 85%</span>
-                  </div>
-
-                  <p className="mt-4 text-[11px] font-medium text-brand-100">Ngân sách tháng này</p>
-                  <p className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">5.000.000 ₫</p>
-
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
-                    <div className="h-full w-[15%] rounded-full bg-white" />
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-[10px] font-medium text-brand-100">
-                    <span>Đã chi 765.000 ₫</span>
-                    <span>15% ngân sách</span>
-                  </div>
-
-                  <div className="mt-5 grid grid-cols-3 gap-2">
-                    {[
-                      { label: 'Hạn mức hôm nay', value: '137.226 ₫' },
-                      { label: 'Chi hôm nay', value: '30.000 ₫' },
-                      { label: 'Còn lại tháng', value: '4.235.000 ₫' },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-xl bg-white/10 px-2.5 py-2 ring-1 ring-white/10">
-                        <p className="text-[8px] font-bold uppercase tracking-wide text-brand-100">{item.label}</p>
-                        <p className="mt-0.5 text-[11px] font-extrabold">{item.value}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-semibold">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
-                      Quỹ hôm nay: An toàn
-                    </span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1">
-                      <PiggyBank className="h-3 w-3" />
-                      Heo đất 4.127.774 ₫
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-3 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl border border-ink-100 bg-ink-50/60 p-3">
-                  <div className="flex items-center gap-2">
-                    <span className="grid h-7 w-7 place-items-center rounded-lg bg-brand-100 text-brand-700">
-                      <TrendingUp className="h-3.5 w-3.5" />
-                    </span>
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Dự báo heo đất</p>
-                  </div>
-                  <p className="mt-2 text-lg font-extrabold tracking-tight text-ink-900">4.235.000 ₫</p>
-                  <p className="mt-0.5 text-[10px] text-ink-400">Nếu giữ đúng hạn mức</p>
-                </div>
-                <div className="rounded-2xl border border-ink-100 bg-ink-50/60 p-3">
-                  <div className="flex items-center gap-2">
-                    <span className="grid h-7 w-7 place-items-center rounded-lg bg-amber-100 text-amber-700">
-                      <ShoppingBag className="h-3.5 w-3.5" />
-                    </span>
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Kèo gom đơn</p>
-                  </div>
-                  <p className="mt-2 text-lg font-extrabold tracking-tight text-ink-900">-30%</p>
-                  <p className="mt-0.5 text-[10px] text-ink-400">Tiết kiệm 18.000 ₫/người</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute -bottom-5 -left-4 hidden rounded-2xl border border-white/70 bg-white/95 p-3 shadow-card backdrop-blur sm:block">
-              <div className="flex items-center gap-2">
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand-50 text-brand-600">
-                  <MapPin className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Gần bạn</p>
-                  <p className="text-xs font-extrabold text-ink-900">KTX Khu A · 2 giờ trước</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="border-y border-ink-200/60 bg-white">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 py-8 sm:px-6 md:grid-cols-4">
-          {[
-            { value: '10%', label: 'ngân sách tự vào heo đất' },
-            { value: '3', label: 'tầng quyền: khách, sinh viên, admin' },
-            { value: '0 ₫', label: 'chi phí sử dụng' },
-            { value: '24/7', label: 'cập nhật chi tiêu' },
-          ].map((item) => (
-            <div key={item.label}>
-              <p className="text-2xl font-extrabold tracking-tight text-brand-700 sm:text-3xl">{item.value}</p>
-              <p className="mt-1 text-xs font-medium text-ink-500">{item.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="tinh-nang" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-        <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-600">Tính năng</p>
-          <h2 className="mt-2 text-balance text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">
-            Một ứng dụng, đủ cho đời sống sinh viên.
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-ink-500">
-            Không cần bảng tính phức tạp. Mọi thứ bạn cần để giữ tiền trong ví đều nằm ở đây.
+          <p className="mt-6 text-[14px] leading-relaxed text-ink-500">
+            Miễn phí hoàn toàn. Hồ sơ sinh viên được quản trị viên duyệt trước khi đăng bài.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, description, tone, to }) => (
-            <article key={title} className="card card-hover p-6">
-              <span className={`grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br ${tone} text-white shadow-soft`}>
-                <Icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 text-lg font-extrabold tracking-tight text-ink-900">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-500">{description}</p>
-              <Link to={loggedIn ? to : '/login'} className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-brand-600 transition hover:gap-2">
-                {loggedIn ? 'Xem thử' : 'Đăng nhập để xem'}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </article>
+        <div className="animate-in">
+          <LedgerFragment />
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------- Stats */}
+      <section className="bg-ink-900 py-14 text-white">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-10 px-5 sm:px-8 md:grid-cols-4">
+          {[
+            ['10%', 'ngân sách tự vào heo đất'],
+            ['0 ₫', 'chi phí sử dụng'],
+            ['3', 'tầng quyền: khách, sinh viên, admin'],
+            ['24/7', 'ghi chi tiêu mọi lúc'],
+          ].map(([value, label], i) => (
+            <div
+              key={label}
+              data-reveal
+              className="reveal border-l-2 border-brand-400/40 pl-4 first:border-l-0 first:pl-0 md:first:border-l-0"
+              style={{ transitionDelay: `${i * 70}ms` }}
+            >
+              <p className="text-[clamp(2.2rem,4vw,3rem)] font-extrabold leading-none tracking-[-0.04em] tabular-nums text-brand-300">
+                {value}
+              </p>
+              <p className="mt-2 max-w-[16ch] text-[14px] leading-snug text-white/60">{label}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="cach-hoat-dong" className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-600">Cách hoạt động</p>
-              <h2 className="mt-2 text-balance text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">
-                Bắt đầu trong 3 bước.
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-ink-500">
-                Không cần nhập liệu phức tạp. Chỉ cần số tiền bạn có và một khoản chi mỗi ngày.
-              </p>
-              <div className="mt-6 rounded-2xl border border-brand-100 bg-brand-50/60 p-4">
-                <div className="flex items-center gap-2 text-brand-700">
-                  <Zap className="h-4 w-4" />
-                  <p className="text-xs font-bold uppercase tracking-wide">Mẹo nhỏ</p>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-ink-600">
-                  Bật “Đột xuất” cho sửa xe, y tế hoặc thiết bị học tập. Khoản đó sẽ được trải đều
-                  cả tháng thay vì làm hạn mức ăn uống hôm nay sụp về 0.
-                </p>
-              </div>
-            </div>
+      {/* ------------------------------------------------------- The product */}
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2
+            data-reveal
+            className="reveal max-w-3xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
+          >
+            Đây là thứ bạn mở mỗi sáng.
+          </h2>
+          <p data-reveal className="reveal mt-3 max-w-xl text-[16px] leading-relaxed text-ink-700">
+            Sổ chi tiêu, chợ đồ cũ và kèo gom đơn — cùng một tài khoản sinh viên.
+          </p>
 
-            <div className="space-y-3">
-              {STEPS.map((step) => (
-                <div key={step.number} className="flex gap-4 rounded-3xl border border-ink-200/70 bg-ink-50/40 p-5">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-sm font-extrabold text-brand-700 shadow-soft ring-1 ring-brand-100">
-                    {step.number}
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-extrabold text-ink-900">{step.title}</h3>
-                    <p className="mt-1 text-xs leading-relaxed text-ink-500">{step.description}</p>
+          <div className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+            <div data-reveal className="reveal">
+              <MarketFragment />
+            </div>
+            <div data-reveal className="reveal space-y-5" style={{ transitionDelay: '80ms' }}>
+              <DealFragment />
+              <div data-ui className="rounded-2xl border-2 border-brand-700 bg-brand-600 p-5 text-white">
+                <p className="text-[13px] font-semibold text-white/70">Dự báo cuối tháng</p>
+                <p className="mt-1.5 text-[30px] font-extrabold leading-none tracking-[-0.04em] tabular-nums">
+                  4.235.000<span className="ml-1 text-[17px] font-bold text-white/60">₫</span>
+                </p>
+                <p className="mt-2 text-[13px] leading-relaxed text-white/75">
+                  Nếu giữ đúng hạn mức, heo đất của bạn chạm mốc này trước ngày chốt sổ.
+                </p>
+                <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/20">
+                  <div className="h-full w-4/5 rounded-full bg-white" />
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-white/10 px-2.5 py-2">
+                    <p className="text-[12px] text-white/60">Heo đất hiện tại</p>
+                    <p className="mt-0.5 text-[14px] font-bold tabular-nums">4.127.774</p>
+                  </div>
+                  <div className="rounded-lg bg-white/10 px-2.5 py-2">
+                    <p className="text-[12px] text-white/60">Thưởng dự kiến</p>
+                    <p className="mt-0.5 text-[14px] font-bold tabular-nums">+107.226</p>
                   </div>
                 </div>
-              ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            <div data-reveal className="reveal">
+              <ChartFragment />
+            </div>
+            <div data-reveal className="reveal" style={{ transitionDelay: '80ms' }}>
+              <SplitBillFragment />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why */}
-      <section id="vi-sao" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              icon: ShieldCheck,
-              title: 'Minh bạch từng đồng',
-              text: 'Mọi khoản chi đều hiện rõ theo ngày, danh mục và lý do đột xuất. Không có chi phí ẩn.',
-            },
-            {
-              icon: Users,
-              title: 'Cùng trường, cùng kèo',
-              text: 'Ưu tiên tin đăng và kèo gom đơn gần khu vực của bạn, giảm phí ship và thời gian đi lại.',
-            },
-            {
-              icon: BadgeCheck,
-              title: 'Xác minh bởi admin',
-              text: 'Quản trị viên kiểm tra MSSV và thẻ sinh viên trước khi gán huy hiệu. Tài khoản vi phạm bị khóa, bài đăng bị gỡ.',
-            },
-            {
-              icon: ShieldCheck,
-              title: 'An toàn hơn khi giao dịch',
-              text: 'Người bán có badge xác minh sinh viên. UniSave không giữ tiền, mọi chuyển khoản đều trực tiếp.',
-            },
-          ].map(({ icon: Icon, title, text }) => (
-            <div key={title} className="rounded-3xl border border-ink-200/70 bg-white p-6 shadow-soft">
-              <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-50 text-brand-600">
-                <Icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 text-sm font-extrabold text-ink-900">{title}</h3>
-              <p className="mt-2 text-xs leading-relaxed text-ink-500">{text}</p>
-            </div>
-          ))}
+      {/* ------------------------------------------------------------- Features */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2
+            data-reveal
+            className="reveal max-w-2xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
+          >
+            Ba việc, gọn trong một chỗ.
+          </h2>
+
+          <div className="card-strong mt-10 space-y-6 p-6 sm:p-8">
+            {[
+              {
+                title: 'Ngân sách co giãn',
+                body: 'Hạn mức mỗi ngày tự tính lại theo số tiền còn lại. Khoản đột xuất được trải đều cả tháng nên quỹ ăn uống không sụp.',
+                link: '/dashboard',
+                label: 'Xem sổ chi tiêu',
+              },
+              {
+                title: 'Chợ trong trường',
+                body: 'Pass lại giáo trình, thuê đồ học tập theo trường hoặc ký túc xá. Tin gần bạn được xếp trước, không phí ship.',
+                link: '/marketplace',
+                label: 'Xem chợ sinh viên',
+              },
+              {
+                title: 'Gom đơn cho rẻ',
+                body: 'Rủ bạn cùng lớp gom đơn lấy giá sỉ. Công cụ chia tiền nói rõ từng người chuyển bao nhiêu.',
+                link: '/deals',
+                label: 'Xem kèo đang mở',
+              },
+            ].map((item, i) => (
+              <div
+                key={item.title}
+                data-reveal
+                className="reveal grid gap-2 md:grid-cols-[0.85fr_1.15fr] md:items-center md:gap-10"
+                style={{ transitionDelay: `${i * 60}ms` }}
+              >
+                <h3 className="text-[20px] font-bold leading-snug tracking-[-0.02em]">
+                  {item.title}
+                </h3>
+                <div>
+                  <p className="max-w-xl text-[16px] leading-relaxed text-ink-700">{item.body}</p>
+                  <Link
+                    to={loggedIn ? item.link : '/login'}
+                    className="mt-2 inline-flex items-center gap-1.5 text-[15px] font-bold text-brand-600 transition-colors hover:text-brand-700"
+                  >
+                    {loggedIn ? item.label : 'Đăng nhập để xem'}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:pb-20">
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-600 via-brand-600 to-emerald-700 px-6 py-12 text-center text-white shadow-[0_30px_80px_-30px_rgba(5,150,105,0.5)] sm:px-12">
-          <div className="absolute -left-16 top-0 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-20 right-0 h-64 w-64 rounded-full bg-emerald-300/20 blur-3xl" />
-          <div className="relative">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em]">
-              <Coins className="h-3.5 w-3.5" />
-              Bắt đầu hôm nay
-            </span>
-            <h2 className="mt-4 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Để tháng sau bạn không phải nói “hết tiền rồi”.
+      {/* --------------------------------------------------------- How it works */}
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+            <div>
+              <h2
+                data-reveal
+                className="reveal text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
+              >
+                Bắt đầu trong ba bước.
+              </h2>
+              <p data-reveal className="reveal mt-3 text-[16px] leading-relaxed text-ink-700">
+                Không cần bảng tính. Chỉ cần số tiền bạn có và một khoản chi mỗi ngày.
+              </p>
+            </div>
+
+            <ol className="card-strong space-y-6 p-6 sm:p-8">
+              {[
+                [
+                  'Đặt ngân sách tháng',
+                  'Nhập số tiền bạn có. UniSave trích 10% vào heo đất và chia hạn mức cho từng ngày còn lại.',
+                ],
+                [
+                  'Ghi chi tiêu mỗi ngày',
+                  'Thêm một khoản chi trong vài giây. Quỹ hôm nay đổi sang vàng khi gần hết, đỏ khi vượt mức.',
+                ],
+                [
+                  'Chốt sổ cuối tháng',
+                  'Phần chưa tiêu tự chảy vào heo đất. Bạn thấy trước mình sẽ tiết kiệm được bao nhiêu.',
+                ],
+              ].map(([title, body], i) => (
+                <li
+                  key={title}
+                  data-reveal
+                  className="reveal"
+                  style={{ transitionDelay: `${i * 70}ms` }}
+                >
+                  <h3 className="text-[19px] font-bold leading-snug tracking-[-0.02em]">{title}</h3>
+                  <p className="mt-2 text-[16px] leading-relaxed text-ink-700">{body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ Why */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2
+            data-reveal
+            className="reveal max-w-2xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
+          >
+            Vì sao sinh viên ở lại.
+          </h2>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {[
+              {
+                title: 'Minh bạch từng đồng',
+                body: 'Mọi khoản chi hiện theo ngày, danh mục và lý do đột xuất. Không có phí ẩn.',
+              },
+              {
+                title: 'Cùng trường, cùng kèo',
+                body: 'Tin đăng và kèo gom đơn ưu tiên khu vực của bạn, giảm thời gian đi lại.',
+              },
+              {
+                title: 'Sinh viên thật được duyệt',
+                body: 'Quản trị viên đối chiếu MSSV và thẻ sinh viên trước khi gán huy hiệu.',
+              },
+              {
+                title: 'Không giữ tiền của bạn',
+                body: 'UniSave không làm trung gian thanh toán. Mọi chuyển khoản diễn ra trực tiếp.',
+              },
+            ].map((item, i) => (
+              <div
+                key={item.title}
+                data-reveal
+                className="reveal card-edge p-5"
+                style={{ transitionDelay: `${i * 60}ms` }}
+              >
+                <h3 className="text-[17px] font-bold leading-snug tracking-[-0.015em] text-brand-800">
+                  {item.title}
+                </h3>
+                <p className="mt-1.5 max-w-md text-[16px] leading-relaxed text-ink-700">
+                  {item.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ CTA */}
+      <section className="mx-auto max-w-6xl px-5 pb-16 sm:px-8 sm:pb-20">
+        <div
+          data-reveal
+          className="reveal grid gap-10 rounded-3xl bg-brand-600 px-6 py-12 sm:px-12 sm:py-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-center"
+        >
+          <div>
+            <h2 className="max-w-2xl text-balance text-[clamp(1.8rem,3.4vw,2.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-white">
+              Đừng để cuối tháng hết tiền.
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-brand-100">
-              Đặt ngân sách, ghi khoản chi đầu tiên và xem heo đất lớn lên mỗi ngày.
+            <p className="mt-3 max-w-lg text-[16px] leading-relaxed text-white/75">
+              Đặt ngân sách hôm nay, ghi khoản chi đầu tiên, và xem heo đất lớn lên mỗi ngày.
             </p>
-            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link to={primaryTo} className="btn bg-white px-6 py-3.5 text-sm font-bold text-brand-700 shadow-soft transition hover:bg-brand-50">
+            <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
+              <Link
+                to={primaryTo}
+                className="btn justify-center bg-white px-7 py-4 text-[16px] font-bold text-brand-700 hover:bg-brand-50"
+              >
                 {primaryLabel}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               {!loggedIn && (
-                <Link to="/login" className="btn border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-bold text-white transition hover:bg-white/20">
+                <Link
+                  to="/login"
+                  className="btn justify-center border border-white/30 px-7 py-4 text-[16px] font-bold text-white hover:bg-white/10"
+                >
                   Đã có tài khoản
                 </Link>
               )}
             </div>
           </div>
+
+          <ul className="space-y-3">
+            {[
+              'Miễn phí, không quảng cáo',
+              'Hồ sơ sinh viên được duyệt',
+              'Không giữ tiền, không phí ẩn',
+              'Dùng được trên điện thoại',
+            ].map((line) => (
+              <li key={line} className="flex items-start gap-2.5 text-[16px] text-white">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white/50" />
+                {line}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-ink-200/60 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:px-6">
-          <Brand />
-          <p className="text-center text-xs text-ink-400 sm:text-right">
-            © 2026 UniSave · Dành cho sinh viên Việt Nam.
-            <br className="sm:hidden" />
-            <span className="ml-1">Quản lý tiền nhẹ nhàng hơn mỗi ngày.</span>
+      {/* --------------------------------------------------------------- Footer */}
+      <footer className="bg-ink-900 pb-10 pt-14 text-white">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <p className="text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-none tracking-[-0.05em]">
+            UniSave
           </p>
+          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/60">
+            Ứng dụng quản lý tiền dành cho sinh viên Việt Nam. Miễn phí, không quảng cáo.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] text-white/60">
+            <Link to="/register" className="transition-colors hover:text-white">
+              Tạo tài khoản
+            </Link>
+            <Link to="/login" className="transition-colors hover:text-white">
+              Đăng nhập
+            </Link>
+            <span>© 2026 UniSave</span>
+          </div>
         </div>
       </footer>
     </div>

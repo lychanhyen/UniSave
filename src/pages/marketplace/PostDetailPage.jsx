@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -167,14 +167,14 @@ export default function PostDetailPage() {
       </Link>
 
       {isSold && (
-        <div className="animate-in mb-5 flex flex-col gap-3 rounded-3xl border border-ink-200 bg-gradient-to-r from-ink-900 to-ink-800 p-4 text-white sm:flex-row sm:items-center sm:justify-between">
+        <div className="animate-in mb-5 flex flex-col gap-3 rounded-3xl bg-ink-900 p-4 text-white sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/10 text-amber-300">
-              <CheckCircle2 className="h-5 w-5" />
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/10 text-amber-300">
+              <CheckCircle2 className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-sm font-bold">Tin này đã bán</p>
-              <p className="mt-0.5 text-xs text-ink-300">
+              <p className="text-[13px] font-bold">Tin này đã bán</p>
+              <p className="mt-0.5 text-[11px] text-white/60">
                 Giá {formatCurrency(post.price)} được giữ lại làm dữ liệu tham khảo cho cộng đồng.
               </p>
             </div>
@@ -205,8 +205,7 @@ export default function PostDetailPage() {
                 <img src={current} alt={post.title} className="h-full w-full object-cover" />
               ) : (
                 <div className="grid h-full place-items-center text-white">
-                  <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/15 blur-3xl" />
-                  <Icon className="h-24 w-24 drop-shadow" strokeWidth={1.2} />
+                  <Icon className="h-24 w-24 opacity-90" strokeWidth={1.2} />
                 </div>
               )}
 
@@ -345,7 +344,7 @@ export default function PostDetailPage() {
               )}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-ink-200/80 bg-ink-50/60 p-3.5">
+            <div className="mt-5 rounded-2xl border border-brand-200/70/80 bg-ink-50/60 p-3.5">
               <div className="flex items-center gap-3">
                 <Avatar
                   size="md"
@@ -379,7 +378,7 @@ export default function PostDetailPage() {
             </div>
 
             {isSold ? (
-              <div className="mt-4 rounded-2xl border border-ink-200 bg-ink-50 p-4 text-center">
+              <div className="mt-4 rounded-2xl border border-brand-200/70 bg-ink-50 p-4 text-center">
                 <p className="text-sm font-bold text-ink-700">Tin đã bán</p>
                 <p className="mt-1 text-xs leading-relaxed text-ink-500">
                   Người bán đã chốt đơn. Bạn có thể xem các tin cùng danh mục bên dưới.
@@ -396,7 +395,7 @@ export default function PostDetailPage() {
                     href={zaloLink(post.contact)}
                     target="_blank"
                     rel="noreferrer"
-                    className="btn-primary w-full bg-gradient-to-r from-brand-600 to-emerald-600 py-3"
+                    className="btn-primary w-full py-3"
                   >
                     <MessageCircle className="h-4.5 w-4.5" />
                     Nhắn Zalo người bán
@@ -559,7 +558,7 @@ export default function PostDetailPage() {
                   key={question}
                   type="button"
                   onClick={() => setInquiryText(question)}
-                  className="chip border border-ink-200 bg-white text-[11px] text-ink-600 transition hover:border-brand-300 hover:text-brand-700"
+                  className="chip border border-brand-200/70 bg-white text-[11px] text-ink-600 transition hover:border-brand-300 hover:text-brand-700"
                 >
                   {question}
                 </button>

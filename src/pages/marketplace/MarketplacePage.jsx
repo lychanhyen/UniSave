@@ -105,20 +105,17 @@ export default function MarketplacePage() {
         }
       />
 
-      <div className="animate-in relative mb-6 overflow-hidden rounded-4xl bg-gradient-to-br from-ink-900 via-ink-800 to-brand-900 p-6 text-white shadow-card sm:p-7">
-        <div className="absolute -right-10 -top-16 h-52 w-52 rounded-full bg-brand-500/25 blur-3xl" />
-        <div className="absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-emerald-400/15 blur-3xl" />
+      <div className="animate-in relative mb-6 overflow-hidden rounded-3xl bg-ink-900 p-6 text-white sm:p-7">
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-lg">
-            <span className="chip bg-white/10 text-brand-200 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">
               Cộng đồng sinh viên
             </span>
-            <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+            <h2 className="mt-2.5 text-[clamp(1.5rem,3vw,1.9rem)] font-extrabold leading-[1.06] tracking-[-0.035em]">
               Món đồ bạn không dùng,
               <br className="hidden sm:block" /> là bảo bối của người khác.
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-ink-300">
+            <p className="mt-2 text-[13px] leading-relaxed text-white/60">
               Lọc theo trường/KTX để giao dịch gần, không phát sinh phí vận chuyển.
             </p>
           </div>
@@ -132,11 +129,11 @@ export default function MarketplacePage() {
             ].map(({ label, value, icon: Icon }) => (
               <div
                 key={label}
-                className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm ring-1 ring-white/10"
+                className="rounded-xl border border-white/15 bg-white/10 px-4 py-3"
               >
-                <Icon className="h-4 w-4 text-brand-300" />
-                <p className="mt-2 text-xl font-extrabold tracking-tight">{formatCompact(value)}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-300">
+                <Icon className="h-4 w-4 text-white/60" />
+                <p className="mt-2 figure-lg text-[20px]">{formatCompact(value)}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/50">
                   {label}
                 </p>
               </div>

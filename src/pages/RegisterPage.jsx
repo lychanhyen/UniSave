@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Mail,
@@ -88,10 +88,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen">
       {/* Left showcase */}
-      <div className="relative hidden w-1/2 overflow-hidden bg-gradient-to-br from-ink-900 via-ink-800 to-brand-900 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute -right-20 top-10 h-80 w-80 rounded-full bg-brand-500/20 blur-3xl" />
-        <div className="absolute -bottom-24 -left-10 h-96 w-96 rounded-full bg-emerald-400/10 blur-3xl" />
-
+      <div className="relative hidden w-1/2 overflow-hidden bg-brand-600 p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <div className="relative flex items-center gap-3">
           <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 backdrop-blur">
             <PiggyBank className="h-6 w-6 text-brand-300" />
@@ -110,7 +107,7 @@ export default function RegisterPage() {
             <br />
             tiết kiệm của bạn.
           </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-300">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-brand-100">
             Tạo tài khoản miễn phí, xác thực sinh viên và nhận ngay heo đất thông minh đầu tiên.
           </p>
 
@@ -120,7 +117,7 @@ export default function RegisterPage() {
               'Đồng bộ chi tiêu mọi lúc mọi nơi',
               'Kết nối cộng đồng mua bán, gom đơn',
             ].map((text) => (
-              <div key={text} className="flex items-center gap-3 text-sm text-ink-200">
+              <div key={text} className="flex items-center gap-3 text-sm text-brand-50">
                 <span className="grid h-6 w-6 place-items-center rounded-full bg-brand-500/20 text-brand-300">
                   <Check className="h-3.5 w-3.5" />
                 </span>
@@ -130,7 +127,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <p className="relative text-xs text-ink-400">© 2026 UniSave. Dành cho sinh viên Việt Nam.</p>
+        <p className="relative text-xs text-brand-200">© 2026 UniSave. Dành cho sinh viên Việt Nam.</p>
       </div>
 
       {/* Form */}
@@ -138,7 +135,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
             <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-glow">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 text-white shadow-soft">
                 <PiggyBank className="h-5 w-5" />
               </span>
               <span className="text-xl font-extrabold tracking-tight text-ink-900">UniSave</span>
@@ -175,7 +172,7 @@ export default function RegisterPage() {
           </div>
 
           {isAdmin ? (
-            <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-ink-200 bg-ink-50 p-3.5">
+            <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-brand-200/70 bg-ink-50 p-3.5">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-ink-600" />
               <p className="text-[11px] leading-relaxed text-ink-600">
                 Quản trị viên <strong>không cần mã số sinh viên</strong>. Tài khoản được kích hoạt

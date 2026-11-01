@@ -1,26 +1,25 @@
-import { Menu, Plus } from 'lucide-react';
+﻿import { Menu, Plus, PiggyBank } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PiggyBank } from 'lucide-react';
 
 export default function MobileHeader({ onMenu }) {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-200/70 bg-white/80 px-4 py-3 backdrop-blur-xl lg:hidden">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-brand-200/70 bg-ink-50/90 px-4 py-3 backdrop-blur-xl lg:hidden">
       <button
         onClick={onMenu}
-        className="grid h-10 w-10 place-items-center rounded-xl text-ink-600 hover:bg-ink-100"
+        className="grid h-10 w-10 place-items-center rounded-lg text-ink-600 hover:bg-ink-100"
         aria-label="Mở menu"
       >
         <Menu className="h-5 w-5" />
       </button>
       <Link to="/dashboard" className="flex items-center gap-2">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white">
-          <PiggyBank className="h-4.5 w-4.5" />
+        <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white">
+          <PiggyBank className="h-4 w-4" />
         </span>
-        <span className="text-base font-extrabold tracking-tight text-ink-900">UniSave</span>
+        <span className="text-[15px] font-extrabold tracking-[-0.02em] text-ink-900">UniSave</span>
       </Link>
       <Link
         to="/dashboard"
-        className="grid h-10 w-10 place-items-center rounded-xl bg-brand-600 text-white shadow-glow"
+        className="grid h-10 w-10 place-items-center rounded-lg bg-brand-600 text-white"
         aria-label="Thêm chi tiêu"
       >
         <Plus className="h-5 w-5" />

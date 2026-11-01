@@ -1,35 +1,47 @@
 @import "tailwindcss";
 
+/* ============================================================================
+   UniSave — Design system
+   Hướng: "sổ chi tiêu" (spending ledger). Giấy ấm, mực đậm, một màu emerald
+   duy nhất dùng thật tiết kiệm nhưng thật đậm. Cấu trúc bằng đường kẻ hairline
+   và dải màu phẳng, KHÔNG dùng blob gradient / bóng đổ mềm / pill chip tràn lan.
+   Mọi component chỉ tham chiếu token.
+   ========================================================================== */
 @theme {
-  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-300: #6ee7b7;
-  --color-brand-400: #34d399;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-brand-800: #065f46;
-  --color-brand-900: #064e3b;
+  /* Accent: emerald đậm — chỉ 1 sắc, dùng cho hành động + 1 khối nhấn mỗi màn. */
+  --color-brand-50: #eef7f1;
+  --color-brand-100: #d5ebde;
+  --color-brand-200: #a9d6c0;
+  --color-brand-300: #74bd9e;
+  --color-brand-400: #3f9f7b;
+  --color-brand-500: #1c825f;
+  --color-brand-600: #0f6b4f;
+  --color-brand-700: #0b5740;
+  --color-brand-800: #084534;
+  --color-brand-900: #063329;
 
-  --color-ink-50: #f8fafc;
-  --color-ink-100: #f1f5f9;
-  --color-ink-200: #e2e8f0;
-  --color-ink-300: #cbd5e1;
-  --color-ink-400: #94a3b8;
-  --color-ink-500: #64748b;
-  --color-ink-600: #475569;
-  --color-ink-700: #334155;
-  --color-ink-800: #1e293b;
-  --color-ink-900: #0f172a;
+  /* Ink: neutral đá (stone), hơi ngả xanh — không vàng kem. */
+  --color-ink-50: #f5f6f4;
+  --color-ink-100: #eceeeb;
+  --color-ink-200: #dfe2dd;
+  --color-ink-300: #c6cac3;
+  --color-ink-400: #8f958c;
+  --color-ink-500: #666d64;
+  --color-ink-600: #4a5148;
+  --color-ink-700: #353b33;
+  --color-ink-800: #20251e;
+  --color-ink-900: #131711;
 
-  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.08);
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 40px -12px rgba(15, 23, 42, 0.12);
-  --shadow-glow: 0 0 0 1px rgba(16, 185, 129, 0.08), 0 12px 32px -8px rgba(16, 185, 129, 0.35);
+  /* Bóng: gần như không dùng. Chỉ menu nổi và dialog. */
+  --shadow-soft: 0 1px 0 rgba(20, 20, 15, 0.05);
+  --shadow-card: 0 2px 3px rgba(20, 20, 15, 0.04), 0 10px 24px -18px rgba(20, 20, 15, 0.18);
+  --shadow-glow: 0 1px 0 rgba(20, 20, 15, 0.05);
 
-  --radius-4xl: 2rem;
+  /* Bo góc: sắc gọn, không bo tròn kiểu "AI card". */
+  --radius-4xl: 1.125rem;
+  --radius-3xl: 0.875rem;
 }
 
 @layer base {
@@ -41,14 +53,26 @@
 
   body {
     @apply bg-ink-50 text-ink-900 font-sans;
-    background-image:
-      radial-gradient(1200px 600px at 100% -10%, rgba(16, 185, 129, 0.10), transparent 60%),
-      radial-gradient(900px 500px at -10% 110%, rgba(59, 130, 246, 0.08), transparent 55%);
-    background-attachment: fixed;
+    background-image: none;
+    font-feature-settings: 'ss01' 1, 'cv01' 1;
+  }
+
+  /* Số tiền luôn thẳng cột và chặt hơn chữ thường. */
+  .tabular-nums,
+  [data-money] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.03em;
+    line-height: 1.08;
   }
 
   ::selection {
-    @apply bg-brand-200 text-brand-900;
+    @apply bg-brand-600 text-white;
   }
 
   input[type='number']::-webkit-inner-spin-button,
@@ -59,6 +83,17 @@
 
   input[type='number'] {
     -moz-appearance: textfield;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   ::-webkit-scrollbar {
@@ -77,64 +112,137 @@
 }
 
 @layer components {
+  /* ------------------------------------------------------------------
+     Bề mặt: viền xanh nhạt để mọi khối nội dung đọc ra ngay trên nền giấy.
+     Phân tầng bằng viền + dải sắc độ, không bóng.
+     ------------------------------------------------------------------ */
   .card {
-    @apply bg-white/90 backdrop-blur-sm rounded-3xl border border-ink-200/70 shadow-soft;
+    @apply rounded-3xl border border-brand-200/80 bg-white;
+  }
+
+  /* Nhấn mạnh: viền xanh dày hơn cho khối cần đọc trước. */
+  .card-strong {
+    @apply rounded-3xl border-2 border-brand-200 bg-white;
+  }
+
+  /* Khối nhấn mạnh nhất: viền xanh + nền tint. */
+  .card-tint {
+    @apply rounded-3xl border-2 border-brand-200 bg-brand-50/60;
+  }
+
+  /* Gạch xanh bên trái: nhấn mà không cần icon. */
+  .card-edge {
+    @apply rounded-2xl border-2 border-brand-200 border-l-4 border-l-brand-600 bg-white;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card;
+    @apply transition-colors duration-150 hover:border-brand-300;
   }
 
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
-      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
-      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98];
+  /* Khối nhấn: chỉ 1-2 khối mỗi màn, nền emerald đậm, không gradient. */
+  .panel-accent {
+    @apply rounded-3xl bg-brand-600 text-white;
   }
 
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
-      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
-      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
-      bg-brand-600 text-white shadow-glow hover:bg-brand-700;
+  .panel-tint {
+    @apply rounded-3xl border-2 border-brand-200 bg-brand-50/70;
   }
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
-      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
-      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
-      bg-white text-ink-700 border border-ink-200 hover:bg-ink-50 hover:border-ink-300;
+  /* Đường kẻ cấu trúc kiểu sổ — dùng thay cho card khi cần nhịp. */
+  .rule {
+    @apply border-t border-ink-200;
   }
 
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
-      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
-      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
-      text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+  /* ------------------------------------------------------------------
+     Typography — thang bậc rõ rệt, đây là chỗ tạo "cảm giác được thiết kế".
+     ------------------------------------------------------------------ */
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-ink-400;
   }
 
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold
-      transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25
-      disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]
-      bg-rose-600 text-white hover:bg-rose-700;
+  .eyebrow-accent {
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600;
   }
 
-  .input {
-    @apply w-full rounded-2xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900
-      placeholder:text-ink-400 transition-all duration-200
-      focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15;
+  /* Số tiền chủ đạo — to, chặt, có sức nặng. */
+  .figure,
+  .figure-xl,
+  .figure-lg,
+  .figure-md {
+    @apply font-extrabold tabular-nums;
+    font-feature-settings: 'tnum' 1;
+    letter-spacing: -0.045em;
   }
 
-  .label {
-    @apply mb-1.5 block text-sm font-semibold text-ink-700;
+  .figure-xl {
+    @apply text-[clamp(2.5rem,7vw,3.75rem)] leading-[0.95];
   }
 
-  .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+  .figure-lg {
+    @apply text-[clamp(1.75rem,4vw,2.25rem)] leading-none;
+  }
+
+  .figure-md {
+    @apply text-[1.0625rem] leading-tight;
   }
 
   .section-title {
-    @apply text-lg font-bold tracking-tight text-ink-900;
+    @apply text-[15px] font-bold tracking-[-0.01em] text-ink-900;
+  }
+
+  /* ------------------------------------------------------------------
+     Điều khiển
+     ------------------------------------------------------------------ */
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+      transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600
+      focus-visible:ring-offset-2 focus-visible:ring-offset-ink-50 disabled:opacity-40
+      disabled:pointer-events-none;
+  }
+
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700;
+  }
+
+  .btn-secondary {
+    @apply border border-ink-300 bg-white text-ink-800 hover:border-ink-400 hover:bg-ink-50;
+  }
+
+  .btn-ghost {
+    @apply text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+  }
+
+  .btn-danger {
+    @apply bg-rose-700 text-white hover:bg-rose-800;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-ink-300 bg-white px-4 py-3 text-sm text-ink-900
+      placeholder:text-ink-400 transition-colors duration-150
+      focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20;
+  }
+
+  .label {
+    @apply mb-1.5 block text-[12px] font-semibold tracking-wide text-ink-600;
+  }
+
+  /* Chip: dùng cho trạng thái, KHÔNG dùng làm nút trang trí. */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em];
+  }
+
+  /* Hàng sổ: icon | nội dung | số tiền */
+  .ledger-row {
+    @apply flex items-center gap-3 border-t border-ink-200 py-3 first:border-t-0 first:pt-0;
+  }
+
+  /* Cột số liệu ngăn bằng đường kẻ dọc. */
+  .stat-col {
+    @apply border-l border-ink-200 pl-4 first:border-l-0 first:pl-0;
   }
 }
 
@@ -150,25 +258,48 @@
     text-wrap: balance;
   }
 
+  /* Vào màn: nhẹ, chỉ 1 lần, không stagger rải rác khắp nơi. */
   .animate-in {
-    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   .animate-in-delay-1 {
-    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+    animation: fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
   }
 
   .animate-in-delay-2 {
-    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+    animation: fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
   }
 
   .animate-in-delay-3 {
-    animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+    animation: fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
   }
 
-  /* Popover cần xuất hiện nhanh, tránh cảm giác "trong suốt" khi mở. */
   .animate-pop {
-    animation: pop-in 0.16s ease-out both;
+    animation: pop-in 0.14s ease-out both;
+  }
+
+  /* Reveal khi cuộn — chỉ transform + opacity, có fallback reduced-motion. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal.is-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -183,7 +314,7 @@
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -194,7 +325,7 @@
 @keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(-4px) scale(0.98);
+    transform: translateY(-4px) scale(0.99);
   }
   to {
     opacity: 1;

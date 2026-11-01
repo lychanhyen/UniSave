@@ -34,7 +34,7 @@ import {
   requestVerificationDemo,
   updateOwnAccount,
 } from './demoAuth';
-import { uploadPrivateDataUrl } from './upload';
+import { uploadDataUrl, uploadPrivateDataUrl } from './upload';
 
 /**
  * Lớp dữ liệu dùng chung.
@@ -500,6 +500,13 @@ export async function fetchAccounts() {
     student_card_url: row.student_card_url || '',
     verification_status: row.verification_status || (row.is_verified ? 'approved' : 'none'),
   }));
+}
+
+/** Lưu ảnh đại diện: demo trả data URL, Supabase trả URL công khai của bucket avatars. */
+export async function uploadAvatar(userId, dataUrl) {
+  if (!dataUrl) return '';
+  if (!isRemote()) return dataUrl;
+  return uploadDataUrl('avatars', userId, dataUrl);
 }
 
 /** Lưu ảnh thẻ sinh viên: demo trả data URL, Supabase trả đường dẫn bucket riêng tư. */

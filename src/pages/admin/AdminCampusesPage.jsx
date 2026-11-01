@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import {
   AlertTriangle,
   ArrowDown,
@@ -326,7 +326,7 @@ export default function AdminCampusesPage() {
                   key={item.value}
                   className={cn(
                     'rounded-2xl border px-3 py-3 transition',
-                    isEditing ? 'border-brand-200 bg-brand-50/40' : 'border-ink-200 bg-white',
+                    isEditing ? 'border-brand-200 bg-brand-50/40' : 'border-brand-200/70 bg-white',
                     !item.is_active && 'opacity-70'
                   )}
                 >

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+﻿import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Store, ShoppingBag, UserRound } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -11,7 +11,7 @@ const ITEMS = [
 
 export default function BottomNav() {
   return (
-    <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-ink-200/70 bg-white/90 px-2 pb-2 pt-1.5 backdrop-blur-xl lg:hidden">
+    <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-brand-200/60 bg-white/90 px-2 pb-2 pt-1.5 backdrop-blur-xl lg:hidden">
       <div className="mx-auto flex max-w-md items-center justify-around">
         {ITEMS.map(({ to, label, icon: Icon }) => (
           <NavLink

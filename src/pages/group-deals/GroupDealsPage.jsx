@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Plus,
@@ -107,20 +107,17 @@ export default function GroupDealsPage() {
         }
       />
 
-      <div className="animate-in relative mb-6 overflow-hidden rounded-4xl bg-gradient-to-br from-brand-700 via-brand-600 to-emerald-700 p-6 text-white shadow-glow sm:p-7">
-        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
-        <div className="absolute -bottom-24 left-1/4 h-48 w-48 rounded-full bg-emerald-300/20 blur-3xl" />
+      <div className="animate-in relative mb-6 overflow-hidden rounded-3xl bg-brand-600 p-6 text-white sm:p-7">
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-lg">
-            <span className="chip bg-white/15 text-white backdrop-blur">
-              <Flame className="h-3.5 w-3.5" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60">
               Kèo đang hot
             </span>
-            <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+            <h2 className="mt-2.5 text-[clamp(1.5rem,3vw,1.9rem)] font-extrabold leading-[1.06] tracking-[-0.035em]">
               Một người mua thì đắt,
               <br className="hidden sm:block" /> cả nhóm mua thì hời.
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-brand-50/90">
+            <p className="mt-2 text-[13px] leading-relaxed text-white/70">
               Tham gia kèo có sẵn hoặc tự tạo kèo cho lớp, ký túc xá của bạn.
             </p>
           </div>
@@ -133,13 +130,13 @@ export default function GroupDealsPage() {
             ].map(({ label, value, icon: Icon }) => (
               <div
                 key={label}
-                className="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10 backdrop-blur-sm"
+                className="rounded-xl border border-white/15 bg-white/10 px-4 py-3"
               >
-                <Icon className="h-4 w-4 text-brand-100" />
-                <p className="mt-2 text-xl font-extrabold tracking-tight">
+                <Icon className="h-4 w-4 text-white/60" />
+                <p className="mt-2 figure-lg text-[20px]">
                   {typeof value === 'number' ? formatCompact(value) : value}
                 </p>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-100/80">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/50">
                   {label}
                 </p>
               </div>
@@ -237,7 +234,7 @@ export default function GroupDealsPage() {
         </div>
       )}
 
-      <div className="mt-8 flex items-start gap-3 rounded-3xl border border-ink-200/70 bg-white/70 p-5 backdrop-blur-sm">
+      <div className="mt-8 flex items-start gap-3 rounded-3xl border border-brand-200/60 bg-white/70 p-5 backdrop-blur-sm">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-600">
           <Sparkles className="h-5 w-5" />
         </span>

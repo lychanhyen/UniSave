@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import {
   BadgeCheck,
   Check,
@@ -254,7 +254,7 @@ export default function AdminStudentsPage() {
                         onClick={() =>
                           setPreview({ url: user.student_card_url, name: user.full_name })
                         }
-                        className="group relative overflow-hidden rounded-xl border border-ink-200"
+                        className="group relative overflow-hidden rounded-xl border border-brand-200/70"
                         aria-label={`Xem ảnh thẻ của ${user.full_name}`}
                       >
                         <StudentCardImage value={user.student_card_url} className="h-14 w-20" />
@@ -435,7 +435,7 @@ export default function AdminStudentsPage() {
                     name: action.user.full_name,
                   })
                 }
-                className="mt-3 block w-full overflow-hidden rounded-2xl border border-ink-200"
+                className="mt-3 block w-full overflow-hidden rounded-2xl border border-brand-200/70"
                 aria-label="Phóng to ảnh thẻ sinh viên"
               >
                 <StudentCardImage

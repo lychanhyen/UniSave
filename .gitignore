@@ -49,3 +49,6 @@ supabase/.temp
 .vercel
 .env*
 !.env.example
+
+# Đầu ra của tasteskill inspector (ảnh chụp, report)
+.taste-skill/

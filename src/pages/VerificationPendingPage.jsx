@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -50,26 +50,20 @@ export default function VerificationPendingPage() {
       <div className="card overflow-hidden p-0">
         <div
           className={`relative overflow-hidden px-6 py-10 text-center text-white sm:px-10 ${
-            rejected
-              ? 'bg-gradient-to-br from-rose-600 to-rose-800'
-              : pending
-                ? 'bg-gradient-to-br from-amber-500 to-orange-600'
-                : 'bg-gradient-to-br from-brand-600 to-emerald-700'
+            rejected ? 'bg-rose-700' : pending ? 'bg-amber-600' : 'bg-brand-600'
           }`}
         >
-          <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-16 right-0 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
           <div className="relative">
-            <span className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-white/15 backdrop-blur">
+            <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white/15">
               {rejected ? (
-                <XCircle className="h-8 w-8" />
+                <XCircle className="h-7 w-7" />
               ) : pending ? (
-                <Clock3 className="h-8 w-8" />
+                <Clock3 className="h-7 w-7" />
               ) : (
-                <ShieldAlert className="h-8 w-8" />
+                <ShieldAlert className="h-7 w-7" />
               )}
             </span>
-            <h1 className="mt-4 text-2xl font-extrabold tracking-tight sm:text-3xl">
+            <h1 className="mt-4 text-[clamp(1.4rem,3vw,1.9rem)] font-extrabold tracking-[-0.035em]">
               {rejected
                 ? 'Hồ sơ chưa được duyệt'
                 : pending
@@ -106,7 +100,7 @@ export default function VerificationPendingPage() {
                 text: 'Được đăng bài, tạo kèo và nhận badge xác minh.',
               },
             ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-2xl border border-ink-200/70 bg-ink-50/50 p-4">
+              <div key={title} className="rounded-2xl border border-brand-200/60 bg-ink-50/50 p-4">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-white text-brand-600 shadow-soft">
                   <Icon className="h-4.5 w-4.5" />
                 </span>
@@ -116,7 +110,7 @@ export default function VerificationPendingPage() {
             ))}
           </div>
 
-          <div className="mt-5 rounded-2xl border border-ink-200/70 p-4">
+          <div className="mt-5 rounded-2xl border border-brand-200/60 p-4">
             <p className="text-xs font-bold uppercase tracking-wide text-ink-400">
               Trạng thái hồ sơ
             </p>

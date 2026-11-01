@@ -83,10 +83,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Left showcase */}
-      <div className="relative hidden w-1/2 overflow-hidden bg-gradient-to-br from-brand-600 via-brand-600 to-emerald-800 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute -left-16 top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-emerald-300/20 blur-3xl" />
-
+      <div className="relative hidden w-1/2 overflow-hidden bg-brand-600 p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <Link to="/" className="relative flex items-center gap-3">
           <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 backdrop-blur">
             <PiggyBank className="h-6 w-6" />
@@ -133,7 +130,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
             <Link to="/" className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-glow">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 text-white shadow-soft">
                 <PiggyBank className="h-5 w-5" />
               </span>
               <span className="text-xl font-extrabold tracking-tight text-ink-900">UniSave</span>

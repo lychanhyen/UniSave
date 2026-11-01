@@ -1,4 +1,4 @@
-import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
+﻿import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Store,
@@ -41,14 +41,14 @@ const ADMIN_NAV = [
 
 function Logo({ compact = false, to = '/dashboard' }) {
   return (
-    <Link to={to} className="flex items-center gap-2.5 group">
-      <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-glow transition-transform group-hover:scale-105">
-        <PiggyBank className="h-5 w-5" strokeWidth={2.2} />
+    <Link to={to} className="flex items-center gap-2.5">
+      <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white">
+        <PiggyBank className="h-4 w-4" strokeWidth={2.4} />
       </span>
       {!compact && (
         <span className="flex flex-col leading-none">
-          <span className="text-[17px] font-extrabold tracking-tight text-ink-900">UniSave</span>
-          <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600">
+          <span className="text-[15px] font-extrabold tracking-[-0.02em] text-ink-900">UniSave</span>
+          <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-ink-400">
             Student finance
           </span>
         </span>
@@ -65,9 +65,9 @@ function NavItem({ item, onClick }) {
       onClick={onClick}
       className={({ isActive }) =>
         cn(
-          'group flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-semibold transition-all duration-200',
+          'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-semibold transition-colors duration-150',
           isActive
-            ? 'bg-brand-600 text-white shadow-glow'
+            ? 'bg-brand-50 text-brand-700'
             : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
         )
       }
@@ -76,10 +76,10 @@ function NavItem({ item, onClick }) {
         <>
           <Icon
             className={cn(
-              'h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110',
-              isActive ? 'text-white' : 'text-ink-400 group-hover:text-brand-600'
+              'h-[18px] w-[18px] shrink-0',
+              isActive ? 'text-brand-600' : 'text-ink-400 group-hover:text-brand-600'
             )}
-            strokeWidth={2.1}
+            strokeWidth={2}
           />
           <span className="truncate">{item.label}</span>
         </>
@@ -127,7 +127,7 @@ export default function AppLayout({ children }) {
   return (
     <div className="min-h-screen lg:flex">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto border-r border-ink-200/70 bg-white/80 px-4 py-6 backdrop-blur-xl lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto border-r border-brand-200/70 bg-white px-4 py-6 lg:flex">
         <div className="flex items-center justify-between gap-2">
           <Logo to={home} />
           <NotificationBell surface="desktop" />
@@ -142,7 +142,7 @@ export default function AppLayout({ children }) {
             <NavItem key={item.to} item={item} />
           ))}
         </nav>
-        <div className="rounded-2xl bg-gradient-to-br from-brand-50 to-white p-4 ring-1 ring-brand-100">
+        <div className="rounded-2xl border border-brand-200 bg-brand-50/70 p-4">
           <div className="flex items-center gap-2 text-brand-700">
             <Sparkles className="h-4 w-4" />
             <span className="text-xs font-bold uppercase tracking-wide">
@@ -156,7 +156,7 @@ export default function AppLayout({ children }) {
           </p>
         </div>
 
-        <div className="mt-3 rounded-2xl border border-ink-200/70 bg-white p-3">
+        <div className="mt-3 rounded-2xl border border-brand-200/60 bg-white p-3">
           <div className="flex items-center gap-2.5">
             <Avatar
               size="sm"
@@ -196,7 +196,7 @@ export default function AppLayout({ children }) {
             className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <aside className="animate-in absolute inset-y-0 left-0 flex w-72 flex-col bg-white px-4 py-6 shadow-2xl">
+          <aside className="animate-in absolute inset-y-0 left-0 flex w-72 flex-col bg-white px-4 py-6 shadow-lg">
             <div className="flex items-center justify-between">
               <Logo to={home} />
               <button
@@ -255,7 +255,7 @@ export default function AppLayout({ children }) {
 
       <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
         {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-200/70 bg-white/80 px-4 py-3 backdrop-blur-xl lg:hidden">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-brand-200/70 bg-ink-50/90 px-4 py-3 backdrop-blur-xl lg:hidden">
           <button
             onClick={() => setOpen(true)}
             className="grid h-10 w-10 place-items-center rounded-xl text-ink-600 hover:bg-ink-100"
@@ -268,7 +268,7 @@ export default function AppLayout({ children }) {
             <NotificationBell surface="mobile" />
             <Link
               to={isAdmin ? '/admin/reports' : '/dashboard'}
-              className="grid h-10 w-10 place-items-center rounded-xl bg-brand-600 text-white shadow-glow"
+              className="grid h-10 w-10 place-items-center rounded-xl bg-brand-600 text-white shadow-soft"
               aria-label={isAdmin ? 'Tố cáo cần xử lý' : 'Thêm chi tiêu'}
             >
               {isAdmin ? <Flag className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
@@ -332,7 +332,7 @@ export default function AppLayout({ children }) {
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-ink-200/70 bg-white/90 px-2 pb-2 pt-1.5 backdrop-blur-xl lg:hidden">
+        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-brand-200/70 bg-ink-50/95 px-2 pb-2 pt-1.5 backdrop-blur-xl lg:hidden">
           <div className="mx-auto flex max-w-md items-center justify-around">
             {navItems.slice(0, 4).map((item) => {
               const Icon = item.icon;

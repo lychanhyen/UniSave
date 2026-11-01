@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   BadgeCheck,
@@ -81,14 +81,14 @@ export default function AdminDashboardPage() {
         subtitle="Duyệt sinh viên, kiểm tra bài đăng và xử lý tố cáo để giữ cộng đồng an toàn."
       />
 
-      <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-ink-900/10 bg-gradient-to-br from-ink-900 via-ink-800 to-brand-900 p-5 text-white sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 flex flex-col gap-3 rounded-3xl bg-ink-900 p-5 text-white sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/10">
-            <ShieldCheck className="h-5 w-5 text-brand-300" />
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/10">
+            <ShieldCheck className="h-4 w-4 text-white/70" />
           </span>
           <div>
-            <p className="text-sm font-bold">Nguyên tắc duyệt hồ sơ</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-ink-300">
+            <p className="text-[13px] font-bold">Nguyên tắc duyệt hồ sơ</p>
+            <p className="mt-0.5 text-[11px] leading-relaxed text-white/60">
               Đối chiếu họ tên, MSSV và ảnh thẻ sinh viên. Chỉ duyệt khi thông tin khớp; từ chối kèm
               lý do rõ ràng để sinh viên gửi lại.
             </p>
@@ -150,7 +150,7 @@ export default function AdminDashboardPage() {
                 <li key={user.id}>
                   <Link
                     to="/admin/students"
-                    className="flex items-center gap-3 rounded-2xl border border-ink-200/70 p-3 transition hover:border-brand-200 hover:bg-brand-50/40"
+                    className="flex items-center gap-3 rounded-2xl border border-brand-200/60 p-3 transition hover:border-brand-200 hover:bg-brand-50/40"
                   >
                     <Avatar size="sm" name={user.full_name} src={user.avatar_url} />
                     <div className="min-w-0 flex-1">
@@ -199,7 +199,7 @@ export default function AdminDashboardPage() {
                 <li key={report.id}>
                   <Link
                     to="/admin/reports"
-                    className="flex items-start gap-3 rounded-2xl border border-ink-200/70 p-3 transition hover:border-rose-200 hover:bg-rose-50/40"
+                    className="flex items-start gap-3 rounded-2xl border border-brand-200/60 p-3 transition hover:border-rose-200 hover:bg-rose-50/40"
                   >
                     <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-rose-50 text-rose-600">
                       <Flag className="h-4 w-4" />

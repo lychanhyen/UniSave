@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
   BadgeCheck,
   Banknote,
@@ -77,11 +77,11 @@ export default function DealCard({
 
   return (
     <article className="card card-hover flex flex-col overflow-hidden p-0">
-      <div className="relative bg-gradient-to-br from-brand-50 via-white to-blue-50/60 p-5">
+      <div className="relative border-b border-brand-200/70 bg-ink-50/60 p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-glow">
-              <ShoppingBag className="h-5 w-5" />
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white">
+              <ShoppingBag className="h-4 w-4" />
             </span>
             <div>
               <span className={cn('chip ring-1', status.className)}>{status.label}</span>
@@ -98,7 +98,7 @@ export default function DealCard({
           </div>
 
           {discount > 0 && (
-            <span className="chip bg-rose-500 text-white shadow-soft">
+            <span className="chip bg-rose-700 text-white">
               <TrendingDown className="h-3.5 w-3.5" />
               -{discount}%
             </span>
@@ -145,13 +145,11 @@ export default function DealCard({
           </span>
         </div>
 
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-ink-100">
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink-200">
           <div
             className={cn(
-              'h-full rounded-full transition-all duration-700',
-              isFull
-                ? 'bg-gradient-to-r from-blue-400 to-blue-600'
-                : 'bg-gradient-to-r from-brand-400 to-brand-600'
+              'h-full rounded-full transition-[width] duration-700',
+              isFull ? 'bg-blue-600' : 'bg-brand-600'
             )}
             style={{ width: `${progress}%` }}
           />
@@ -195,7 +193,7 @@ export default function DealCard({
             'mt-3 flex w-full items-center justify-between gap-2 rounded-xl border px-3 py-2 text-[11px] font-bold transition',
             isFull
               ? 'border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100/70'
-              : 'border-ink-200 bg-white text-ink-600 hover:border-brand-200 hover:text-brand-700'
+              : 'border-brand-200/70 bg-white text-ink-600 hover:border-brand-200 hover:text-brand-700'
           )}
           aria-expanded={showSplit}
         >
@@ -211,7 +209,7 @@ export default function DealCard({
         </button>
 
         {showSplit && (
-          <div className="mt-2 rounded-2xl border border-ink-200 bg-ink-50/70 p-3">
+          <div className="mt-2 rounded-2xl border border-brand-200/70 bg-ink-50/70 p-3">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="rounded-xl bg-white px-2 py-2 ring-1 ring-ink-100">
                 <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400">Mỗi người</p>
@@ -255,7 +253,7 @@ export default function DealCard({
               </div>
             )}
 
-            <ul className="mt-2 divide-y divide-ink-200/70">
+            <ul className="mt-2 divide-y divide-brand-200/60/70">
               {members.map((member) => (
                 <li key={member.id} className="flex items-center gap-2 py-2">
                   <Avatar size="sm" name={member.name} verified={member.verified} />
@@ -292,7 +290,7 @@ export default function DealCard({
                         'chip shrink-0 border text-[10px] transition',
                         member.paid
                           ? 'border-brand-200 bg-brand-50 text-brand-700'
-                          : 'border-ink-200 bg-white text-ink-500',
+                          : 'border-brand-200/70 bg-white text-ink-500',
                         canToggle(member)
                           ? 'hover:border-brand-300 hover:text-brand-700'
                           : 'cursor-not-allowed opacity-60'
@@ -365,7 +363,7 @@ export default function DealCard({
             <button
               type="button"
               onClick={() => onDelete?.(deal.id)}
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-ink-200 text-ink-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-brand-200/70 text-ink-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
               title="Xóa kèo"
               aria-label="Xóa kèo"
             >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+ï»¿import { useState } from 'react';
 import { ArrowLeft, Check, MapPin, Phone, Tag, FileText, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
@@ -107,7 +107,7 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = 'Ä
                     'flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition',
                     active
                       ? 'border-brand-500 bg-brand-50/70 ring-4 ring-brand-500/10'
-                      : 'border-ink-200 bg-white hover:border-ink-300'
+                      : 'border-brand-200/70 bg-white hover:border-ink-300'
                   )}
                 >
                   <div>
@@ -147,7 +147,7 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = 'Ä
                     'chip border transition',
                     active
                       ? 'border-ink-900 bg-ink-900 text-white'
-                      : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300'
+                      : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300'
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -172,7 +172,7 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = 'Ä
                     'chip border transition',
                     active
                       ? 'border-brand-600 bg-brand-600 text-white'
-                      : 'border-ink-200 bg-white text-ink-600 hover:border-brand-300 hover:text-brand-700'
+                      : 'border-brand-200/70 bg-white text-ink-600 hover:border-brand-300 hover:text-brand-700'
                   )}
                 >
                   <MapPin className="h-3.5 w-3.5" />

@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 export default function EmptyState({ icon: Icon = Inbox, title, description, action, className }) {
   return (
     <div className={cn('flex flex-col items-center justify-center px-6 py-16 text-center', className)}>
-      <span className="grid h-16 w-16 place-items-center rounded-3xl bg-ink-100 text-ink-400">
+      <span className="grid h-16 w-16 place-items-center rounded-2xl bg-ink-100 text-ink-400">
         <Icon className="h-8 w-8" />
       </span>
       <h3 className="mt-4 text-base font-bold text-ink-900">{title}</h3>

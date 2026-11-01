@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { AlertTriangle, Plus, Receipt, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
@@ -42,46 +42,42 @@ export default function ExpenseForm({ onAdd }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card p-5 sm:p-6">
+    <form onSubmit={handleSubmit} className="card-strong px-5 py-5 sm:px-6">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-brand-600">
-            <Receipt className="h-5 w-5" />
-          </span>
-          <div>
-            <h2 className="section-title">Thêm chi tiêu</h2>
-            <p className="text-[11px] text-ink-400">Ghi lại mỗi ngày để hạn mức luôn chính xác.</p>
-          </div>
+          <Receipt className="h-4 w-4 text-ink-400" />
+          <h2 className="section-title">Ghi chi tiêu</h2>
         </div>
         <button
           type="button"
           onClick={toggleUnexpected}
-          className={cn(
-            'chip shrink-0 border transition',
-            unexpected
-              ? 'border-amber-300 bg-amber-100 text-amber-800'
-              : 'border-ink-200 bg-white text-ink-500 hover:border-amber-200 hover:text-amber-700'
-          )}
           aria-pressed={unexpected}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-bold uppercase tracking-[0.08em] transition-colors',
+            unexpected
+              ? 'border-amber-300 bg-amber-50 text-amber-800'
+              : 'border-brand-200/70 text-ink-500 hover:border-amber-300 hover:text-amber-700'
+          )}
         >
-          <AlertTriangle className="h-3.5 w-3.5" />
+          <AlertTriangle className="h-3 w-3" />
           Đột xuất
         </button>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
+      <div className="grid gap-2.5 sm:grid-cols-[1fr_1.5fr_auto]">
         <input
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="Số tiền (VND)"
-          className="input"
+          placeholder="Số tiền"
+          inputMode="numeric"
+          className="input tabular-nums"
         />
         <input
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder={unexpected ? `Ghi chú, ví dụ: ${reason.toLowerCase()}` : 'Ghi chú, ví dụ: Ăn trưa'}
+          placeholder={unexpected ? `Ví dụ: ${reason.toLowerCase()}` : 'Ví dụ: Ăn trưa'}
           className="input"
         />
         <Button type="submit" icon={Plus}>
@@ -90,28 +86,24 @@ export default function ExpenseForm({ onAdd }) {
       </div>
 
       {unexpected ? (
-        <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-3.5">
-          <div className="flex items-center gap-2 text-amber-800">
-            <AlertTriangle className="h-4 w-4" />
-            <span className="text-xs font-bold uppercase tracking-wide">
-              Khoản phát sinh đột xuất
-            </span>
-          </div>
-          <p className="mt-1 text-[11px] leading-relaxed text-amber-700/80">
-            Khoản này được trải đều vào hạn mức cả tháng, không dồn hết vào hạn mức ăn uống hôm
-            nay. Chọn lý do để dễ nhìn lại cuối tháng.
+        <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50/60 p-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-amber-800">
+            Khoản phát sinh đột xuất
           </p>
-          <div className="mt-2.5 flex flex-wrap gap-2">
+          <p className="mt-1 text-[11px] leading-relaxed text-amber-800/80">
+            Khoản này được trải đều vào hạn mức cả tháng, không dồn hết vào hôm nay.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {UNEXPECTED_REASONS.map((item) => (
               <button
                 key={item.value}
                 type="button"
                 onClick={() => setReason(item.value)}
                 className={cn(
-                  'chip border transition',
+                  'rounded-md border px-2 py-1 text-[11px] font-semibold transition-colors',
                   reason === item.value
-                    ? 'border-amber-400 bg-white text-amber-800 shadow-soft'
-                    : 'border-amber-200/80 bg-amber-50 text-amber-700 hover:bg-white'
+                    ? 'border-amber-400 bg-white text-amber-900'
+                    : 'border-amber-200 bg-transparent text-amber-700 hover:bg-white'
                 )}
               >
                 {item.label}
@@ -121,22 +113,23 @@ export default function ExpenseForm({ onAdd }) {
         </div>
       ) : (
         <p className="mt-3 flex items-center gap-1.5 text-[11px] text-ink-400">
-          <ShieldCheck className="h-3.5 w-3.5 text-brand-500" />
-          Mẹo: bật “Đột xuất” cho sửa xe, y tế, thiết bị học tập để không làm tụt hạn mức ngày.
+          <ShieldCheck className="h-3.5 w-3.5 text-brand-600" />
+          Bật “Đột xuất” cho sửa xe, y tế, thiết bị học tập để không làm tụt hạn mức ngày.
         </p>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-1.5">
         {CATEGORIES.map((c) => (
           <button
             key={c.value}
             type="button"
             onClick={() => setCategory(c.value)}
-            className={`chip transition ${
+            className={cn(
+              'rounded-md border px-2.5 py-1 text-[11px] font-semibold transition-colors',
               category === c.value
-                ? 'bg-brand-600 text-white'
-                : 'bg-ink-100 text-ink-600 hover:bg-ink-200'
-            }`}
+                ? 'border-brand-600 bg-brand-600 text-white'
+                : 'border-brand-200/70 text-ink-600 hover:border-ink-300 hover:bg-ink-50'
+            )}
           >
             {c.label}
           </button>

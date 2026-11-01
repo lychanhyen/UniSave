@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ArrowLeft, Banknote, CalendarClock, Sparkles, Truck, Users, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn, formatCurrency } from '../../lib/utils';
@@ -234,7 +234,7 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
                 'chip border transition',
                 hours === option.value
                   ? 'border-ink-900 bg-ink-900 text-white'
-                  : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300'
+                  : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300'
               )}
             >
               {option.label}

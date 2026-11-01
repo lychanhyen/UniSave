@@ -13,7 +13,7 @@ export default function Avatar({ src, name = '', size = 'md', verified = false, 
     <div className={cn('relative inline-flex shrink-0', className)}>
       <div
         className={cn(
-          'grid place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-brand-100 to-brand-200 font-bold text-brand-700 ring-2 ring-white',
+          'grid place-items-center overflow-hidden rounded-lg bg-brand-100 font-bold text-brand-700',
           sizes[size]
         )}
       >

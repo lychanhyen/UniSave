@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   UserRound,
@@ -12,6 +12,8 @@ import {
   XCircle,
   CheckCircle2,
   LayoutDashboard,
+  Loader2,
+  Trash2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -24,7 +26,8 @@ import StudentCardUpload from '../components/verification/StudentCardUpload';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { useMarketplace } from '../hooks/useMarketplace';
 import { useDeals } from '../hooks/useDeals';
-import { requestVerification, updateOwnProfile, uploadStudentCard } from '../lib/api';
+import { requestVerification, updateOwnProfile, uploadAvatar, uploadStudentCard } from '../lib/api';
+import { compressImageFile } from '../lib/image';
 import { useCampuses } from '../context/CampusContext';
 
 export default function ProfilePage() {
@@ -39,6 +42,40 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [requesting, setRequesting] = useState(false);
   const [cardSaving, setCardSaving] = useState(false);
+  const [avatarSaving, setAvatarSaving] = useState(false);
+  const avatarInputRef = useRef(null);
+
+  /** Tải ảnh đại diện: nén nhỏ (400px) rồi lưu vào bucket avatars. */
+  async function handleAvatarFile(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setAvatarSaving(true);
+    try {
+      const dataUrl = await compressImageFile(file, { maxSize: 400, quality: 0.82 });
+      const stored = await uploadAvatar(profile.id, dataUrl);
+      await updateOwnProfile(profile.id, { avatar_url: stored });
+      await refreshUser();
+      toast.success('Đã cập nhật ảnh đại diện.');
+    } catch (error) {
+      toast.error(error.message || 'Không tải được ảnh đại diện.');
+    } finally {
+      setAvatarSaving(false);
+    }
+  }
+
+  async function handleAvatarRemove() {
+    setAvatarSaving(true);
+    try {
+      await updateOwnProfile(profile.id, { avatar_url: '' });
+      await refreshUser();
+      toast.success('Đã xóa ảnh đại diện.');
+    } catch (error) {
+      toast.error(error.message || 'Không xóa được ảnh đại diện.');
+    } finally {
+      setAvatarSaving(false);
+    }
+  }
 
   const stats = useMemo(() => {
     const ownerId = profile.id;
@@ -125,7 +162,7 @@ export default function ProfilePage() {
 
       <div className="grid gap-6 md:grid-cols-[1fr_1.4fr]">
         {/* Identity card */}
-        <div className="card flex flex-col items-center p-6 text-center">
+        <div className="card-tint flex flex-col items-center p-6 text-center">
           <div className="relative">
             <Avatar
               size="xl"
@@ -135,13 +172,37 @@ export default function ProfilePage() {
             />
             <button
               type="button"
-              className="absolute -bottom-1 -right-1 grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-white shadow-glow transition hover:bg-brand-700"
+              className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white transition-colors hover:bg-brand-700 disabled:opacity-70"
               aria-label="Đổi ảnh đại diện"
-              onClick={() => toast('Tính năng tải ảnh sẽ mở khi cấu hình Supabase Storage')}
+              disabled={avatarSaving}
+              onClick={() => avatarInputRef.current?.click()}
             >
-              <Camera className="h-4 w-4" />
+              {avatarSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Camera className="h-4 w-4" />
+              )}
             </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarFile}
+              disabled={avatarSaving}
+            />
           </div>
+
+          {profile.avatar_url && !avatarSaving && (
+            <button
+              type="button"
+              onClick={handleAvatarRemove}
+              className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-ink-400 transition-colors hover:text-rose-600"
+            >
+              <Trash2 className="h-3 w-3" />
+              Xóa ảnh đại diện
+            </button>
+          )}
           <h2 className="mt-4 text-lg font-extrabold tracking-tight text-ink-900">{fullName}</h2>
           <p className="mt-1 text-xs text-ink-400">{profile.email || 'Chưa cập nhật email'}</p>
 

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { ImagePlus, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
@@ -100,7 +100,7 @@ export default function ImageUploader({ value = [], onChange, max = 4 }) {
           {value.map((src, index) => (
           <div
             key={`${index}-${src.slice(-12)}`}
-            className="group relative aspect-square overflow-hidden rounded-2xl border border-ink-200 bg-ink-50"
+            className="group relative aspect-square overflow-hidden rounded-2xl border border-brand-200/70 bg-ink-50"
           >
             <img src={src} alt={`Ảnh ${index + 1}`} className="h-full w-full object-cover" />
             {index === 0 && (

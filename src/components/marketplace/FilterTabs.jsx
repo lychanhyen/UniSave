@@ -1,4 +1,4 @@
-import { MapPin, Navigation, Search, SlidersHorizontal, UserRound, X } from 'lucide-react';
+﻿import { MapPin, Navigation, Search, SlidersHorizontal, UserRound, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useCampuses } from '../../context/CampusContext';
 import { POST_CATEGORIES, POST_STATUSES } from '../../lib/constants';
@@ -60,7 +60,7 @@ export default function FilterTabs({
               'inline-flex items-center justify-center gap-2 rounded-2xl border px-3.5 py-3 text-sm font-semibold transition',
               nearby
                 ? 'border-brand-600 bg-brand-50 text-brand-700'
-                : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:bg-ink-50'
+                : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300 hover:bg-ink-50'
             )}
             aria-pressed={nearby}
             title="Ưu tiên tin cùng trường/KTX với bạn"
@@ -75,7 +75,7 @@ export default function FilterTabs({
               'inline-flex items-center justify-center gap-2 rounded-2xl border px-3.5 py-3 text-sm font-semibold transition',
               mine
                 ? 'border-brand-600 bg-brand-600 text-white shadow-glow'
-                : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:bg-ink-50'
+                : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300 hover:bg-ink-50'
             )}
           >
             <UserRound className="h-4 w-4" />
@@ -142,7 +142,7 @@ export default function FilterTabs({
             'chip shrink-0 border transition',
             location === 'all'
               ? 'border-ink-900 bg-ink-900 text-white'
-              : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300'
+              : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300'
           )}
         >
           Tất cả
@@ -158,7 +158,7 @@ export default function FilterTabs({
                 'chip shrink-0 border transition',
                 active
                   ? 'border-brand-600 bg-brand-600 text-white'
-                  : 'border-ink-200 bg-white text-ink-600 hover:border-brand-300'
+                  : 'border-brand-200/70 bg-white text-ink-600 hover:border-brand-300'
               )}
               title={campus.area}
             >
@@ -177,7 +177,7 @@ export default function FilterTabs({
             'chip shrink-0 border transition',
             category === 'all'
               ? 'border-ink-900 bg-ink-900 text-white'
-              : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300'
+              : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300'
           )}
         >
           Tất cả danh mục
@@ -194,7 +194,7 @@ export default function FilterTabs({
                 'chip shrink-0 border transition',
                 active
                   ? 'border-ink-900 bg-ink-900 text-white'
-                  : 'border-ink-200 bg-white text-ink-600 hover:border-ink-300'
+                  : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300'
               )}
             >
               <Icon className="h-3.5 w-3.5" />

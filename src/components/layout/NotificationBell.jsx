@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -66,7 +66,7 @@ export default function NotificationBell({ surface = 'all' }) {
             <div className="absolute inset-0 bg-ink-900/20 backdrop-blur-[2px]" />
             <div
               className={cn(
-                'animate-pop absolute w-[min(24rem,calc(100vw-1.5rem))] overflow-hidden rounded-3xl border border-ink-200/80 bg-white shadow-card',
+                'animate-pop absolute w-[min(24rem,calc(100vw-1.5rem))] overflow-hidden rounded-3xl border border-brand-200/70/80 bg-white shadow-card',
                 surface === 'desktop'
                   ? 'right-3 top-16 sm:right-6 sm:top-20 lg:left-[17rem] lg:right-auto lg:top-6'
                   : 'right-3 top-16 sm:right-6 sm:top-20'
@@ -119,7 +119,7 @@ export default function NotificationBell({ surface = 'all' }) {
                   </p>
                 </div>
               ) : (
-                <ul className="divide-y divide-ink-100">
+                <ul className="divide-y divide-brand-200/50">
                   {notifications.map((item) => {
                     const style = TYPE_STYLE[item.type] || TYPE_STYLE.system;
                     const Icon = style.icon;

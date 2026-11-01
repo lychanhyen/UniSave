@@ -1,6 +1,14 @@
 import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
+/**
+ * Primitive button — port từ OD prototype.
+ * - primary: nền accent, chữ trắng, shadow mềm
+ * - secondary: surface + border-strong
+ * - ghost: transparent
+ * - danger: rose
+ * Touch target ≥44px ở md/lg.
+ */
 export function Button({
   children,
   variant = 'primary',

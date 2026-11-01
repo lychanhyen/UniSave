@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -440,7 +440,7 @@ export default function AdminReportsPage() {
                     'flex cursor-pointer items-start gap-3 rounded-2xl border p-3 transition',
                     action === item.value
                       ? 'border-brand-300 bg-brand-50/60'
-                      : 'border-ink-200 hover:border-ink-300'
+                      : 'border-brand-200/70 hover:border-ink-300'
                   )}
                 >
                   <input

@@ -1,9 +1,9 @@
-import { Receipt } from 'lucide-react';
+﻿import { Receipt } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
 
 export default function RecentExpenses({ expenses = [] }) {
   return (
-    <div className="card p-5 sm:p-6">
+    <div className="card-strong p-5 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="section-title">Chi tiêu gần đây</h2>
         <span className="chip bg-ink-100 text-ink-500">{expenses.length} khoản</span>
@@ -18,7 +18,7 @@ export default function RecentExpenses({ expenses = [] }) {
           <p className="mt-1 text-xs text-ink-400">Thêm khoản chi đầu tiên để bắt đầu theo dõi.</p>
         </div>
       ) : (
-        <ul className="divide-y divide-ink-100">
+        <ul className="divide-y divide-brand-200/50">
           {expenses.map((e) => (
             <li key={e.id} className="flex items-center gap-3 py-3.5">
               <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-50 text-brand-600">

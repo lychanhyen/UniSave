@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { CreditCard } from 'lucide-react';
 import { resolveStudentCardUrl } from '../../lib/api';
 import { cn } from '../../lib/utils';
@@ -41,7 +41,7 @@ export default function StudentCardImage({ value, alt = 'Ảnh thẻ sinh viên'
     return (
       <div
         className={cn(
-          'grid place-items-center rounded-2xl border border-dashed border-ink-200 bg-ink-50 text-ink-300',
+          'grid place-items-center rounded-2xl border border-dashed border-brand-200/70 bg-ink-50 text-ink-300',
           className
         )}
       >

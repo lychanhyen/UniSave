@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { ImagePlus, Loader2, RefreshCw, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { compressImageFile } from '../../lib/image';
@@ -58,7 +58,7 @@ export default function StudentCardUpload({
       </div>
 
       {value ? (
-        <div className="relative overflow-hidden rounded-2xl border border-ink-200">
+        <div className="relative overflow-hidden rounded-2xl border border-brand-200/70">
           <StudentCardImage
             value={value}
             className={cn('w-full', compact ? 'h-28' : 'h-44')}
@@ -85,7 +85,7 @@ export default function StudentCardUpload({
             'flex w-full flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed px-4 text-center transition',
             compact ? 'py-5' : 'py-7',
             disabled
-              ? 'cursor-not-allowed border-ink-200 bg-ink-50 text-ink-300'
+              ? 'cursor-not-allowed border-brand-200/70 bg-ink-50 text-ink-300'
               : 'border-brand-200 bg-brand-50/50 text-brand-700 hover:border-brand-300 hover:bg-brand-50'
           )}
         >
