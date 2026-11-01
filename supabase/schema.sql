@@ -1,4 +1,4 @@
-﻿-- ============================================================================
+-- ============================================================================
 -- UniSave – Supabase schema
 -- Chạy toàn bộ file này trong Supabase Dashboard → SQL Editor.
 -- Sau khi chạy, điền VITE_SUPABASE_URL và VITE_SUPABASE_ANON_KEY vào .env.local.
@@ -129,6 +129,7 @@ create table if not exists public.notifications (
   id uuid primary key default gen_random_uuid(),
   recipient_id uuid not null references public.profiles (id) on delete cascade,
   actor_id uuid references public.profiles (id) on delete set null,
+  actor_name text not null default '',
   type text not null default 'system',
   title text not null,
   body text,

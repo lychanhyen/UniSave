@@ -24,7 +24,7 @@ begin
     v_target := new.target_id;
     v_link := '/profile';
   else
-    select owner_id into v_target from public.posts where id = new.target_id;
+    select owner_id into v_target from public.posts where id = new.target_id::uuid;
     v_link := '/marketplace/' || new.target_id::text;
   end if;
 
