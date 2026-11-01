@@ -1,0 +1,8 @@
+# Không đưa file bí mật của máy lên bản build/deploy trên Vercel.
+.env
+.env.*
+!.env.example
+.vercel
+.preview
+.git
+node_modules
