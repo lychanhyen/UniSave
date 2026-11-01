@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   MapPin,
   Navigation,
+  PencilLine,
   RotateCcw,
   Trash2,
 } from 'lucide-react';
@@ -20,6 +21,7 @@ export default function PostCard({
   onDelete,
   onMarkDone,
   onRelist,
+  onEdit,
 }) {
   const { labelOf } = useCampuses();
   const category = POST_CATEGORY_MAP[post.category] || POST_CATEGORY_MAP.other;
@@ -146,6 +148,15 @@ export default function PostCard({
                   <CheckCircle2 className="h-4 w-4" />
                 </button>
               )}
+              <button
+                type="button"
+                onClick={() => onEdit?.(post.id)}
+                className="grid h-8 w-8 place-items-center rounded-xl text-ink-500 transition hover:bg-brand-50 hover:text-brand-600"
+                title="Sửa tin"
+                aria-label="Sửa tin"
+              >
+                <PencilLine className="h-4 w-4" />
+              </button>
               <button
                 type="button"
                 onClick={() => onDelete?.(post.id)}

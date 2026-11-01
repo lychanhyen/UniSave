@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+﻿import { useMemo, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   UserRound,
@@ -80,7 +80,7 @@ export default function ProfilePage() {
   const stats = useMemo(() => {
     const ownerId = profile.id;
     return {
-      posts: posts.filter((p) => p.owner_id === ownerId).length,
+      posts: posts.filter((p) => p.owner_id === ownerId && p.status !== 'deleted').length,
       deals: deals.filter((d) => d.owner_id === ownerId).length,
     };
   }, [profile.id, posts, deals]);

@@ -13,6 +13,7 @@ import VerificationPendingPage from './pages/VerificationPendingPage';
 import MarketplacePage from './pages/marketplace/MarketplacePage';
 import PostDetailPage from './pages/marketplace/PostDetailPage';
 import CreatePostPage from './pages/marketplace/CreatePostPage';
+import EditPostPage from './pages/marketplace/EditPostPage';
 import GroupDealsPage from './pages/group-deals/GroupDealsPage';
 import CreateDealPage from './pages/group-deals/CreateDealPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
@@ -129,6 +130,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <PostDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/marketplace/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditPostPage />
                   </ProtectedRoute>
                 }
               />

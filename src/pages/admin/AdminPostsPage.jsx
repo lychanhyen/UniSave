@@ -7,6 +7,7 @@ import {
   Flag,
   Lock,
   LockOpen,
+  RotateCcw,
   Search,
   ShieldAlert,
   Store,
@@ -29,6 +30,7 @@ const STATUS_TABS = [
   { value: 'active', label: 'Đang bán' },
   { value: 'sold', label: 'Đã bán' },
   { value: 'reported', label: 'Có tố cáo' },
+  { value: 'deleted', label: 'Đã xoá' },
 ];
 
 const ACTION_META = {
@@ -59,7 +61,7 @@ const ACTION_META = {
 };
 
 export default function AdminPostsPage() {
-  const { posts, loading, removePost } = useMarketplace();
+  const { posts, loading, removePost, undeletePost } = useMarketplace();
   const { reports } = useReports();
   const { users, lock, unlock } = useAdminUsers();
   const { labelOf } = useCampuses();
@@ -88,9 +90,18 @@ export default function AdminPostsPage() {
     return map;
   }, [reports]);
 
+  // Tin đã xoá (status 'deleted') chỉ hiện ở tab "Đã xoá", không lẫn vào tab kiểm duyệt.
+  const livePosts = useMemo(() => posts.filter((post) => post.status !== 'deleted'), [posts]);
+  const deletedPosts = useMemo(() => posts.filter((post) => post.status === 'deleted'), [posts]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return posts.filter((post) => {
+      if (tab === 'deleted') {
+        if (post.status !== 'deleted') return false;
+      } else if (post.status === 'deleted') {
+        return false;
+      }
       if (tab === 'active' && post.status !== 'active') return false;
       if (tab === 'sold' && post.status !== 'sold' && post.status !== 'done') return false;
       if (tab === 'reported' && !openReportCounts[post.id]) return false;
@@ -104,22 +115,24 @@ export default function AdminPostsPage() {
 
   const stats = useMemo(
     () => ({
-      total: posts.length,
-      active: posts.filter((post) => post.status === 'active').length,
-      sold: posts.filter((post) => post.status === 'sold' || post.status === 'done').length,
-      reported: posts.filter((post) => openReportCounts[post.id]).length,
+      total: livePosts.length,
+      active: livePosts.filter((post) => post.status === 'active').length,
+      sold: livePosts.filter((post) => post.status === 'sold' || post.status === 'done').length,
+      reported: livePosts.filter((post) => openReportCounts[post.id]).length,
+      deleted: deletedPosts.length,
     }),
-    [posts, openReportCounts]
+    [livePosts, deletedPosts, openReportCounts]
   );
 
   const counts = useMemo(
     () => ({
-      all: posts.length,
+      all: livePosts.length,
       active: stats.active,
       sold: stats.sold,
       reported: stats.reported,
+      deleted: stats.deleted,
     }),
-    [posts.length, stats]
+    [livePosts.length, stats]
   );
 
   function openAction(type, post) {
@@ -261,6 +274,9 @@ export default function AdminPostsPage() {
             const CategoryIcon = categoryMeta.icon;
             const owner = users.find((user) => user.id === post.owner_id);
             const isSold = post.status === 'sold' || post.status === 'done';
+            const isDeleted = post.status === 'deleted';
+            const deletedByAdmin =
+              isDeleted && post.deleted_by && post.deleted_by !== post.owner_id;
             const openReports = openReportCounts[post.id] || 0;
             const totalReports = reportCounts[post.id] || 0;
             return (
@@ -278,7 +294,12 @@ export default function AdminPostsPage() {
                       >
                         {post.title}
                       </Link>
-                      {isSold ? (
+                      {isDeleted ? (
+                        <span className="chip bg-rose-50 text-rose-700 ring-1 ring-rose-100">
+                          <Trash2 className="h-3.5 w-3.5" />
+                          {deletedByAdmin ? 'Admin đã xoá' : 'Sinh viên tự xoá'}
+                        </span>
+                      ) : isSold ? (
                         <span className="chip bg-ink-100 text-ink-600 ring-1 ring-ink-200">
                           <Clock3 className="h-3.5 w-3.5" /> Đã bán
                         </span>
@@ -341,14 +362,28 @@ export default function AdminPostsPage() {
                       <ExternalLink className="h-3.5 w-3.5" />
                       Xem tin
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => openAction('remove', post)}
-                      className="btn-ghost justify-center py-2 text-xs text-rose-600 hover:bg-rose-50"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Gỡ bài đăng
-                    </button>
+                    {isDeleted ? (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await undeletePost(post.id);
+                          toast.success('Đã đăng lại tin lên chợ');
+                        }}
+                        className="btn-secondary justify-center py-2 text-xs text-brand-700"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Đăng lại tin
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => openAction('remove', post)}
+                        className="btn-ghost justify-center py-2 text-xs text-rose-600 hover:bg-rose-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Gỡ bài đăng
+                      </button>
+                    )}
                     {owner ? (
                       owner.is_locked ? (
                         <button

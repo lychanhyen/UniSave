@@ -137,12 +137,32 @@ export async function updatePost(id, patch) {
   return data;
 }
 
-export async function deletePost(id) {
+/**
+ * Xoá tin = chuyển trạng thái sang 'deleted' (không xoá dòng) để giữ lịch sử đăng tin.
+ * actorId là người bấm xoá: trùng chủ tin = sinh viên tự xoá, khác = quản trị viên xoá.
+ */
+export async function deletePost(id, actorId = '') {
+  const patch = {
+    status: 'deleted',
+    deleted_at: new Date().toISOString(),
+    deleted_by: actorId || null,
+  };
   if (!isRemote()) {
-    savePosts(loadPosts().filter((post) => post.id !== id));
+    savePosts(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
     return;
   }
-  const { error } = await supabase.from('posts').delete().eq('id', id);
+  const { error } = await supabase.from('posts').update(patch).eq('id', id);
+  if (error) throw error;
+}
+
+/** Đăng lại tin đã xoá: quay về trạng thái chưa bán. */
+export async function restorePost(id) {
+  const patch = { status: 'active', deleted_at: null, deleted_by: null };
+  if (!isRemote()) {
+    savePosts(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
+    return;
+  }
+  const { error } = await supabase.from('posts').update(patch).eq('id', id);
   if (error) throw error;
 }
 

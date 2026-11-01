@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -12,6 +12,7 @@ import {
   MessageCircle,
   MessageSquare,
   Navigation,
+  PencilLine,
   Phone,
   RotateCcw,
   Send,
@@ -54,6 +55,7 @@ export default function PostDetailPage() {
     removePost,
     markSold,
     relistPost,
+    undeletePost,
     sendInquiry,
   } = useMarketplace();
   const [activeImage, setActiveImage] = useState(0);
@@ -68,7 +70,12 @@ export default function PostDetailPage() {
   const related = useMemo(() => {
     if (!post) return [];
     return posts
-      .filter((p) => p.id !== post.id && p.status === 'active' && p.category === post.category)
+      .filter(
+        (p) =>
+          p.id !== post.id &&
+          p.status === 'active' &&
+          p.category === post.category
+      )
       .slice(0, 3);
   }, [posts, post]);
 
@@ -101,21 +108,54 @@ export default function PostDetailPage() {
     );
   }
 
+  // Tin đã xoá: chỉ chủ tin và quản trị viên xem lại được (lịch sử đăng tin).
+  if (
+    post.status === 'deleted' &&
+    post.owner_id !== currentUser.id &&
+    currentUser.role !== 'admin'
+  ) {
+    return (
+      <div className="mx-auto max-w-3xl">
+        <div className="card">
+          <EmptyState
+            icon={Store}
+            title="Tin này đã được gỡ"
+            description="Người đăng đã xoá tin hoặc quản trị viên đã gỡ khỏi chợ."
+            action={
+              <Link to="/marketplace" className="btn-primary">
+                Xem tin khác
+              </Link>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
   const category = POST_CATEGORY_MAP[post.category] || POST_CATEGORY_MAP.other;
   const Icon = category.icon;
   const gradient = POST_GRADIENTS[category.tone] || POST_GRADIENTS.slate;
   const campus = itemOf(post.location) || { label: 'Khu vực khác', area: '' };
   const isOwner = post.owner_id === currentUser.id;
   const isSold = post.status === 'sold' || post.status === 'done';
+  const isDeleted = post.status === 'deleted';
+  // Tin bị quản trị viên xoá thì sinh viên không tự đăng lại được.
+  const deletedByAdmin = isDeleted && post.deleted_by && post.deleted_by !== post.owner_id;
+  const canRestore = isDeleted && (currentUser.role === 'admin' || !deletedByAdmin);
   const isNearby = post.location === currentUser.campus;
   const images = post.images || [];
   const current = images[Math.min(activeImage, Math.max(0, images.length - 1))];
 
   async function handleDelete() {
-    if (!window.confirm('Xóa tin đăng này? Hành động không thể hoàn tác.')) return;
+    if (!window.confirm('Xoá tin khỏi chợ? Tin vẫn được lưu trong lịch sử đăng tin.')) return;
     await removePost(post.id);
-    toast.success('Đã xóa tin đăng');
+    toast.success('Đã xoá tin khỏi chợ, lịch sử vẫn được giữ');
     navigate('/marketplace');
+  }
+
+  async function handleRestore() {
+    await undeletePost(post.id);
+    toast.success('Đã đăng lại tin lên chợ');
   }
 
   async function handleMarkSold() {
@@ -165,6 +205,36 @@ export default function PostDetailPage() {
         <ArrowLeft className="h-4 w-4" />
         Quay lại chợ sinh viên
       </Link>
+
+      {isDeleted && (
+        <div className="animate-in mb-5 flex flex-col gap-3 rounded-3xl border-2 border-rose-200 bg-rose-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white text-rose-600">
+              <Trash2 className="h-4 w-4" />
+            </span>
+            <div>
+              <p className="text-[13px] font-bold text-rose-900">
+                {deletedByAdmin ? 'Quản trị viên đã xoá tin này' : 'Tin đã xoá khỏi chợ'}
+              </p>
+              <p className="mt-0.5 text-[11px] text-rose-700/80">
+                {deletedByAdmin
+                  ? 'Tin bị gỡ khỏi chợ. Nếu thấy chưa thoả đáng, bạn có thể gửi tố cáo hoặc liên hệ quản trị viên.'
+                  : 'Tin vẫn nằm trong lịch sử đăng tin của bạn và có thể đăng lại bất cứ lúc nào.'}
+              </p>
+            </div>
+          </div>
+          {canRestore && (
+            <button
+              type="button"
+              onClick={handleRestore}
+              className="btn-secondary shrink-0 py-2.5 text-xs"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Đăng lại tin
+            </button>
+          )}
+        </div>
+      )}
 
       {isSold && (
         <div className="animate-in mb-5 flex flex-col gap-3 rounded-3xl bg-ink-900 p-4 text-white sm:flex-row sm:items-center sm:justify-between">
@@ -377,7 +447,16 @@ export default function PostDetailPage() {
               </div>
             </div>
 
-            {isSold ? (
+            {isDeleted ? (
+              <div className="mt-4 rounded-2xl border-2 border-rose-200 bg-rose-50 p-4 text-center">
+                <p className="text-sm font-bold text-rose-900">Tin không còn trên chợ</p>
+                <p className="mt-1 text-xs leading-relaxed text-rose-700/80">
+                  {deletedByAdmin
+                    ? 'Quản trị viên đã gỡ tin này nên không thể liên hệ qua tin đăng.'
+                    : 'Bạn đã xoá tin này khỏi chợ. Đăng lại nếu vẫn muốn bán.'}
+                </p>
+              </div>
+            ) : isSold ? (
               <div className="mt-4 rounded-2xl border border-brand-200/70 bg-ink-50 p-4 text-center">
                 <p className="text-sm font-bold text-ink-700">Tin đã bán</p>
                 <p className="mt-1 text-xs leading-relaxed text-ink-500">
@@ -457,6 +536,14 @@ export default function PostDetailPage() {
                 <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
                   Quản lý tin của bạn
                 </p>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/marketplace/${post.id}/edit`)}
+                  className="btn-secondary w-full"
+                >
+                  <PencilLine className="h-4 w-4 text-brand-600" />
+                  Sửa tin đăng
+                </button>
                 {isSold ? (
                   <button type="button" onClick={handleRelist} className="btn-secondary w-full">
                     <RotateCcw className="h-4 w-4 text-brand-600" />
@@ -468,10 +555,23 @@ export default function PostDetailPage() {
                     Đánh dấu đã bán
                   </button>
                 )}
-                <button type="button" onClick={handleDelete} className="btn-danger w-full">
-                  <Trash2 className="h-4 w-4" />
-                  Xóa tin đăng
-                </button>
+                {isDeleted ? (
+                  canRestore ? (
+                    <button type="button" onClick={handleRestore} className="btn-secondary w-full">
+                      <RotateCcw className="h-4 w-4 text-brand-600" />
+                      Đăng lại tin lên chợ
+                    </button>
+                  ) : (
+                    <p className="rounded-xl bg-ink-50 px-3 py-2 text-center text-[11px] font-semibold text-ink-500">
+                      Tin bị quản trị viên gỡ — liên hệ quản trị viên nếu cần khiếu nại.
+                    </p>
+                  )
+                ) : (
+                  <button type="button" onClick={handleDelete} className="btn-danger w-full">
+                    <Trash2 className="h-4 w-4" />
+                    Xoá tin khỏi chợ
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -505,6 +605,7 @@ export default function PostDetailPage() {
                   await removePost(postId);
                   toast.success('Đã xóa tin đăng');
                 }}
+                onEdit={(postId) => navigate(`/marketplace/${postId}/edit`)}
                 onMarkDone={async (postId) => {
                   await markSold(postId);
                   toast.success('Đã chuyển tin sang “Đã bán”');

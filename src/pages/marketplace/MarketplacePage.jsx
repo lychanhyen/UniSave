@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+﻿import { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Store,
@@ -21,6 +21,7 @@ import { formatCompact } from '../../lib/utils';
 
 export default function MarketplacePage() {
   const { posts, loading, currentUser, removePost, markSold, relistPost } = useMarketplace();
+  const navigate = useNavigate();
   const canPost = Boolean(currentUser.is_verified);
   const [query, setQuery] = useState('');
   const [type, setType] = useState('all');
@@ -30,19 +31,21 @@ export default function MarketplacePage() {
   const [mine, setMine] = useState(false);
   const [nearby, setNearby] = useState(true);
 
+  const livePosts = useMemo(() => posts.filter((post) => post.status !== 'deleted'), [posts]);
+
   const stats = useMemo(() => {
-    const active = posts.filter((p) => p.status !== 'sold' && p.status !== 'done');
+    const active = livePosts.filter((p) => p.status !== 'sold' && p.status !== 'done');
     return {
-      total: posts.length,
+      total: livePosts.length,
       active: active.length,
-      sold: posts.length - active.length,
-      mine: posts.filter((p) => p.owner_id === currentUser.id).length,
+      sold: livePosts.length - active.length,
+      mine: livePosts.filter((p) => p.owner_id === currentUser.id).length,
     };
-  }, [posts, currentUser.id]);
+  }, [livePosts, currentUser.id]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return posts
+    return livePosts
       .filter((post) => {
         const isSold = post.status === 'sold' || post.status === 'done';
         if (mine && post.owner_id !== currentUser.id) return false;
@@ -66,12 +69,12 @@ export default function MarketplacePage() {
         }
         return new Date(b.created_at) - new Date(a.created_at);
       });
-  }, [posts, query, type, category, status, location, mine, nearby, currentUser.id, currentUser.campus]);
+  }, [livePosts, query, type, category, status, location, mine, nearby, currentUser.id, currentUser.campus]);
 
   async function handleDelete(id) {
-    if (!window.confirm('Xóa tin đăng này? Hành động không thể hoàn tác.')) return;
+    if (!window.confirm('Xóa tin khỏi chợ? Tin vẫn được lưu trong lịch sử đăng tin.')) return;
     await removePost(id);
-    toast.success('Đã xóa tin đăng');
+    toast.success('Đã xoá tin khỏi chợ, lịch sử vẫn được giữ');
   }
 
   async function handleMarkSold(id) {
@@ -82,6 +85,10 @@ export default function MarketplacePage() {
   async function handleRelist(id) {
     await relistPost(id);
     toast.success('Đã đăng bán lại tin này');
+  }
+
+  function handleEdit(id) {
+    navigate(`/marketplace/${id}/edit`);
   }
 
   return (
@@ -202,6 +209,7 @@ export default function MarketplacePage() {
               onDelete={handleDelete}
               onMarkDone={handleMarkSold}
               onRelist={handleRelist}
+              onEdit={handleEdit}
             />
           ))}
         </div>

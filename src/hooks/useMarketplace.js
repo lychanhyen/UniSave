@@ -9,6 +9,7 @@ import {
   updatePost,
   deletePost,
   createInquiry,
+  restorePost,
   pushNotification,
 } from '../lib/api';
 import { loadPosts, savePosts } from '../lib/demoData';
@@ -107,19 +108,90 @@ export function useMarketplace() {
     [currentUser, persistDemo]
   );
 
+  /** Sửa tin đăng: ảnh mới (data URL) được đẩy lên Storage trước khi ghi DB. */
+  const editPost = useCallback(
+    async (id, patch) => {
+      if (!isRemote()) {
+        persistDemo(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
+        return { id, ...patch };
+      }
+
+      const snapshot = posts;
+      setPosts((prev) => prev.map((post) => (post.id === id ? { ...post, ...patch } : post)));
+      try {
+        let uploadFailed = false;
+        const images = await Promise.all(
+          (patch.images || []).map(async (src) => {
+            if (!String(src).startsWith('data:')) return src;
+            try {
+              return await uploadDataUrl('post-images', currentUser.id, src);
+            } catch {
+              uploadFailed = true;
+              return src;
+            }
+          })
+        );
+        if (uploadFailed) {
+          toast('Không upload được ảnh mới lên Storage, ảnh được lưu tạm trong bài đăng.', {
+            icon: '⚠️',
+          });
+        }
+        const saved = await updatePost(id, { ...patch, images });
+        setPosts((prev) =>
+          prev.map((post) => (post.id === id ? { ...post, ...patch, ...saved } : post))
+        );
+        return saved;
+      } catch (error) {
+        setPosts(snapshot);
+        toast.error(`Không thể cập nhật tin: ${error.message}`);
+        throw error;
+      }
+    },
+    [currentUser.id, persistDemo, posts]
+  );
+
+  /**
+   * Xoá tin: chuyển sang trạng thái 'deleted' để giữ lịch sử đăng tin.
+   * deleted_by ghi nhận ai xoá (sinh viên tự xoá hay quản trị viên xoá).
+   */
   const removePost = useCallback(
     async (id) => {
+      const patch = {
+        status: 'deleted',
+        deleted_at: new Date().toISOString(),
+        deleted_by: currentUser.id || null,
+      };
       if (!isRemote()) {
-        persistDemo(loadPosts().filter((post) => post.id !== id));
+        persistDemo(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
         return;
       }
       const snapshot = posts;
-      setPosts((prev) => prev.filter((post) => post.id !== id));
+      setPosts((prev) => prev.map((post) => (post.id === id ? { ...post, ...patch } : post)));
       try {
-        await deletePost(id);
+        await deletePost(id, currentUser.id);
       } catch (error) {
         setPosts(snapshot);
         toast.error(`Không thể xóa tin: ${error.message}`);
+      }
+    },
+    [currentUser.id, persistDemo, posts]
+  );
+
+  /** Đăng lại tin đã xoá: quay về trạng thái chưa bán. */
+  const undeletePost = useCallback(
+    async (id) => {
+      const patch = { status: 'active', deleted_at: null, deleted_by: null };
+      if (!isRemote()) {
+        persistDemo(loadPosts().map((post) => (post.id === id ? { ...post, ...patch } : post)));
+        return;
+      }
+      const snapshot = posts;
+      setPosts((prev) => prev.map((post) => (post.id === id ? { ...post, ...patch } : post)));
+      try {
+        await restorePost(id);
+      } catch (error) {
+        setPosts(snapshot);
+        toast.error(`Không thể đăng lại tin: ${error.message}`);
       }
     },
     [persistDemo, posts]
@@ -183,7 +255,9 @@ export function useMarketplace() {
     currentUser,
     reload,
     addPost,
+    editPost,
     removePost,
+    undeletePost,
     markSold,
     relistPost,
     sendInquiry,

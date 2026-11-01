@@ -52,10 +52,17 @@ create table if not exists public.posts (
   images jsonb not null default '[]'::jsonb,
   contact text not null default '',
   location text not null default 'khac',
-  status text not null default 'active' check (status in ('active', 'sold')),
+  status text not null default 'active' check (status in ('active', 'sold', 'deleted')),
   sold_at timestamptz,
+  deleted_at timestamptz,
+  deleted_by uuid references public.profiles (id) on delete set null,
   created_at timestamptz not null default now()
 );
+
+-- Xoá mềm: tin đã xoá vẫn còn dòng để lưu lịch sử đăng tin.
+-- status: active = chưa bán, sold = đã bán, deleted = đã xoá.
+alter table public.posts add column if not exists deleted_at timestamptz;
+alter table public.posts add column if not exists deleted_by uuid references public.profiles (id) on delete set null;
 
 create table if not exists public.post_inquiries (
   id uuid primary key default gen_random_uuid(),
