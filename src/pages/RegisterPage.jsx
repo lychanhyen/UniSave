@@ -9,8 +9,6 @@ import {
   PiggyBank,
   Check,
   ShieldCheck,
-  ShieldPlus,
-  KeyRound,
   Info,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -20,20 +18,16 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import StudentCardUpload from '../components/verification/StudentCardUpload';
 
-const DEMO_ADMIN_INVITE = 'UNISAVE-ADMIN';
-
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { register, demoMode } = useAuth();
   const { active: campusOptions } = useCampuses();
-  const [role, setRole] = useState('student');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mssv, setMssv] = useState('');
   const [campus, setCampus] = useState(() => campusOptions[0]?.value || 'khac');
   const [studentCard, setStudentCard] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Danh sách khu vực có thể thay đổi sau khi tải xong (hoặc admin vừa sửa):
@@ -42,34 +36,22 @@ export default function RegisterPage() {
     ? campus
     : campusOptions[0]?.value || 'khac';
 
-  const isAdmin = role === 'admin';
-
   async function handleSubmit(e) {
     e.preventDefault();
-    if (isAdmin && !demoMode) {
-      toast.error('Tài khoản quản trị được tạo bằng SQL trong Supabase. Xem supabase/README.md.');
-      return;
-    }
     setLoading(true);
     try {
       const result = await register({
         fullName,
         email,
         password,
-        studentCode: isAdmin ? '' : mssv.trim(),
-        campus: isAdmin ? 'khac' : selectedCampus,
-        role,
-        studentCardUrl: isAdmin ? '' : studentCard,
-        inviteCode: isAdmin ? inviteCode.trim() : '',
+        studentCode: mssv.trim(),
+        campus: selectedCampus,
+        role: 'student',
+        studentCardUrl: studentCard,
       });
       if (result?.needsConfirmation) {
         toast.success('Đăng ký thành công! Kiểm tra email để xác nhận tài khoản.');
         navigate('/login');
-        return;
-      }
-      if (isAdmin) {
-        toast.success('Đã tạo tài khoản quản trị viên.');
-        navigate('/admin');
         return;
       }
       toast.success(
@@ -145,48 +127,7 @@ export default function RegisterPage() {
           <h1 className="text-2xl font-extrabold tracking-tight text-ink-900">Tạo tài khoản mới</h1>
           <p className="mt-1.5 text-sm text-ink-500">Chỉ mất 30 giây để bắt đầu tiết kiệm.</p>
 
-          {/* Role switch */}
-          <div className="mt-5 grid grid-cols-2 gap-1 rounded-2xl bg-ink-100 p-1">
-            <button
-              type="button"
-              onClick={() => setRole('student')}
-              className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition ${
-                !isAdmin ? 'bg-white text-ink-900 shadow-soft' : 'text-ink-500 hover:text-ink-800'
-              }`}
-            >
-              <GraduationCap className="h-3.5 w-3.5" />
-              Sinh viên
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole('admin')}
-              disabled={!demoMode}
-              title={demoMode ? 'Tạo tài khoản quản trị bằng mã mời' : 'Tạo quản trị viên bằng SQL trong Supabase'}
-              className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-                isAdmin ? 'bg-white text-ink-900 shadow-soft' : 'text-ink-500 hover:text-ink-800'
-              }`}
-            >
-              <ShieldPlus className="h-3.5 w-3.5" />
-              Quản trị viên
-            </button>
-          </div>
-
-          {isAdmin ? (
-            <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-brand-200/70 bg-ink-50 p-3.5">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-ink-600" />
-              <p className="text-[11px] leading-relaxed text-ink-600">
-                Quản trị viên <strong>không cần mã số sinh viên</strong>. Tài khoản được kích hoạt
-                ngay và có quyền duyệt hồ sơ, quản lý bài đăng, xử lý tố cáo.
-                {demoMode && (
-                  <>
-                    {' '}
-                    Mã mời demo: <strong>{DEMO_ADMIN_INVITE}</strong>
-                  </>
-                )}
-              </p>
-            </div>
-          ) : (
-            <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-amber-100 bg-amber-50/80 p-3.5">
+                      <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-amber-100 bg-amber-50/80 p-3.5">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
               <p className="text-[11px] leading-relaxed text-amber-800">
                 Sau khi đăng ký, hồ sơ ở trạng thái <strong>chờ duyệt</strong>. Quản trị viên kiểm
@@ -194,30 +135,18 @@ export default function RegisterPage() {
                 bài và tạo kèo gom đơn.
               </p>
             </div>
-          )}
 
           <form onSubmit={handleSubmit} className="mt-6">
             <Input
               label="Họ và tên"
               icon={UserRound}
-              placeholder={isAdmin ? 'Quản trị UniSave' : 'Nguyễn Văn A'}
+              placeholder="Nguyễn Văn A"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
             />
 
-            {isAdmin ? (
-              <Input
-                label="Mã mời quản trị"
-                icon={KeyRound}
-                placeholder="UNISAVE-ADMIN"
-                value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value)}
-                hint="Mã mời được cấp bởi quản trị viên hệ thống. Không chia sẻ công khai."
-                required
-              />
-            ) : (
-              <>
+                          <>
                 <Input
                   label="Mã số sinh viên"
                   icon={GraduationCap}
@@ -257,8 +186,6 @@ export default function RegisterPage() {
                   <StudentCardUpload value={studentCard} onChange={setStudentCard} compact />
                 </div>
               </>
-            )}
-
             <Input
               label="Email"
               type="email"
@@ -280,7 +207,7 @@ export default function RegisterPage() {
             />
 
             <Button type="submit" size="lg" loading={loading} className="mt-2 w-full">
-              {isAdmin ? 'Tạo tài khoản quản trị' : 'Đăng ký'}
+              Đăng ký
               <ArrowRight className="h-4 w-4" />
             </Button>
           </form>

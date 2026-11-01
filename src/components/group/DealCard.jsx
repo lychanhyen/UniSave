@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import {
   BadgeCheck,
   Banknote,
@@ -6,7 +6,9 @@ import {
   ChevronDown,
   Clock3,
   Copy,
+  Eye,
   LogOut,
+  Paperclip,
   ShoppingBag,
   Trash2,
   TrendingDown,
@@ -14,10 +16,13 @@ import {
   UserPlus,
   Users,
   Wallet,
+  X,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn, formatCurrency, percentOf, timeLeft } from '../../lib/utils';
 import { getDealMembers } from '../../lib/demoData';
+import { resolveDealBillUrl } from '../../lib/api';
+import { compressImageFile } from '../../lib/image';
 import Avatar from '../ui/Avatar';
 
 const STATUS = {
@@ -35,8 +40,45 @@ export default function DealCard({
   onDelete,
   onDeclarePayment,
   onReviewPayment,
+  onAttachBill,
+  isAdmin = false,
 }) {
   const [showSplit, setShowSplit] = useState(false);
+  const [billBusy, setBillBusy] = useState(false);
+  const [billViewer, setBillViewer] = useState(null);
+  const [billSrc, setBillSrc] = useState('');
+  const [billLoading, setBillLoading] = useState(false);
+  const billInputRef = useRef(null);
+
+  async function openBill(member) {
+    if (!member.bill_url) return;
+    setBillViewer(member);
+    setBillSrc('');
+    setBillLoading(true);
+    try {
+      setBillSrc(await resolveDealBillUrl(member.bill_url));
+    } catch (error) {
+      toast.error(`Không mở được bill: ${error.message}`);
+    } finally {
+      setBillLoading(false);
+    }
+  }
+
+  async function handleBillFile(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setBillBusy(true);
+    try {
+      const dataUrl = await compressImageFile(file, { maxSize: 1400, quality: 0.72 });
+      await onAttachBill?.(deal.id, dataUrl);
+      toast.success('Đã tải bill. Chủ kèo và quản trị viên xem được để đối chiếu.');
+    } catch {
+      /* lỗi đã hiển thị */
+    } finally {
+      setBillBusy(false);
+    }
+  }
   const progress = Math.min(100, percentOf(deal.current_members, deal.min_members));
   const discount =
     deal.original_price > 0
@@ -284,6 +326,32 @@ export default function DealCard({
                               ? 'Chủ kèo báo chưa nhận được tiền'
                               : 'Chưa chuyển khoản'}
                     </p>
+
+                    {(member.bill_url || member.id === currentUserId) && !member.is_owner && (
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                        {member.bill_url && (isOwner || isAdmin || member.id === currentUserId) && (
+                          <button
+                            type="button"
+                            onClick={() => openBill(member)}
+                            className="inline-flex items-center gap-1 rounded-md bg-ink-900 px-1.5 py-0.5 text-[9px] font-bold text-white transition hover:bg-ink-800"
+                          >
+                            <Eye className="h-2.5 w-2.5" />
+                            Xem bill
+                          </button>
+                        )}
+                        {member.id === currentUserId && statusOf(member) !== 'confirmed' && (
+                          <button
+                            type="button"
+                            onClick={() => billInputRef.current?.click()}
+                            disabled={billBusy}
+                            className="inline-flex items-center gap-1 rounded-md border border-brand-200 bg-white px-1.5 py-0.5 text-[9px] font-bold text-brand-700 transition hover:border-brand-300 disabled:opacity-60"
+                          >
+                            <Paperclip className="h-2.5 w-2.5" />
+                            {billBusy ? 'Đang tải…' : member.bill_url ? 'Đổi bill' : 'Tải bill'}
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                   {member.is_owner ? (
                     <span className="chip bg-ink-200 text-[10px] text-ink-600">—</span>
@@ -442,6 +510,60 @@ export default function DealCard({
           </p>
         )}
       </div>
+
+      <input
+        ref={billInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleBillFile}
+      />
+
+      {billViewer && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm"
+            onClick={() => setBillViewer(null)}
+          />
+          <div className="animate-pop relative w-full max-w-md rounded-3xl bg-white p-4 shadow-card">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-ink-900">Bill chuyển khoản</p>
+                <p className="mt-0.5 text-[11px] text-ink-500">
+                  {billViewer.name}
+                  {billViewer.is_owner ? '' : ` · cần chuyển ${formatCurrency(perMember)}`}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBillViewer(null)}
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-xl text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                aria-label="Đóng"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-3 overflow-hidden rounded-2xl border border-brand-200 bg-ink-50">
+              {billLoading ? (
+                <p className="py-16 text-center text-xs font-semibold text-ink-400">Đang tải bill…</p>
+              ) : billSrc ? (
+                <img
+                  src={billSrc}
+                  alt="Bill chuyển khoản"
+                  className="max-h-[60vh] w-full object-contain"
+                />
+              ) : (
+                <p className="py-16 text-center text-xs text-ink-400">Không mở được bill.</p>
+              )}
+            </div>
+
+            <p className="mt-2 text-[10px] leading-relaxed text-ink-400">
+              Bill được lưu riêng tư: chỉ người tải, chủ kèo và quản trị viên UniSave xem được.
+            </p>
+          </div>
+        </div>
+      )}
     </article>
   );
 }

@@ -258,7 +258,8 @@ as $$
     select 1 from public.profiles
     where id = auth.uid()
       and is_locked = false
-      and (is_verified = true or role = 'admin')
+      and is_verified = true
+      and role = 'student'
   );
 $$;
 

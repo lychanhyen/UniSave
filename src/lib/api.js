@@ -226,6 +226,8 @@ function mapDeal(row, participants, profiles) {
         participant.payment_status || (participant.paid ? 'confirmed' : 'unpaid'),
       declared_at: participant.declared_at || null,
       confirmed_at: participant.confirmed_at || null,
+      bill_url: participant.bill_url || '',
+      bill_uploaded_at: participant.bill_uploaded_at || null,
     };
   });
   const owner = members.find((member) => member.is_owner) || {};
@@ -259,7 +261,7 @@ export async function fetchDeals() {
   if (ids.length) {
     const { data, error: participantError } = await supabase
       .from('deal_participants')
-      .select('deal_id, user_id, paid, payment_status, declared_at, confirmed_at')
+      .select('deal_id, user_id, paid, payment_status, declared_at, confirmed_at, bill_url, bill_uploaded_at')
       .in('deal_id', ids);
     if (participantError) throw participantError;
     participants = data || [];
@@ -359,6 +361,31 @@ export async function reviewDealPayment(dealId, userId, accept) {
     p_accept: accept,
   });
   if (error) throw error;
+}
+
+/** Tải bill chuyển khoản lên bucket riêng tư, trả đường dẫn lưu vào DB. */
+export async function uploadDealBill(userId, dealId, dataUrl) {
+  if (!isRemote()) return dataUrl;
+  return uploadPrivateDataUrl('deal-bills', userId, dataUrl, `bill-${String(dealId).slice(0, 8)}`);
+}
+
+/** Gắn bill vào lượt tham gia kèo (RPC tự kiểm tra quyền + báo chủ kèo). */
+export async function attachDealBill(dealId, path) {
+  if (!isRemote()) return;
+  const { error } = await supabase.rpc('deal_attach_bill', { p_deal: dealId, p_path: path });
+  if (error) throw error;
+}
+
+/** Đổi đường dẫn bill thành URL xem được (signed URL, bucket riêng tư). */
+export async function resolveDealBillUrl(value) {
+  if (!value) return '';
+  if (value.startsWith('data:') || value.startsWith('http')) return value;
+  if (!isRemote()) return value;
+  const { data, error } = await supabase.storage
+    .from('deal-bills')
+    .createSignedUrl(value, 60 * 30);
+  if (error) throw error;
+  return data?.signedUrl || '';
 }
 
 export async function deleteDeal(id) {

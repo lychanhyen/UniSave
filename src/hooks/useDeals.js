@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 import {
@@ -10,6 +10,8 @@ import {
   leaveDealRemote,
   declareDealPayment,
   reviewDealPayment,
+  uploadDealBill,
+  attachDealBill,
   deleteDeal,
   pushNotification,
 } from '../lib/api';
@@ -250,6 +252,36 @@ export function useDeals() {
     [persistDemo, deals]
   );
 
+  /** Tải bill chuyển khoản: upload bucket riêng tư rồi gắn vào lượt tham gia. */
+  const attachBill = useCallback(
+    async (id, dataUrl) => {
+      const apply = (billPath) => (deal) => ({
+        ...deal,
+        members: (deal.members || []).map((member) =>
+          member.id === currentUser.id ? { ...member, bill_url: billPath } : member
+        ),
+      });
+
+      if (!isRemote()) {
+        persistDemo(loadDeals().map((deal) => (deal.id === id ? apply(dataUrl)(deal) : deal)));
+        return;
+      }
+
+      const snapshot = deals;
+      setDeals((prev) => prev.map((deal) => (deal.id === id ? apply(dataUrl)(deal) : deal)));
+      try {
+        const path = await uploadDealBill(currentUser.id, id, dataUrl);
+        await attachDealBill(id, path);
+        setDeals((prev) => prev.map((deal) => (deal.id === id ? apply(path)(deal) : deal)));
+      } catch (error) {
+        setDeals(snapshot);
+        toast.error(`Không tải được bill: ${error.message}`);
+        throw error;
+      }
+    },
+    [currentUser.id, persistDemo, deals]
+  );
+
   const removeDeal = useCallback(
     async (id) => {
       if (!isRemote()) {
@@ -278,6 +310,7 @@ export function useDeals() {
     leaveDeal,
     declarePayment,
     reviewPayment,
+    attachBill,
     removeDeal,
   };
 }

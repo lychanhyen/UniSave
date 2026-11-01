@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
@@ -22,7 +22,8 @@ import { formatCompact, isPostExpired, POST_VISIBLE_DAYS } from '../../lib/utils
 export default function MarketplacePage() {
   const { posts, loading, currentUser, removePost, markSold, relistPost } = useMarketplace();
   const navigate = useNavigate();
-  const canPost = Boolean(currentUser.is_verified);
+  // Quản trị viên chỉ kiểm duyệt, không đăng tin hay tạo kèo.
+  const canPost = currentUser.role !== 'admin' && Boolean(currentUser.is_verified);
   const [query, setQuery] = useState('');
   const [type, setType] = useState('all');
   const [category, setCategory] = useState('all');
