@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { supabase } from '../lib/supabase';
 
 const DEMO_ACCOUNTS = [
   {
@@ -60,6 +61,27 @@ export default function LoginPage() {
       goTo(account);
     } catch (error) {
       toast.error(error.message || 'Đăng nhập thất bại');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (!email) {
+      toast.error('Vui lòng nhập email trước.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        emailRedirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(
+        `Đã gửi email đặt lại mật khẩu đến ${email}. Vui lòng kiểm tra hộp thư.`
+      );
+    } catch (error) {
+      toast.error(error.message || 'Không gửi được email đặt lại mật khẩu.');
     } finally {
       setLoading(false);
     }
@@ -168,7 +190,7 @@ export default function LoginPage() {
                 />
                 Ghi nhớ đăng nhập
               </label>
-              <button type="button" className="font-semibold text-brand-600 hover:text-brand-700">
+              <button type="button" onClick={handleResetPassword} className="font-semibold text-brand-600 hover:text-brand-700">
                 Quên mật khẩu?
               </button>
             </div>
