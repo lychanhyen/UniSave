@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowLeft, Banknote, CalendarClock, Sparkles, Truck, Users, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn, formatCurrency } from '../../lib/utils';
@@ -22,6 +22,8 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
   const [minMembers, setMinMembers] = useState(5);
   const [hours, setHours] = useState(24);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const sendingRef = useRef(false);
 
   const savings = Math.max(0, Number(originalPrice) - Number(dealPrice));
   const discount =
@@ -44,22 +46,30 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    if (sendingRef.current) return;
     if (!validate()) {
       toast.error('Vui lòng kiểm tra lại thông tin');
       return;
     }
-    onSubmit?.({
-      title: title.trim(),
-      description: description.trim(),
-      original_price: Number(originalPrice),
-      deal_price: Number(dealPrice),
-      ship_saving: Number(shipSaving) || 0,
-      owner_bank: ownerBank.trim(),
-      min_members: Number(minMembers),
-      deadline: new Date(Date.now() + hours * 3_600_000).toISOString(),
-    });
+    sendingRef.current = true;
+    setSubmitting(true);
+    try {
+      await onSubmit?.({
+        title: title.trim(),
+        description: description.trim(),
+        original_price: Number(originalPrice),
+        deal_price: Number(dealPrice),
+        ship_saving: Number(shipSaving) || 0,
+        owner_bank: ownerBank.trim(),
+        min_members: Number(minMembers),
+        deadline: new Date(Date.now() + hours * 3_600_000).toISOString(),
+      });
+    } finally {
+      sendingRef.current = false;
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -267,13 +277,14 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold text-ink-500 transition hover:bg-ink-100 hover:text-ink-800"
+          disabled={submitting}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold text-ink-500 transition hover:bg-ink-100 hover:text-ink-800 disabled:opacity-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Quay lại
         </button>
-        <Button type="submit" size="lg" className="sm:min-w-48">
-          {submitLabel}
+        <Button type="submit" size="lg" className="sm:min-w-48" loading={submitting} disabled={submitting}>
+          {submitting ? 'Đang lưu…' : submitLabel}
         </Button>
       </div>
     </form>

@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowLeft, Check, MapPin, Phone, Tag, FileText, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
@@ -19,7 +19,11 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
   const [location, setLocation] = useState(initial?.location || fallbackCampus);
   const [contact, setContact] = useState(initial?.contact || '');
   const [images, setImages] = useState(initial?.images || []);
+  const [coverPosition, setCoverPosition] = useState(initial?.cover_position || '50% 50%');
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  // Chặn bấm 2 lần: khoá ngay từ lần bấm đầu, không chờ state re-render.
+  const sendingRef = useRef(false);
 
   // Tin cũ có thể trỏ tới khu vực đã bị ẩn/xoá: vẫn hiển thị để người đăng biết mà sửa.
   const locationOptions =
@@ -40,22 +44,31 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    if (sendingRef.current) return;
     if (!validate()) {
       toast.error('Vui lòng kiểm tra lại thông tin');
       return;
     }
-    onSubmit?.({
-      title: title.trim(),
-      description: description.trim(),
-      type,
-      price: Number(price),
-      category,
-      location,
-      contact: contact.replace(/\s/g, ''),
-      images,
-    });
+    sendingRef.current = true;
+    setSubmitting(true);
+    try {
+      await onSubmit?.({
+        title: title.trim(),
+        description: description.trim(),
+        type,
+        price: Number(price),
+        category,
+        location,
+        contact: contact.replace(/\s/g, ''),
+        images,
+        cover_position: coverPosition,
+      });
+    } finally {
+      sendingRef.current = false;
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -70,7 +83,13 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
             <p className="text-xs text-ink-400">Ảnh rõ ràng giúp tin của bạn bán nhanh hơn.</p>
           </div>
         </div>
-        <ImageUploader value={images} onChange={setImages} max={4} />
+        <ImageUploader
+          value={images}
+          onChange={setImages}
+          max={4}
+          coverPosition={coverPosition}
+          onCoverPositionChange={setCoverPosition}
+        />
       </section>
 
       <section className="card space-y-4 p-5 sm:p-6">
@@ -259,13 +278,14 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold text-ink-500 transition hover:bg-ink-100 hover:text-ink-800"
+          disabled={submitting}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold text-ink-500 transition hover:bg-ink-100 hover:text-ink-800 disabled:opacity-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Quay lại
         </button>
-        <Button type="submit" size="lg" className="sm:min-w-44">
-          {submitLabel}
+        <Button type="submit" size="lg" className="sm:min-w-44" loading={submitting} disabled={submitting}>
+          {submitting ? 'Đang lưu…' : submitLabel}
         </Button>
       </div>
     </form>

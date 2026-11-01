@@ -272,7 +272,15 @@ export default function PostDetailPage() {
               )}
             >
               {current ? (
-                <img src={current} alt={post.title} className="h-full w-full object-cover" />
+                <img
+                  src={current}
+                  alt={post.title}
+                  className="h-full w-full object-cover"
+                  style={{
+                    objectPosition:
+                      activeImage === 0 ? post.cover_position || '50% 50%' : '50% 50%',
+                  }}
+                />
               ) : (
                 <div className="grid h-full place-items-center text-white">
                   <Icon className="h-24 w-24 opacity-90" strokeWidth={1.2} />

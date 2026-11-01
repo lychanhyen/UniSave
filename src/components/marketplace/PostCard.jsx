@@ -33,7 +33,7 @@ export default function PostCard({
   const campusLabel = labelOf(post.location);
 
   return (
-    <article className="card card-hover group flex flex-col overflow-hidden p-0">
+    <article className="card card-hover group flex h-full flex-col overflow-hidden p-0">
       <Link to={`/marketplace/${post.id}`} className="relative block">
         <div className={cn('relative h-44 overflow-hidden bg-gradient-to-br', gradient)}>
           {cover ? (
@@ -42,6 +42,7 @@ export default function PostCard({
               alt={post.title}
               loading="lazy"
               className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+              style={{ objectPosition: post.cover_position || '50% 50%' }}
             />
           ) : (
             <div className="relative grid h-full place-items-center text-white/95">
@@ -83,13 +84,13 @@ export default function PostCard({
           </h3>
         </Link>
 
-        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-ink-400">
+        <div className="mt-2 flex h-11 flex-wrap content-start items-center gap-1.5 overflow-hidden text-xs text-ink-400">
           <span className="chip bg-ink-100 text-ink-600">{category.label}</span>
-          <span className="chip bg-ink-50 text-ink-500 ring-1 ring-ink-100">
+          <span className="chip max-w-[8.5rem] bg-ink-50 text-ink-500 ring-1 ring-ink-100">
             <MapPin className="h-3 w-3" />
             {campusLabel}
           </span>
-          <span className="truncate">{formatRelativeTime(post.created_at)}</span>
+          <span className="shrink-0 truncate">{formatRelativeTime(post.created_at)}</span>
         </div>
 
         <div className="mt-3 flex items-end justify-between gap-2">
@@ -111,7 +112,7 @@ export default function PostCard({
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-2 border-t border-ink-100 pt-3">
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-brand-200/60 pt-3">
           <div className="flex min-w-0 items-center gap-2">
             <Avatar size="sm" name={post.owner_name} src={post.owner_avatar} />
             <div className="min-w-0">

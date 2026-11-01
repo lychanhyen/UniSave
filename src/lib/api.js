@@ -112,6 +112,7 @@ export async function createPost(post) {
     images: post.images || [],
     contact: post.contact,
     location: post.location || 'khac',
+    cover_position: post.cover_position || '50% 50%',
     status: 'active',
   };
   const { data, error } = await supabase.from('posts').insert(row).select().single();
@@ -639,6 +640,23 @@ export async function createReport({ reporter, targetType, targetId, targetLabel
       } “${targetLabel || targetId}”.`,
       link: '/admin/reports',
     });
+
+    // Ở chế độ Supabase, trigger on_report_created_notify_target làm việc này.
+    const reportedId =
+      targetType === 'user'
+        ? targetId
+        : loadPosts().find((post) => post.id === targetId)?.owner_id;
+    if (reportedId && reportedId !== reporter.id) {
+      notifyUserDemo(reportedId, {
+        type: 'report_received',
+        title: 'Bạn đã nhận 1 lượt tố cáo',
+        body: `Có người vừa tố cáo ${
+          targetType === 'post' ? 'tin đăng' : 'tài khoản'
+        } của bạn với lý do “${reason}”. Nếu bạn cho rằng tố cáo này sai sự thật, hãy gửi kháng cáo tới quản trị viên UniSave để được xem xét lại.`,
+        link: targetType === 'post' ? `/marketplace/${targetId}` : '/profile',
+      });
+    }
+
     return item;
   }
 

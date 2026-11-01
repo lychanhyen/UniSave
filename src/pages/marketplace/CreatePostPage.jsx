@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -8,14 +9,20 @@ import { useMarketplace } from '../../hooks/useMarketplace';
 export default function CreatePostPage() {
   const navigate = useNavigate();
   const { addPost } = useMarketplace();
+  // Chặn tạo trùng khi người dùng bấm đăng hai lần lúc mạng còn chậm.
+  const creatingRef = useRef(false);
 
   async function handleSubmit(values) {
+    if (creatingRef.current) return;
+    creatingRef.current = true;
     try {
       const post = await addPost(values);
       toast.success('Đăng tin thành công!');
       navigate(`/marketplace/${post.id}`);
     } catch {
       /* hook đã hiển thị lỗi */
+    } finally {
+      creatingRef.current = false;
     }
   }
 
