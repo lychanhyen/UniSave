@@ -4,11 +4,12 @@
  *
  * Vì sao cần: Vite/rolldown chỉ kiểm cú pháp, không phát hiện một tên được dùng
  * mà chưa import. Lỗi đó chỉ nổ khi mở đúng màn hình (trang trắng) và rất khó
- * thấy khi build vẫn xanh. Đã từng xảy ra với hasPostCoords và Link.
+ * thấy khi build vẫn xanh. Đã từng xảy ra với hasPostCoords, Link và Apple.
  *
- * Hai nhóm kiểm tra:
+ * Ba nhóm kiểm tra:
  *  1. Tên do chính src export (ví dụ hasPostCoords) dùng ở file khác mà chưa import.
- *  2. Tên quen thuộc từ thư viện ngoài (Link, useState, toast...) dùng mà chưa import.
+ *  2. Tên quen thuộc từ thư viện ngoài (Link, useState, toast...).
+ *  3. Tên icon của lucide-react (Apple, Wallet...) — đọc từ chính package cài sẵn.
  *
  * Chạy: node scripts/check-imports.mjs   (hoặc npm run check:imports)
  */
@@ -46,6 +47,16 @@ const EXTERNALS = [
   'createRoot',
   'toast',
 ];
+
+/** Icon lucide đang được dùng trong dự án (lấy từ package đã cài). */
+async function lucideNames() {
+  try {
+    const module = await import('lucide-react');
+    return new Set(Object.keys(module).filter((name) => /^[A-Z]/.test(name)));
+  } catch {
+    return new Set();
+  }
+}
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -125,6 +136,15 @@ function localNames(code) {
       }
     }
   }
+  // Tham số hàm đổi tên trong destructuring, ví dụ ({ icon: Icon }) hoặc ({ tag: Tag }).
+  for (const match of code.matchAll(/(?:function\s+[A-Za-z_$][\w$]*|=>)\s*\(?\s*\{([^{}]*)\}/g)) {
+    for (const part of match[1].split(',')) {
+      const pieces = part.split(':');
+      if (pieces.length < 2) continue;
+      const alias = pieces[1].split('=')[0].trim();
+      if (/^[A-Z][\w$]*$/.test(alias)) names.add(alias);
+    }
+  }
   return names;
 }
 
@@ -132,10 +152,13 @@ function isUsed(body, name) {
   return new RegExp(`(?<![-.:\\w$])${name}(?![\\w$:=])`).test(body);
 }
 
+/** Biến cục bộ hay đặt cho icon, không bao giờ import từ lucide. */
+const ICON_ALIASES = new Set(['Icon', 'Icons', 'ItemIcon', 'Tag']);
+
+const ICONS = await lucideNames();
 const files = walk(ROOT);
 const sources = new Map(files.map((file) => [file, readFileSync(file, 'utf8')]));
 
-// Tên export -> file định nghĩa
 const owners = new Map();
 for (const [file, code] of sources) {
   for (const name of exportsOf(code)) {
@@ -151,21 +174,15 @@ for (const [file, code] of sources) {
   const imported = importedNames(code);
   const local = localNames(code);
 
-  // 1. Tên do src export, dùng ở file khác mà chưa import.
   for (const [name, from] of owners) {
     if (name.length < 3) continue;
     if (from.includes(file)) continue;
     if (from.length !== 1) continue;
     if (imported.has(name) || local.has(name)) continue;
     if (!isUsed(body, name)) continue;
-    problems.push({
-      file: relative(process.cwd(), file),
-      name,
-      definedIn: relative(process.cwd(), from[0]),
-    });
+    problems.push({ file: relative(process.cwd(), file), name, definedIn: relative(process.cwd(), from[0]) });
   }
 
-  // 2. Tên từ thư viện ngoài.
   for (const name of EXTERNALS) {
     if (imported.has(name) || local.has(name)) continue;
     if (!isUsed(body, name)) continue;
@@ -174,6 +191,17 @@ for (const [file, code] of sources) {
       name,
       definedIn: 'thư viện ngoài (react / react-router-dom / react-hot-toast)',
     });
+  }
+
+  // Icon chỉ báo khi thật sự dùng như component: <Icon .../> hoặc icon: Icon
+  // (tránh bắt nhầm Map, Image, Tag... vốn là tên có sẵn của JavaScript).
+  for (const name of ICONS) {
+    if (ICON_ALIASES.has(name)) continue; // Icon/Tag... luôn là biến cục bộ, không import
+    if (imported.has(name) || local.has(name)) continue;
+    const asTag = new RegExp('<' + name + '[\\s/>]').test(body);
+    const asValueProp = new RegExp('\\bicon:\\s*' + name + '\\b').test(body);
+    if (!asTag && !asValueProp) continue;
+    problems.push({ file: relative(process.cwd(), file), name, definedIn: 'lucide-react' });
   }
 }
 

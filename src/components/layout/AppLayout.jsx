@@ -1,5 +1,6 @@
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
+  Apple,
   LayoutDashboard,
   Store,
   Wallet,
@@ -27,6 +28,7 @@ import NotificationBell from './NotificationBell';
 const STUDENT_NAV = [
   { to: '/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
   { to: '/expenses', label: 'Chi tiêu', icon: Wallet },
+  { to: '/nutrition', label: 'Dinh dưỡng', icon: Apple },
   { to: '/marketplace', label: 'Chợ sinh viên', icon: Store },
   { to: '/deals', label: 'Gom đơn', icon: ShoppingBag },
   { to: '/profile', label: 'Hồ sơ', icon: UserRound },

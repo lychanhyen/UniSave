@@ -14,7 +14,6 @@ import {
 import toast from 'react-hot-toast';
 import PageHeader from '../../components/ui/PageHeader';
 import EmptyState from '../../components/ui/EmptyState';
-import FloatingActionButton from '../../components/ui/FloatingActionButton';
 import PostCard from '../../components/marketplace/PostCard';
 import PostMap from '../../components/marketplace/PostMap';
 import FilterTabs from '../../components/marketplace/FilterTabs';
@@ -261,9 +260,6 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {canPost && (
-        <FloatingActionButton to="/marketplace/new" label="Đăng tin" className="lg:hidden" />
-      )}
     </div>
   );
 }

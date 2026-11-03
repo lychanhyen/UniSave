@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  Apple,
   ArrowUpRight,
   Info,
   PiggyBank,
@@ -42,6 +43,7 @@ function Figure({ label, value, tone = 'text-ink-900', note }) {
 
 const QUICK_LINKS = [
   { to: '/expenses', label: 'Ghi chi tiêu', hint: 'Thêm khoản chi, thu nhập', icon: Plus },
+  { to: '/nutrition', label: 'Dinh dưỡng', hint: 'Thực đơn đi chợ một lần', icon: Apple },
   { to: '/marketplace', label: 'Chợ sinh viên', hint: 'Pass đồ, thuê đồ giá rẻ', icon: Store },
   { to: '/deals', label: 'Gom đơn', hint: 'Mua chung, giảm đến 40%', icon: ShoppingBag },
 ];

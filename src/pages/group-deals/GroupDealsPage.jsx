@@ -15,7 +15,6 @@ import {
 import toast from 'react-hot-toast';
 import PageHeader from '../../components/ui/PageHeader';
 import EmptyState from '../../components/ui/EmptyState';
-import FloatingActionButton from '../../components/ui/FloatingActionButton';
 import DealCard from '../../components/group/DealCard';
 import { useDeals } from '../../hooks/useDeals';
 import { DEAL_VISIBLE_DAYS, isDealArchived } from '../../lib/utils';
@@ -269,8 +268,6 @@ export default function GroupDealsPage() {
           </p>
         </div>
       </div>
-
-      {canPost && <FloatingActionButton to="/deals/new" label="Tạo kèo" className="lg:hidden" />}
     </div>
   );
 }
