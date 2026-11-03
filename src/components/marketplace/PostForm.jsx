@@ -6,6 +6,7 @@ import { useCampuses } from '../../context/CampusContext';
 import { POST_CATEGORIES, POST_TYPES } from '../../lib/constants';
 import { Button } from '../ui/Button';
 import ImageUploader from './ImageUploader';
+import LocationPicker from './LocationPicker';
 
 export default function PostForm({ initial, onSubmit, onCancel, submitLabel = 'Đăng tin' }) {
   const { active: campusOptions, itemOf } = useCampuses();
@@ -20,6 +21,11 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
   const [contact, setContact] = useState(initial?.contact || '');
   const [images, setImages] = useState(initial?.images || []);
   const [coverPosition, setCoverPosition] = useState(initial?.cover_position || '50% 50%');
+  const [coords, setCoords] = useState(() => {
+    const lat = Number(initial?.lat);
+    const lng = Number(initial?.lng);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   // Chặn bấm 2 lần: khoá ngay từ lần bấm đầu, không chờ state re-render.
@@ -64,6 +70,8 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
         contact: contact.replace(/\s/g, ''),
         images,
         cover_position: coverPosition,
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
       });
     } finally {
       sendingRef.current = false;
@@ -274,6 +282,13 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
         </div>
       </section>
 
+      <section className="card space-y-4 p-5 sm:p-6">
+        <LocationPicker value={coords} onChange={setCoords} />
+        <p className="text-xs leading-relaxed text-ink-500">
+          Vị trí chỉ dùng để người mua thấy món đồ trên bản đồ chợ và biết nên hẹn ở đâu. Toạ độ
+          được làm tròn trước khi lưu nên không lộ chính xác phòng ở.
+        </p>
+      </section>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         <button
           type="button"

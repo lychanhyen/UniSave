@@ -66,6 +66,9 @@ alter table public.posts add column if not exists deleted_by uuid references pub
 alter table public.posts add column if not exists cover_position text not null default '50% 50%';
 -- Chợ chỉ hiện tin 7 ngày; bumped_at là lần gia hạn gần nhất (created_at giữ nguyên cho lịch sử).
 alter table public.posts add column if not exists bumped_at timestamptz;
+-- Toạ độ cho bản đồ chợ (làm tròn 4 chữ số thập phân trước khi lưu).
+alter table public.posts add column if not exists lat double precision;
+alter table public.posts add column if not exists lng double precision;
 
 create table if not exists public.post_inquiries (
   id uuid primary key default gen_random_uuid(),

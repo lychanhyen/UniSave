@@ -1,6 +1,8 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
+  List,
+  Map as MapIcon,
   Plus,
   Store,
   BadgeCheck,
@@ -14,6 +16,7 @@ import PageHeader from '../../components/ui/PageHeader';
 import EmptyState from '../../components/ui/EmptyState';
 import FloatingActionButton from '../../components/ui/FloatingActionButton';
 import PostCard from '../../components/marketplace/PostCard';
+import PostMap from '../../components/marketplace/PostMap';
 import FilterTabs from '../../components/marketplace/FilterTabs';
 import { useMarketplace } from '../../hooks/useMarketplace';
 import { POST_CATEGORY_MAP } from '../../lib/constants';
@@ -31,6 +34,7 @@ export default function MarketplacePage() {
   const [location, setLocation] = useState('all');
   const [mine, setMine] = useState(false);
   const [nearby, setNearby] = useState(true);
+  const [view, setView] = useState('list');
 
   // Chợ chỉ hiện tin còn hạn 7 ngày và chưa bị xoá.
   const livePosts = useMemo(
@@ -174,6 +178,38 @@ export default function MarketplacePage() {
         />
       </div>
 
+      <div className="animate-in-delay-1 mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[13px] font-semibold text-ink-600">
+          {filtered.length} tin phù hợp
+          <span className="ml-2 font-normal text-ink-400">
+            · {filtered.filter((post) => hasPostCoords(post)).length} tin có ghim vị trí
+          </span>
+        </p>
+        <div className="flex items-center gap-1 rounded-xl border border-brand-200 bg-white p-1">
+          <button
+            type="button"
+            onClick={() => setView('list')}
+            aria-pressed={view === 'list'}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-bold transition ${
+              view === 'list' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:text-brand-700'
+            }`}
+          >
+            <List className="h-3.5 w-3.5" />
+            Danh sách
+          </button>
+          <button
+            type="button"
+            onClick={() => setView('map')}
+            aria-pressed={view === 'map'}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-bold transition ${
+              view === 'map' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:text-brand-700'
+            }`}
+          >
+            <MapIcon className="h-3.5 w-3.5" />
+            Bản đồ
+          </button>
+        </div>
+      </div>
       {loading ? (
         <div className="card animate-in-delay-2 p-12 text-center text-sm font-medium text-ink-500">
           Đang tải tin đăng…
@@ -202,6 +238,10 @@ export default function MarketplacePage() {
               )
             }
           />
+        </div>
+      ) : view === 'map' ? (
+        <div className="animate-in-delay-2">
+          <PostMap posts={filtered} currentUserId={currentUser.id} />
         </div>
       ) : (
         <div className="animate-in-delay-2 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

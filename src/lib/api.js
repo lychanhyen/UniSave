@@ -115,6 +115,8 @@ export async function createPost(post) {
     contact: post.contact,
     location: post.location || 'khac',
     cover_position: post.cover_position || '50% 50%',
+    lat: Number.isFinite(Number(post.lat)) ? Number(post.lat) : null,
+    lng: Number.isFinite(Number(post.lng)) ? Number(post.lng) : null,
     status: 'active',
   };
   const { data, error } = await supabase.from('posts').insert(row).select().single();
