@@ -17,6 +17,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import FloatingActionButton from '../../components/ui/FloatingActionButton';
 import DealCard from '../../components/group/DealCard';
 import { useDeals } from '../../hooks/useDeals';
+import { DEAL_VISIBLE_DAYS, isDealArchived } from '../../lib/utils';
 import { cn, formatCompact } from '../../lib/utils';
 
 const TABS = [
@@ -33,19 +34,22 @@ export default function GroupDealsPage() {
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('all');
 
+  // Kèo đã kết thúc quá 7 ngày thì tự ẩn khỏi danh sách (dữ liệu vẫn giữ).
+  const visibleDeals = useMemo(() => deals.filter((deal) => !isDealArchived(deal)), [deals]);
+
   const stats = useMemo(() => {
-    const active = deals.filter((d) => d.status === 'open');
-    const members = deals.reduce((sum, d) => sum + (d.current_members || 0), 0);
-    const maxDiscount = deals.reduce((max, d) => {
+    const active = visibleDeals.filter((d) => d.status === 'open');
+    const members = visibleDeals.reduce((sum, d) => sum + (d.current_members || 0), 0);
+    const maxDiscount = visibleDeals.reduce((max, d) => {
       if (!d.original_price) return max;
       return Math.max(max, Math.round((1 - d.deal_price / d.original_price) * 100));
     }, 0);
     return { open: active.length, members, maxDiscount };
-  }, [deals]);
+  }, [visibleDeals]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return deals
+    return visibleDeals
       .filter((deal) => {
         if (tab === 'open' && deal.status !== 'open') return false;
         if (tab === 'full' && deal.status !== 'full') return false;
@@ -59,7 +63,7 @@ export default function GroupDealsPage() {
         return `${deal.title} ${deal.description} ${deal.owner_name}`.toLowerCase().includes(q);
       })
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  }, [deals, query, tab, currentUser.id]);
+  }, [visibleDeals, query, tab, currentUser.id]);
 
   async function handleJoin(id) {
     const next = await joinDeal(id);
@@ -99,7 +103,7 @@ export default function GroupDealsPage() {
       <PageHeader
         eyebrow="Gom đơn"
         title="Mua chung, rẻ hơn một nửa"
-        subtitle="Rủ bạn cùng lớp gom đơn để được giá sỉ, freeship và nhiều ưu đãi hơn."
+        subtitle={`Rủ bạn cùng lớp gom đơn để được giá sỉ, freeship và nhiều ưu đãi hơn. Kèo đã kết thúc quá ${DEAL_VISIBLE_DAYS} ngày sẽ tự ẩn.`}
         actions={
           canPost ? (
             <Link to="/deals/new" className="btn-primary">

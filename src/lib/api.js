@@ -12,6 +12,8 @@ import {
   saveNotifications,
   loadInquiries,
   saveInquiries,
+  loadComments as loadDemoComments,
+  saveComments as saveDemoComments,
   loadReports,
   saveReports,
   loadCampuses,
@@ -565,6 +567,69 @@ export async function sendUserNotification(userId, { type, title, body, link }) 
   return true;
 }
 
+/* ------------------------------ Post comments ----------------------------- */
+
+/** Bình luận của một tin đăng, cũ nhất trước để đọc như một mạch hội thoại. */
+export async function fetchComments(postId) {
+  if (!postId) return [];
+  if (!isRemote()) {
+    return loadDemoComments()
+      .filter((item) => item.post_id === postId)
+      .sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+  }
+  const { data, error } = await supabase
+    .from('post_comments')
+    .select('id, post_id, author_id, body, created_at')
+    .eq('post_id', postId)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+
+  const authorIds = [...new Set((data || []).map((row) => row.author_id))];
+  const profiles = authorIds.length ? await fetchProfiles(authorIds) : {};
+  return (data || []).map((row) => ({
+    ...row,
+    author_name: profiles[row.author_id]?.full_name || 'Sinh viên UniSave',
+    author_avatar: profiles[row.author_id]?.avatar_url || '',
+    author_verified: Boolean(profiles[row.author_id]?.is_verified),
+  }));
+}
+
+export async function createComment({ postId, author, body }) {
+  const text = String(body || '').trim();
+  if (!text) throw new Error('Nội dung bình luận đang trống.');
+  const item = {
+    id: newId(),
+    post_id: postId,
+    author_id: author.id,
+    author_name: author.full_name,
+    author_avatar: author.avatar_url || '',
+    author_verified: Boolean(author.is_verified),
+    body: text,
+    created_at: new Date().toISOString(),
+  };
+
+  if (!isRemote()) {
+    saveDemoComments([...loadDemoComments(), item]);
+    return item;
+  }
+
+  const { data, error } = await supabase
+    .from('post_comments')
+    .insert({ post_id: postId, author_id: author.id, body: text })
+    .select('id, post_id, author_id, body, created_at')
+    .single();
+  if (error) throw error;
+  return { ...item, ...data };
+}
+
+export async function deleteComment(id) {
+  if (!isRemote()) {
+    saveDemoComments(loadDemoComments().filter((item) => item.id !== id));
+    return;
+  }
+  const { error } = await supabase.from('post_comments').delete().eq('id', id);
+  if (error) throw error;
+}
 /* ------------------------------ Profiles / admin -------------------------- */
 
 export async function fetchAccounts() {

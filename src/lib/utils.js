@@ -1,4 +1,4 @@
-﻿import clsx from 'clsx';
+import clsx from 'clsx';
 
 export function cn(...inputs) {
   return clsx(...inputs);
@@ -80,6 +80,15 @@ export function postDaysLeft(post) {
   return Math.max(0, Math.ceil(left / (24 * 60 * 60 * 1000)));
 }
 
+/** Kèo gom đơn đã kết thúc quá số ngày này thì tự ẩn khỏi danh sách. */
+export const DEAL_VISIBLE_DAYS = 7;
+
+export function isDealArchived(deal) {
+  if (!deal?.deadline) return false;
+  const end = new Date(deal.deadline).getTime();
+  if (Number.isNaN(end)) return false;
+  return Date.now() - end > DEAL_VISIBLE_DAYS * 24 * 60 * 60 * 1000;
+}
 export function timeLeft(date) {
   const diff = new Date(date).getTime() - Date.now();
   if (Number.isNaN(diff)) return 'Không giới hạn';

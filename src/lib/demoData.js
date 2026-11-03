@@ -512,6 +512,15 @@ export function saveInquiries(list) {
   write('inquiries', list);
 }
 
+export function loadComments() {
+  const existing = read('comments', null);
+  return Array.isArray(existing) ? existing : [];
+}
+
+export function saveComments(list) {
+  write('comments', list);
+}
+
 /* -------------------------------- Campuses ------------------------------- */
 
 /**

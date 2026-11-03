@@ -29,6 +29,7 @@ import VerifiedBadge from '../../components/ui/VerifiedBadge';
 import PostCard from '../../components/marketplace/PostCard';
 import ReportDialog from '../../components/reports/ReportDialog';
 import { useMarketplace } from '../../hooks/useMarketplace';
+import { usePostComments } from '../../hooks/usePostComments';
 import { POST_CATEGORY_MAP, POST_GRADIENTS } from '../../lib/constants';
 import { useCampuses } from '../../context/CampusContext';
 import {
@@ -68,8 +69,18 @@ export default function PostDetailPage() {
   const [sending, setSending] = useState(false);
   const { itemOf } = useCampuses();
   const [reportTarget, setReportTarget] = useState(null);
+  const [commentText, setCommentText] = useState('');
 
   const post = posts.find((p) => p.id === id);
+
+  const {
+    comments,
+    loading: commentsLoading,
+    sending: commentSending,
+    addComment,
+    removeComment,
+    currentUser: commentUser,
+  } = usePostComments(post?.id);
 
   const related = useMemo(() => {
     if (!post) return [];
@@ -450,6 +461,110 @@ export default function PostDetailPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ------------------------------------------------------ Bình luận */}
+          <div className="card-strong animate-in-delay-2 p-5 sm:p-6">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="section-title">Bình luận</h2>
+              <span className="text-[11px] font-semibold tabular-nums text-ink-400">
+                {comments.length} bình luận
+              </span>
+            </div>
+            <p className="mt-1 text-[13px] text-ink-500">
+              Hỏi thêm về món đồ công khai để người bán khác cũng đọc được.
+            </p>
+
+            {commentsLoading ? (
+              <p className="mt-4 rounded-xl bg-ink-50 px-3 py-4 text-center text-[13px] font-medium text-ink-400">
+                Đang tải bình luận…
+              </p>
+            ) : comments.length === 0 ? (
+              <p className="mt-4 rounded-xl bg-ink-50 px-3 py-4 text-center text-[13px] font-medium text-ink-400">
+                Chưa có bình luận nào. Bạn là người đầu tiên?
+              </p>
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {comments.map((item) => {
+                  const canDelete =
+                    item.author_id === commentUser?.id || commentUser?.role === 'admin';
+                  return (
+                    <li key={item.id} className="flex items-start gap-3">
+                      <Avatar
+                        size="sm"
+                        name={item.author_name}
+                        src={item.author_avatar}
+                        verified={item.author_verified}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span className="text-[13px] font-bold text-ink-900">
+                            {item.author_name}
+                          </span>
+                          {item.author_verified && (
+                            <BadgeCheck className="h-3.5 w-3.5 text-brand-600" />
+                          )}
+                          <span className="text-[11px] text-ink-400">
+                            {formatRelativeTime(item.created_at)}
+                          </span>
+                        </div>
+                        <p className="mt-0.5 whitespace-pre-line text-[14px] leading-relaxed text-ink-700">
+                          {item.body}
+                        </p>
+                      </div>
+                      {canDelete && (
+                        <button
+                          type="button"
+                          onClick={() => removeComment(item.id)}
+                          className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-ink-300 transition hover:bg-rose-50 hover:text-rose-600"
+                          aria-label="Xoá bình luận"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            <form
+              onSubmit={async (event) => {
+                event.preventDefault();
+                const text = commentText.trim();
+                if (text.length < 2) {
+                  toast.error('Bình luận cần ít nhất 2 ký tự');
+                  return;
+                }
+                try {
+                  await addComment(text);
+                  setCommentText('');
+                } catch {
+                  /* hook đã hiện lỗi */
+                }
+              }}
+              className="mt-4 border-t border-brand-200/60 pt-4"
+            >
+              <textarea
+                rows={3}
+                value={commentText}
+                onChange={(event) => setCommentText(event.target.value)}
+                placeholder="Ví dụ: Sách còn ghi chú nhiều không bạn? Mình ở KTX Khu A."
+                className="input resize-none"
+                maxLength={600}
+              />
+              <div className="mt-1.5 flex items-center justify-between gap-3">
+                <span className="text-[11px] text-ink-400">{commentText.length}/600</span>
+                <button
+                  type="submit"
+                  disabled={commentSending || commentText.trim().length < 2}
+                  className="btn-primary py-2 text-xs disabled:opacity-60"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  {commentSending ? 'Đang gửi…' : 'Gửi bình luận'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
