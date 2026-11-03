@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { supabase } from '../lib/supabase';
+import coinsBg from '../assets/coins-bg.webp';
 
 const DEMO_ACCOUNTS = [
   {
@@ -127,73 +128,78 @@ export default function LoginPage() {
 
   return (
     <div style={BRAND_SCALE} className="min-h-screen bg-white">
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:py-10">
-        <div className="grid flex-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+      <div className="flex min-h-screen flex-col lg:flex-row">
           {/* ----------------------------------------------------- Khối hình ảnh */}
           <section
-            className="animate-in relative order-2 min-h-[320px] overflow-hidden rounded-[2rem] lg:order-1 lg:min-h-[620px]"
+            className="animate-in relative isolate flex min-h-[360px] flex-col justify-between overflow-hidden p-8 text-white sm:p-10 lg:min-h-screen lg:w-1/2 lg:p-14 xl:p-16"
             style={{ backgroundColor: '#00834a' }}
           >
-            {/* 1. Ảnh khuôn viên neo đáy, rộng 100% */}
+            {/* 1. Ảnh khuôn viên neo đáy giữa khung, rộng 100% */}
             <img
               src={CAMPUS_IMAGE}
               alt="Khuôn viên trường đại học với toà nhà, tháp đồng hồ và cây xanh"
               className="pointer-events-none absolute inset-x-0 bottom-0 w-full select-none"
             />
 
-            {/* 2. Lớp phủ xanh xuyên thấu: ảnh chỉ còn gợi ý dưới nền */}
+            {/* 2. Đồng xu rơi, hoà dưới lớp nền */}
+            <img
+              src={coinsBg}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover opacity-60 mix-blend-screen"
+            />
 
-            <div className="absolute inset-0 bg-[#00834a]/78" />
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[#00351d]/30" />
+            {/* 3. Lớp phủ xanh xuyên thấu: ảnh chỉ còn gợi ý dưới nền */}
+            <div className="absolute inset-0 bg-[#00834a]/72" />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[#00351d]/35" />
 
-            {/* 3. Nội dung nằm trên cùng */}
-            <div className="relative z-10 flex h-full min-h-[320px] flex-col justify-between gap-10 p-7 text-white sm:p-10">
-              <Link to="/" className="flex items-center gap-3">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur">
-                  <PiggyBank className="h-6 w-6" />
+            {/* 4. Nội dung nằm trên cùng */}
+            <div className="relative z-10 flex h-full flex-col justify-between gap-12">
+              <Link to="/" className="flex items-center gap-3.5">
+                <span className="grid h-14 w-14 place-items-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur">
+                  <PiggyBank className="h-7 w-7" />
                 </span>
-                <span className="text-xl font-extrabold tracking-tight">UniSave</span>
+                <span className="text-2xl font-extrabold tracking-tight">UniSave</span>
               </Link>
 
               <div className="max-w-xl">
-                <h2 className="text-balance text-[clamp(2rem,3.9vw,3.25rem)] font-extrabold leading-[1.04] tracking-[-0.03em]">
-                  Quản lý tiền gọn, sống thoải mái.
+                <h2 className="text-balance text-[clamp(2.35rem,4.4vw,3.6rem)] font-extrabold leading-[1.03] tracking-[-0.035em]">
+                  Quản lý tiền gọn,
+                  <br />
+                  sống thoải mái.
                 </h2>
-                <p className="mt-4 max-w-md text-[16px] leading-relaxed text-white/90">
+                <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/90">
                   Theo dõi chi tiêu, nuôi heo đất và săn kèo gom đơn cùng hàng nghìn sinh viên khác.
                 </p>
 
-                <ul className="mt-7 space-y-3">
+                <ul className="mt-9 space-y-4">
                   {[
                     { icon: ShieldCheck, text: 'Quản trị viên duyệt sinh viên thật, chống lừa đảo' },
                     { icon: Sparkles, text: 'Heo đất tự động lớn mỗi ngày' },
                     { icon: Landmark, text: 'Kèo gom đơn tiết kiệm đến 40%' },
                   ].map(({ icon: Icon, text }) => (
-                    <li key={text} className="flex items-start gap-3 text-[15px] leading-relaxed text-white/95">
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-white/80" />
+                    <li
+                      key={text}
+                      className="flex items-start gap-3.5 text-[16px] leading-relaxed text-white/95"
+                    >
+                      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-white/80" />
                       {text}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <p className="text-[13px] font-medium text-white/80">
+              <p className="text-[13px] font-medium text-white/75">
                 © 2026 UniSave. Dành cho sinh viên Việt Nam.
               </p>
             </div>
           </section>
 
           {/* ------------------------------------------------------------ Biểu mẫu */}
-          <section className="animate-in-delay-1 order-1 w-full lg:order-2">
-            <div className="w-full max-w-md lg:ml-auto">
-              <div className="mb-8 flex items-center gap-3 lg:hidden">
-                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 text-white ring-1 ring-brand-700/25">
-                  <PiggyBank className="h-5 w-5" />
-                </span>
-                <span className="text-xl font-extrabold tracking-tight text-ink-900">UniSave</span>
-              </div>
+          <section className="animate-in-delay-1 flex flex-1 items-center justify-center px-6 py-12 sm:px-10 lg:w-1/2 lg:px-14 xl:px-20">
+            <div className="w-full max-w-md">
 
-              <h1 className="text-[1.65rem] font-extrabold leading-tight tracking-[-0.03em] text-ink-900 sm:text-[2rem]">
+              <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-[-0.03em] text-ink-900 sm:text-[2.25rem]">
                 Chào mừng trở lại
               </h1>
               <p className="mt-2 text-[16px] leading-relaxed text-ink-700">
@@ -296,7 +302,6 @@ export default function LoginPage() {
               </p>
             </div>
           </section>
-        </div>
       </div>
     </div>
   );
