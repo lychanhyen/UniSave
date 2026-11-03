@@ -32,6 +32,8 @@ import {
 import {
   adminSetLockedDemo,
   adminSetVerificationDemo,
+  findAccount,
+  publicAccount,
   listStudents,
   notifyAdmins,
   notifyUserDemo,
@@ -641,6 +643,95 @@ export async function sendUserNotification(userId, { type, title, body, link }) 
   return true;
 }
 
+
+/* --------------------------- Trang cá nhân công khai --------------------------- */
+
+/**
+ * Hồ sơ công khai của một sinh viên: thông tin cơ bản, số liệu tổng hợp và
+ * vài tin/kèo gần nhất. Số báo cáo đã nhận lấy từ hàm profile_public_stats
+ * (security definer) vì bảng reports không cho người ngoài đọc.
+ */
+export async function fetchPublicProfile(userId) {
+  if (!userId) throw new Error('Thiếu mã sinh viên.');
+
+  if (!isRemote()) {
+    const account = findAccount(userId);
+    const profile = account ? publicAccount(account) : null;
+    if (!profile) {
+      const error = new Error('Không tìm thấy sinh viên này.');
+      error.code = 'PROFILE_NOT_FOUND';
+      throw error;
+    }
+    const posts = loadPosts().filter((post) => post.owner_id === userId);
+    const deals = loadDeals().filter((deal) => deal.owner_id === userId);
+    const reports = loadReports().filter(
+      (report) =>
+        (report.target_type === 'user' && report.target_id === userId) ||
+        (report.target_type === 'post' && posts.some((post) => post.id === report.target_id)) ||
+        (report.target_type === 'deal' && deals.some((deal) => deal.id === report.target_id))
+    );
+    const visiblePosts = posts.filter((post) => post.status !== 'deleted');
+    return {
+      profile,
+      stats: {
+        posts_total: visiblePosts.length,
+        posts_active: visiblePosts.filter((post) => post.status === 'active').length,
+        posts_sold: visiblePosts.filter((post) => post.status === 'sold').length,
+        deals_total: deals.length,
+        reports_received: reports.length,
+      },
+      posts: visiblePosts.slice(0, 6),
+      deals: deals.slice(0, 6),
+    };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id, full_name, campus, avatar_url, is_verified, role, created_at, verified_at')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (profileError) throw profileError;
+  if (!profile) {
+    const error = new Error('Không tìm thấy sinh viên này.');
+    error.code = 'PROFILE_NOT_FOUND';
+    throw error;
+  }
+
+  const [statsResult, postsResult, dealsResult] = await Promise.all([
+    supabase.rpc('profile_public_stats', { p_user: userId }),
+    supabase
+      .from('posts')
+      .select('id, title, price, type, category, images, status, created_at')
+      .eq('owner_id', userId)
+      .neq('status', 'deleted')
+      .order('created_at', { ascending: false })
+      .limit(6),
+    supabase
+      .from('deals')
+      .select('id, title, deal_price, original_price, status, deadline, current_members, min_members')
+      .eq('owner_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(6),
+  ]);
+
+  if (statsResult.error) throw statsResult.error;
+  if (postsResult.error) throw postsResult.error;
+  if (dealsResult.error) throw dealsResult.error;
+
+  return {
+    profile,
+    stats: statsResult.data || {
+      posts_total: 0,
+      posts_active: 0,
+      posts_sold: 0,
+      deals_total: 0,
+      reports_received: 0,
+    },
+    posts: postsResult.data || [],
+    deals: dealsResult.data || [],
+  };
+}
 /* ------------------------------ Post comments ----------------------------- */
 
 /** Bình luận của một tin đăng, cũ nhất trước để đọc như một mạch hội thoại. */

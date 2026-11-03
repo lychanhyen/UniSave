@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import StudentProfilePage from './pages/StudentProfilePage';
 import SetupPage from './pages/SetupPage';
 import NotFoundPage from './pages/NotFoundPage';
 import VerificationPendingPage from './pages/VerificationPendingPage';
@@ -163,6 +164,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <EditDealPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/u/:id"
+                element={
+                  <ProtectedRoute>
+                    <StudentProfilePage />
                   </ProtectedRoute>
                 }
               />

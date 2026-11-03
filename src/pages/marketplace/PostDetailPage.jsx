@@ -508,9 +508,12 @@ export default function PostDetailPage() {
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                          <span className="text-[13px] font-bold text-ink-900">
+                          <Link
+                            to={`/u/${item.author_id}`}
+                            className="text-[13px] font-bold text-ink-900 hover:text-brand-700"
+                          >
                             {item.author_name}
-                          </span>
+                          </Link>
                           {item.author_verified && (
                             <BadgeCheck className="h-3.5 w-3.5 text-brand-600" />
                           )}
@@ -629,15 +632,19 @@ export default function PostDetailPage() {
 
             <div className="mt-5 rounded-2xl border border-brand-200/70/80 bg-ink-50/60 p-3.5">
               <div className="flex items-center gap-3">
-                <Avatar
-                  size="md"
-                  name={post.owner_name}
-                  src={post.owner_avatar}
-                  verified={post.owner_verified}
-                />
+                <Link to={`/u/${post.owner_id}`} className="shrink-0">
+                  <Avatar
+                    size="md"
+                    name={post.owner_name}
+                    src={post.owner_avatar}
+                    verified={post.owner_verified}
+                  />
+                </Link>
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1.5 truncate text-sm font-bold text-ink-900">
-                    {post.owner_name}
+                    <Link to={`/u/${post.owner_id}`} className="truncate hover:text-brand-700">
+                      {post.owner_name}
+                    </Link>
                     {post.owner_verified && <BadgeCheck className="h-4 w-4 shrink-0 text-brand-600" />}
                   </p>
                   <p className="text-xs text-ink-400">

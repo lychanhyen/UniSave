@@ -231,10 +231,15 @@ export default function DealCard({
           </div>
 
           <div className="flex min-w-0 items-center gap-1.5">
-            <Avatar size="sm" name={deal.owner_name} />
-            <span className="max-w-[7rem] truncate text-[11px] font-semibold text-ink-500">
+            <Link to={`/u/${deal.owner_id}`} className="shrink-0">
+              <Avatar size="sm" name={deal.owner_name} />
+            </Link>
+            <Link
+              to={`/u/${deal.owner_id}`}
+              className="max-w-[7rem] truncate text-[11px] font-semibold text-ink-500 hover:text-brand-700"
+            >
               {deal.owner_name}
-            </span>
+            </Link>
             {deal.owner_verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-brand-600" />}
           </div>
         </div>
