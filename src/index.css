@@ -164,6 +164,26 @@
     @apply text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600;
   }
 
+  /* Nhãn mở đầu trên nền xanh đậm: gạch cam + chữ hồng đào. */
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: #ffb48f;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 23px;
+    height: 2px;
+    background: #ff9d78;
+    border-radius: 2px;
+  }
+
   /* Số tiền chủ đạo — to, chặt, có sức nặng. */
   .figure,
   .figure-xl,

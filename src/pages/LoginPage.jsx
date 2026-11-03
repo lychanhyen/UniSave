@@ -163,10 +163,12 @@ export default function LoginPage() {
               </Link>
 
               <div className="max-w-xl">
+                <p className="hero-eyebrow mb-5">Chào mừng đến với UniSave</p>
+
                 <h2 className="text-balance text-[clamp(2.35rem,4.4vw,3.6rem)] font-extrabold leading-[1.03] tracking-[-0.035em]">
                   Quản lý tiền gọn,
                   <br />
-                  sống thoải mái.
+                  <span className="text-[#ffb48f]">sống thoải mái.</span>
                 </h2>
                 <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/90">
                   Theo dõi chi tiêu, nuôi heo đất và săn kèo gom đơn cùng hàng nghìn sinh viên khác.
