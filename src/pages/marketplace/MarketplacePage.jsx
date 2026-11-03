@@ -21,6 +21,7 @@ import FilterTabs from '../../components/marketplace/FilterTabs';
 import { useMarketplace } from '../../hooks/useMarketplace';
 import { POST_CATEGORY_MAP } from '../../lib/constants';
 import { formatCompact, isPostExpired, POST_VISIBLE_DAYS } from '../../lib/utils';
+import { hasPostCoords } from '../../lib/location';
 
 export default function MarketplacePage() {
   const { posts, loading, currentUser, removePost, markSold, relistPost } = useMarketplace();

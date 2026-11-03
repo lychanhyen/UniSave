@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import MapTiles from './MapTiles';
 import { Check, Crosshair, Loader2, MapPin, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { pinIcon, TILE_ATTRIBUTION, TILE_URL } from '../../lib/leafletSetup';
+import { pinIcon } from '../../lib/leafletSetup';
 import {
   DEFAULT_MAP_CENTER,
   PICKER_MAP_ZOOM,
@@ -135,7 +136,7 @@ export default function LocationPicker({ value, onChange, className }) {
           scrollWheelZoom={false}
           style={{ height: 240, width: '100%' }}
         >
-          <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+          <MapTiles />
           <ClickToPick onPick={commit} />
           <FlyTo target={flyTarget} />
           {hasPoint && (

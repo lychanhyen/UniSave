@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, Popup } from 'react-leaflet';
+import MapTiles from './MapTiles';
 import { ArrowRight, MapPin } from 'lucide-react';
-import { pinIcon, TILE_ATTRIBUTION, TILE_URL } from '../../lib/leafletSetup';
+import { pinIcon } from '../../lib/leafletSetup';
 import { DEFAULT_MAP_ZOOM, hasPostCoords, mapCenterFor } from '../../lib/location';
 import { formatCurrency, formatRelativeTime } from '../../lib/utils';
 import { POST_CATEGORY_MAP } from '../../lib/constants';
@@ -38,7 +39,7 @@ export default function PostMap({ posts = [], currentUserId }) {
         scrollWheelZoom
         style={{ height: 560, width: '100%' }}
       >
-        <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+        <MapTiles />
 
         {pinned.map((post) => {
           const isOwner = post.owner_id === currentUserId;
