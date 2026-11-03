@@ -8,8 +8,11 @@ import {
   deleteExpense,
   fetchBudget,
   saveBudgetRemote,
+  fetchIncomes,
+  createIncome,
+  deleteIncome,
 } from '../lib/api';
-import { loadBudget, saveBudget, loadExpenses, saveExpenses } from '../lib/demoData';
+import { loadBudget, saveBudget, loadExpenses, saveExpenses, loadIncomes, saveIncomes } from '../lib/demoData';
 import { computeBudgetState } from '../lib/budget';
 import { currentMonthKey, todayKey } from '../lib/utils';
 import { useCurrentUser } from './useCurrentUser';
@@ -31,6 +34,7 @@ export function useBudgetStore() {
     isRemote() ? DEFAULT_BUDGET : loadBudget() || DEFAULT_BUDGET
   );
   const [expenses, setExpenses] = useState(() => (isRemote() ? [] : loadExpenses()));
+  const [incomes, setIncomes] = useState(() => (isRemote() ? [] : loadIncomes()));
   const [loading, setLoading] = useState(isRemote());
 
   useEffect(() => {
@@ -39,13 +43,15 @@ export function useBudgetStore() {
     (async () => {
       setLoading(true);
       try {
-        const [remoteBudget, remoteExpenses] = await Promise.all([
+        const [remoteBudget, remoteExpenses, remoteIncomes] = await Promise.all([
           fetchBudget(currentUser.id, currentMonthKey()),
           fetchExpenses(currentUser.id),
+          fetchIncomes(currentUser.id),
         ]);
         if (!mounted) return;
         if (remoteBudget) setBudget(remoteBudget);
         setExpenses(remoteExpenses);
+        setIncomes(remoteIncomes);
       } catch (error) {
         toast.error(`Không tải được dữ liệu ngân sách: ${error.message}`);
       } finally {
@@ -127,6 +133,73 @@ export function useBudgetStore() {
     [expenses]
   );
 
+
+  /** Thêm thu nhập: ghi một dòng riêng rồi cộng thẳng vào ngân sách tháng. */
+  const addIncome = useCallback(
+    async (income) => {
+      const item = {
+        amount: Number(income.amount) || 0,
+        source: income.source || 'other',
+        note: String(income.note || '').trim(),
+        date: income.date || todayKey(),
+      };
+      if (item.amount <= 0) throw new Error('Số tiền thu nhập phải lớn hơn 0.');
+
+      const nextBudget = {
+        ...budget,
+        total_amount: (Number(budget.total_amount) || 0) + item.amount,
+      };
+
+      if (!isRemote()) {
+        const saved = { ...item, id: newId(), created_at: new Date().toISOString() };
+        const nextIncomes = [saved, ...loadIncomes()];
+        saveIncomes(nextIncomes);
+        setIncomes(nextIncomes);
+        saveBudget(nextBudget);
+        setBudget(nextBudget);
+        return saved;
+      }
+
+      const saved = await createIncome(currentUser.id, item);
+      setIncomes((prev) => [saved, ...prev]);
+      setBudget(nextBudget);
+      saveBudgetRemote(currentUser.id, nextBudget).catch((error) =>
+        toast.error(`Không lưu được ngân sách: ${error.message}`)
+      );
+      return saved;
+    },
+    [budget, currentUser.id]
+  );
+
+  /** Xoá thu nhập: trừ lại đúng số tiền đã cộng vào ngân sách. */
+  const removeIncome = useCallback(
+    async (id) => {
+      const target = incomes.find((item) => item.id === id);
+      if (!target) return;
+      const nextBudget = {
+        ...budget,
+        total_amount: Math.max(0, (Number(budget.total_amount) || 0) - (Number(target.amount) || 0)),
+      };
+
+      const snapshot = incomes;
+      setIncomes((prev) => prev.filter((item) => item.id !== id));
+      setBudget(nextBudget);
+
+      try {
+        await deleteIncome(id);
+        if (isRemote()) {
+          await saveBudgetRemote(currentUser.id, nextBudget);
+        } else {
+          saveBudget(nextBudget);
+        }
+      } catch (error) {
+        setIncomes(snapshot);
+        setBudget(budget);
+        toast.error(`Không xoá được thu nhập: ${error.message}`);
+      }
+    },
+    [budget, currentUser.id, incomes]
+  );
   const updateBudget = useCallback(
     (totalAmount, month = new Date().getMonth() + 1) => {
       const year = new Date().getFullYear();
@@ -151,5 +224,16 @@ export function useBudgetStore() {
 
   const state = useMemo(() => computeBudgetState(budget, expenses), [budget, expenses]);
 
-  return { budget, expenses, state, loading, addExpense, removeExpense, updateBudget };
+  return {
+    budget,
+    expenses,
+    incomes,
+    state,
+    loading,
+    addExpense,
+    removeExpense,
+    addIncome,
+    removeIncome,
+    updateBudget,
+  };
 }

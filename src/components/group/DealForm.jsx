@@ -12,15 +12,17 @@ const QUICK_HOURS = [
   { value: 72, label: '3 ngày' },
 ];
 
-export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo gom đơn' }) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [originalPrice, setOriginalPrice] = useState('');
-  const [dealPrice, setDealPrice] = useState('');
-  const [shipSaving, setShipSaving] = useState('');
-  const [ownerBank, setOwnerBank] = useState('');
-  const [minMembers, setMinMembers] = useState(5);
-  const [hours, setHours] = useState(24);
+export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'Tạo kèo gom đơn' }) {
+  const editing = Boolean(initial?.id);
+  const [title, setTitle] = useState(initial?.title || '');
+  const [description, setDescription] = useState(initial?.description || '');
+  const [originalPrice, setOriginalPrice] = useState(initial?.original_price ?? '');
+  const [dealPrice, setDealPrice] = useState(initial?.deal_price ?? '');
+  const [shipSaving, setShipSaving] = useState(initial?.ship_saving ?? '');
+  const [ownerBank, setOwnerBank] = useState(initial?.owner_bank || '');
+  const [minMembers, setMinMembers] = useState(initial?.min_members ?? 5);
+  // 0 = giữ nguyên hạn chót hiện tại (chỉ dùng khi sửa kèo).
+  const [hours, setHours] = useState(editing ? 0 : 24);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const sendingRef = useRef(false);
@@ -64,7 +66,10 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
         ship_saving: Number(shipSaving) || 0,
         owner_bank: ownerBank.trim(),
         min_members: Number(minMembers),
-        deadline: new Date(Date.now() + hours * 3_600_000).toISOString(),
+        deadline:
+          editing && hours === 0
+            ? initial.deadline
+            : new Date(Date.now() + hours * 3_600_000).toISOString(),
       });
     } finally {
       sendingRef.current = false;
@@ -224,6 +229,7 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
                 onChange={(e) => setHours(Number(e.target.value))}
                 className="input appearance-none pl-10"
               >
+                {editing && <option value={0}>Giữ nguyên hạn chót hiện tại</option>}
                 {QUICK_HOURS.map((option) => (
                   <option key={option.value} value={option.value}>
                     Sau {option.label}
@@ -235,6 +241,20 @@ export default function DealForm({ onSubmit, onCancel, submitLabel = 'Tạo kèo
         </div>
 
         <div className="flex flex-wrap gap-2">
+          {editing && (
+            <button
+              type="button"
+              onClick={() => setHours(0)}
+              className={cn(
+                'chip border transition',
+                hours === 0
+                  ? 'border-ink-900 bg-ink-900 text-white'
+                  : 'border-brand-200/70 bg-white text-ink-600 hover:border-ink-300'
+              )}
+            >
+              Giữ nguyên
+            </button>
+          )}
           {QUICK_HOURS.map((option) => (
             <button
               key={option.value}

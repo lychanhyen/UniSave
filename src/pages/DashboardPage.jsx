@@ -27,6 +27,7 @@ import PiggyForecast from '../components/budget/PiggyForecast';
 import DailyFundStatus from '../components/budget/DailyFundStatus';
 import WeekChart from '../components/budget/WeekChart';
 import ExpenseCalendar from '../components/budget/ExpenseCalendar';
+import IncomeCard from '../components/budget/IncomeCard';
 import OverspendAlert from '../components/budget/OverspendAlert';
 
 function greeting() {
@@ -49,7 +50,17 @@ function Figure({ label, value, tone = 'text-ink-900', note }) {
 
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
-  const { budget, expenses, state, addExpense, removeExpense, updateBudget } = useBudgetStore();
+  const {
+    budget,
+    expenses,
+    incomes,
+    state,
+    addExpense,
+    removeExpense,
+    addIncome,
+    removeIncome,
+    updateBudget,
+  } = useBudgetStore();
   const [showBudget, setShowBudget] = useState(false);
   const formRef = useRef(null);
 
@@ -179,6 +190,13 @@ export default function DashboardPage() {
           <div ref={formRef}>
             <ExpenseForm onAdd={handleAdd} />
           </div>
+
+          <IncomeCard
+            incomes={incomes}
+            monthKey={state.monthKey}
+            onAdd={addIncome}
+            onRemove={removeIncome}
+          />
 
           {/* Sổ chi tiêu gần đây */}
           <section className="card-strong px-5 py-5 sm:px-6">

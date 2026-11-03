@@ -520,6 +520,14 @@ export function loadComments() {
 export function saveComments(list) {
   write('comments', list);
 }
+export function loadIncomes() {
+  const existing = read('incomes', null);
+  return Array.isArray(existing) ? existing : [];
+}
+
+export function saveIncomes(list) {
+  write('incomes', list);
+}
 
 /* -------------------------------- Campuses ------------------------------- */
 

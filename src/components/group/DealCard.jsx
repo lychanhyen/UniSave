@@ -8,6 +8,7 @@ import {
   Copy,
   Eye,
   Flag,
+  PencilLine,
   LogOut,
   Paperclip,
   ShoppingBag,
@@ -40,6 +41,7 @@ export default function DealCard({
   onJoin,
   onLeave,
   onDelete,
+  onEdit,
   onDeclarePayment,
   onReviewPayment,
   onAttachBill,
@@ -525,6 +527,18 @@ export default function DealCard({
               aria-label="Tố cáo kèo"
             >
               <Flag className="h-4 w-4" />
+            </button>
+          )}
+
+          {isOwner && (
+            <button
+              type="button"
+              onClick={() => onEdit?.(deal.id)}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-brand-200/70 text-ink-500 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+              title="Sửa kèo"
+              aria-label="Sửa kèo"
+            >
+              <PencilLine className="h-4 w-4" />
             </button>
           )}
 

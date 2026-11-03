@@ -12,6 +12,8 @@ import {
   saveNotifications,
   loadInquiries,
   saveInquiries,
+  loadIncomes,
+  saveIncomes,
   loadComments as loadDemoComments,
   saveComments as saveDemoComments,
   loadReports,
@@ -37,6 +39,7 @@ import {
   updateOwnAccount,
 } from './demoAuth';
 import { uploadDataUrl, uploadPrivateDataUrl } from './upload';
+import { todayKey } from './utils';
 
 /**
  * Lớp dữ liệu dùng chung.
@@ -392,6 +395,17 @@ export async function resolveDealBillUrl(value) {
   return data?.signedUrl || '';
 }
 
+/** Sửa nội dung kèo gom đơn (không đụng danh sách người tham gia). */
+export async function updateDeal(id, patch) {
+  if (!isRemote()) {
+    saveDeals(loadDeals().map((deal) => (deal.id === id ? { ...deal, ...patch } : deal)));
+    return patch;
+  }
+  const { error } = await supabase.from('deals').update(patch).eq('id', id);
+  if (error) throw error;
+  return patch;
+}
+
 export async function deleteDeal(id) {
   if (!isRemote()) {
     saveDeals(loadDeals().filter((deal) => deal.id !== id));
@@ -401,6 +415,64 @@ export async function deleteDeal(id) {
   if (error) throw error;
 }
 
+
+/* -------------------------------- Thu nhập -------------------------------- */
+
+/** Thu nhập thêm của người dùng, mới nhất trước. */
+export async function fetchIncomes(userId) {
+  if (!isRemote()) {
+    return loadIncomes().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  }
+  const { data, error } = await supabase
+    .from('incomes')
+    .select('*')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map((row) => ({ ...row, amount: Number(row.amount) || 0 }));
+}
+
+export async function createIncome(userId, income) {
+  const item = {
+    id: newId(),
+    user_id: userId,
+    amount: Number(income.amount) || 0,
+    source: income.source || 'other',
+    note: String(income.note || '').trim(),
+    date: income.date || todayKey(),
+    created_at: new Date().toISOString(),
+  };
+
+  if (!isRemote()) {
+    saveIncomes([item, ...loadIncomes()]);
+    return item;
+  }
+
+  const { data, error } = await supabase
+    .from('incomes')
+    .insert({
+      id: item.id,
+      user_id: userId,
+      amount: item.amount,
+      source: item.source,
+      note: item.note,
+      date: item.date,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return { ...item, ...data, amount: Number(data.amount) || item.amount };
+}
+
+export async function deleteIncome(id) {
+  if (!isRemote()) {
+    saveIncomes(loadIncomes().filter((item) => item.id !== id));
+    return;
+  }
+  const { error } = await supabase.from('incomes').delete().eq('id', id);
+  if (error) throw error;
+}
 /* --------------------------------- Budget --------------------------------- */
 
 export async function fetchExpenses(userId) {

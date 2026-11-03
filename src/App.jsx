@@ -16,6 +16,7 @@ import CreatePostPage from './pages/marketplace/CreatePostPage';
 import EditPostPage from './pages/marketplace/EditPostPage';
 import GroupDealsPage from './pages/group-deals/GroupDealsPage';
 import CreateDealPage from './pages/group-deals/CreateDealPage';
+import EditDealPage from './pages/group-deals/EditDealPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminStudentsPage from './pages/admin/AdminStudentsPage';
 import AdminPostsPage from './pages/admin/AdminPostsPage';
@@ -155,6 +156,14 @@ export default function App() {
                   <VerifiedRoute>
                     <CreateDealPage />
                   </VerifiedRoute>
+                }
+              />
+              <Route
+                path="/deals/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditDealPage />
+                  </ProtectedRoute>
                 }
               />
               <Route

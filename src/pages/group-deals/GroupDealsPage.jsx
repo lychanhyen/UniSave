@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {
   Plus,
@@ -28,6 +29,7 @@ const TABS = [
 ];
 
 export default function GroupDealsPage() {
+  const navigate = useNavigate();
   const { deals, currentUser, joinDeal, leaveDeal, declarePayment, reviewPayment, attachBill, removeDeal } = useDeals();
   // Quản trị viên chỉ kiểm duyệt, không đăng tin hay tạo kèo.
   const canPost = currentUser.role !== 'admin' && Boolean(currentUser.is_verified);
@@ -78,6 +80,10 @@ export default function GroupDealsPage() {
   async function handleLeave(id) {
     await leaveDeal(id);
     toast('Bạn đã rời kèo gom đơn', { icon: '👋' });
+  }
+
+  function handleEditDeal(id) {
+    navigate(`/deals/${id}/edit`);
   }
 
   async function handleDelete(id) {
@@ -240,6 +246,7 @@ export default function GroupDealsPage() {
               onJoin={handleJoin}
               onLeave={handleLeave}
               onDelete={handleDelete}
+              onEdit={handleEditDeal}
               onDeclarePayment={handleDeclarePayment}
               onReviewPayment={handleReviewPayment}
               onAttachBill={attachBill}

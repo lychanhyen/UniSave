@@ -133,3 +133,17 @@ export const TIPS = [
   'Chỉ mua đồ pass khi thật sự cần, đừng vì rẻ mà mua.',
   'Mỗi cuối tuần, xem lại 7 ngày qua để điều chỉnh tuần tới.',
 ];
+
+/** Nguồn thu nhập thêm để nạp vào ngân sách tháng. */
+export const INCOME_SOURCES = [
+  { value: 'parttime', label: 'Làm thêm / part-time' },
+  { value: 'salary', label: 'Lương thực tập' },
+  { value: 'family', label: 'Gia đình gửi' },
+  { value: 'scholarship', label: 'Học bổng' },
+  { value: 'sell', label: 'Bán đồ cũ' },
+  { value: 'other', label: 'Khoản khác' },
+];
+
+export const INCOME_SOURCE_MAP = Object.fromEntries(
+  INCOME_SOURCES.map((item) => [item.value, item])
+);

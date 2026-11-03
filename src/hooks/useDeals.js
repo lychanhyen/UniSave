@@ -12,6 +12,7 @@ import {
   reviewDealPayment,
   uploadDealBill,
   attachDealBill,
+  updateDeal,
   deleteDeal,
   pushNotification,
 } from '../lib/api';
@@ -282,6 +283,27 @@ export function useDeals() {
     [currentUser.id, persistDemo, deals]
   );
 
+  /** Sửa nội dung kèo: chỉ chủ kèo gọi, cập nhật lạc quan rồi hoàn tác nếu lỗi. */
+  const editDeal = useCallback(
+    async (id, patch) => {
+      if (!isRemote()) {
+        persistDemo(loadDeals().map((deal) => (deal.id === id ? { ...deal, ...patch } : deal)));
+        return patch;
+      }
+      const snapshot = deals;
+      setDeals((prev) => prev.map((deal) => (deal.id === id ? { ...deal, ...patch } : deal)));
+      try {
+        await updateDeal(id, patch);
+      } catch (error) {
+        setDeals(snapshot);
+        toast.error(`Không thể cập nhật kèo: ${error.message}`);
+        throw error;
+      }
+      return patch;
+    },
+    [deals, persistDemo]
+  );
+
   const removeDeal = useCallback(
     async (id) => {
       if (!isRemote()) {
@@ -310,6 +332,7 @@ export function useDeals() {
     leaveDeal,
     declarePayment,
     reviewPayment,
+    editDeal,
     attachBill,
     removeDeal,
   };
