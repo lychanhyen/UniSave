@@ -103,7 +103,7 @@ export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'T
                 onChange={(e) => setOriginalPrice(e.target.value)}
                 placeholder="45000"
                 min={0}
-                step={1000}
+                step={1}
                 className={cn('input pl-10', errors.originalPrice && 'border-rose-400')}
               />
             </div>
@@ -122,7 +122,7 @@ export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'T
                 onChange={(e) => setDealPrice(e.target.value)}
                 placeholder="33000"
                 min={0}
-                step={1000}
+                step={1}
                 className={cn('input pl-10', errors.dealPrice && 'border-rose-400')}
               />
             </div>
@@ -176,7 +176,7 @@ export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'T
                 onChange={(e) => setShipSaving(e.target.value)}
                 placeholder="15000"
                 min={0}
-                step={1000}
+                step={1}
                 className="input pl-10"
               />
             </div>

@@ -16,6 +16,7 @@ import {
   Phone,
   RotateCcw,
   Send,
+  ShieldAlert,
   ShieldCheck,
   Store,
   Tag,
@@ -537,43 +538,62 @@ export default function PostDetailPage() {
               </ul>
             )}
 
-            <form
-              onSubmit={async (event) => {
-                event.preventDefault();
-                const text = commentText.trim();
-                if (text.length < 2) {
-                  toast.error('Bình luận cần ít nhất 2 ký tự');
-                  return;
-                }
-                try {
-                  await addComment(text);
-                  setCommentText('');
-                } catch {
-                  /* hook đã hiện lỗi */
-                }
-              }}
-              className="mt-4 border-t border-brand-200/60 pt-4"
-            >
-              <textarea
-                rows={3}
-                value={commentText}
-                onChange={(event) => setCommentText(event.target.value)}
-                placeholder="Ví dụ: Sách còn ghi chú nhiều không bạn? Mình ở KTX Khu A."
-                className="input resize-none"
-                maxLength={600}
-              />
-              <div className="mt-1.5 flex items-center justify-between gap-3">
-                <span className="text-[11px] text-ink-400">{commentText.length}/600</span>
-                <button
-                  type="submit"
-                  disabled={commentSending || commentText.trim().length < 2}
-                  className="btn-primary py-2 text-xs disabled:opacity-60"
-                >
-                  <Send className="h-3.5 w-3.5" />
-                  {commentSending ? 'Đang gửi…' : 'Gửi bình luận'}
-                </button>
+            {commentUser &&
+            (commentUser.role === 'admin' || commentUser.is_verified) ? (
+              <form
+                onSubmit={async (event) => {
+                  event.preventDefault();
+                  const text = commentText.trim();
+                  if (text.length < 2) {
+                    toast.error('Bình luận cần ít nhất 2 ký tự');
+                    return;
+                  }
+                  try {
+                    await addComment(text);
+                    setCommentText('');
+                  } catch {
+                    /* hook đã hiện lỗi */
+                  }
+                }}
+                className="mt-4 border-t border-brand-200/60 pt-4"
+              >
+                <textarea
+                  rows={3}
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
+                  placeholder="Ví dụ: Sách còn ghi chú nhiều không bạn? Mình ở KTX Khu A."
+                  className="input resize-none"
+                  maxLength={600}
+                />
+                <div className="mt-1.5 flex items-center justify-between gap-3">
+                  <span className="text-[11px] text-ink-400">{commentText.length}/600</span>
+                  <button
+                    type="submit"
+                    disabled={commentSending || commentText.trim().length < 2}
+                    className="btn-primary py-2 text-xs disabled:opacity-60"
+                  >
+                    <Send className="h-3.5 w-3.5" />
+                    {commentSending ? 'Đang gửi…' : 'Gửi bình luận'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="mt-4 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4">
+                <p className="flex items-center gap-2 text-[13px] font-bold text-amber-900">
+                  <ShieldAlert className="h-4 w-4" />
+                  Bạn cần xác minh sinh viên trước khi bình luận
+                </p>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-amber-800">
+                  Bình luận là công khai và hiện tên bạn, nên UniSave chỉ mở cho tài khoản đã được
+                  quản trị viên duyệt sinh viên. Gửi yêu cầu xác minh để bình luận ngay sau khi được
+                  duyệt.
+                </p>
+                <Link to="/profile" className="btn-secondary mt-3 py-2 text-xs">
+                  <ShieldAlert className="h-3.5 w-3.5 text-amber-600" />
+                  Gửi yêu cầu xác minh
+                </Link>
               </div>
-            </form>
+            )}
           </div>
         </div>
 

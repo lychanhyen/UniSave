@@ -1004,9 +1004,19 @@ drop policy if exists "comments readable by signed in" on public.post_comments;
 create policy "comments readable by signed in" on public.post_comments
   for select to authenticated using (true);
 
+-- Bình luận chỉ dành cho tài khoản đã xác minh sinh viên (hoặc quản trị viên).
 drop policy if exists "users write own comments" on public.post_comments;
 create policy "users write own comments" on public.post_comments
-  for insert to authenticated with check (author_id = auth.uid() and public.can_post());
+  for insert to authenticated with check (
+    author_id = auth.uid()
+    and exists (
+      select 1
+      from public.profiles p
+      where p.id = auth.uid()
+        and p.is_locked = false
+        and (p.is_verified = true or p.role = 'admin')
+    )
+  );
 
 drop policy if exists "users delete own comments" on public.post_comments;
 create policy "users delete own comments" on public.post_comments

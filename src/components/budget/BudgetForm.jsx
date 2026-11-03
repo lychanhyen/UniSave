@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
@@ -38,7 +38,7 @@ export default function BudgetForm({
           onChange={(e) => setAmount(e.target.value)}
           placeholder="5.000.000"
           min={100000}
-          step={100000}
+          step={1}
         />
         <Input
           label="Tháng"

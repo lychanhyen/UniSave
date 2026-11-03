@@ -130,7 +130,7 @@ export default function IncomeCard({ incomes = [], monthKey, onAdd, onRemove }) 
                 id="income-amount"
                 type="number"
                 min={0}
-                step={10000}
+                step={1}
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
                 placeholder="1500000"

@@ -229,7 +229,7 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = 'Ä
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="65000"
                 min={0}
-                step={1000}
+                step={1}
                 className={cn('input pl-10', errors.price && 'border-rose-400')}
               />
             </div>

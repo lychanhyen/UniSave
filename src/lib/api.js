@@ -692,7 +692,14 @@ export async function createComment({ postId, author, body }) {
     .insert({ post_id: postId, author_id: author.id, body: text })
     .select('id, post_id, author_id, body, created_at')
     .single();
-  if (error) throw error;
+  if (error) {
+    if (error.code === '42501' || error.status === 403) {
+      throw new Error(
+        'Bạn cần được quản trị viên xác minh sinh viên trước khi bình luận. Vào Hồ sơ để gửi yêu cầu xác minh.'
+      );
+    }
+    throw error;
+  }
   return { ...item, ...data };
 }
 

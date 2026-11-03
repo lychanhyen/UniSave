@@ -371,7 +371,7 @@ export default function ExpenseCalendar({
                       id="cal-amount"
                       type="number"
                       min={0}
-                      step={1000}
+                      step={1}
                       value={amount}
                       onChange={(event) => setAmount(event.target.value)}
                       placeholder="25000"
