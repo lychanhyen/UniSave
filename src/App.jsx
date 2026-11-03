@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
+import ExpensesPage from './pages/ExpensesPage';
 import ProfilePage from './pages/ProfilePage';
 import StudentProfilePage from './pages/StudentProfilePage';
 import SetupPage from './pages/SetupPage';
@@ -108,6 +109,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/expenses"
+                element={
+                  <ProtectedRoute>
+                    <ExpensesPage />
                   </ProtectedRoute>
                 }
               />

@@ -1,7 +1,8 @@
-﻿import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Store,
+  Wallet,
   ShoppingBag,
   UserRound,
   PiggyBank,
@@ -25,6 +26,7 @@ import NotificationBell from './NotificationBell';
 
 const STUDENT_NAV = [
   { to: '/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
+  { to: '/expenses', label: 'Chi tiêu', icon: Wallet },
   { to: '/marketplace', label: 'Chợ sinh viên', icon: Store },
   { to: '/deals', label: 'Gom đơn', icon: ShoppingBag },
   { to: '/profile', label: 'Hồ sơ', icon: UserRound },
@@ -334,7 +336,7 @@ export default function AppLayout({ children }) {
         {/* Mobile bottom nav */}
         <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-brand-200/70 bg-ink-50/95 px-2 pb-2 pt-1.5 backdrop-blur-xl lg:hidden">
           <div className="mx-auto flex max-w-md items-center justify-around">
-            {navItems.slice(0, 4).map((item) => {
+            {navItems.slice(0, 5).map((item) => {
               const Icon = item.icon;
               const active = location.pathname === item.to;
               return (

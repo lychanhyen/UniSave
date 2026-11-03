@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 /**
- * Soát import còn thiếu giữa các module trong src.
+ * Soát import còn thiếu trong src.
  *
- * Vì sao cần: Vite/rolldown chỉ kiểm cú pháp, không phát hiện một hàm được dùng
+ * Vì sao cần: Vite/rolldown chỉ kiểm cú pháp, không phát hiện một tên được dùng
  * mà chưa import. Lỗi đó chỉ nổ khi mở đúng màn hình (trang trắng) và rất khó
- * thấy khi build vẫn xanh.
+ * thấy khi build vẫn xanh. Đã từng xảy ra với hasPostCoords và Link.
  *
- * Cách làm:
- *  1. Thu tên export của từng file trong src.
- *  2. Chỉ xét những tên duy nhất do đúng một file export (tránh trùng tên phổ biến).
- *  3. Trong mỗi file khác, nếu tên đó xuất hiện mà file không import và cũng không
- *     tự khai báo thì báo thiếu.
+ * Hai nhóm kiểm tra:
+ *  1. Tên do chính src export (ví dụ hasPostCoords) dùng ở file khác mà chưa import.
+ *  2. Tên quen thuộc từ thư viện ngoài (Link, useState, toast...) dùng mà chưa import.
  *
- * Chạy: node scripts/check-imports.mjs
+ * Chạy: node scripts/check-imports.mjs   (hoặc npm run check:imports)
  */
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -21,6 +19,33 @@ import { join, relative, resolve } from 'node:path';
 const ROOT = resolve(process.cwd(), 'src');
 const EXT = /\.(js|jsx)$/;
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.git', 'assets', 'public']);
+
+const EXTERNALS = [
+  'Link',
+  'NavLink',
+  'Navigate',
+  'Outlet',
+  'useNavigate',
+  'useParams',
+  'useLocation',
+  'useSearchParams',
+  'useState',
+  'useEffect',
+  'useMemo',
+  'useCallback',
+  'useRef',
+  'useReducer',
+  'useContext',
+  'createContext',
+  'useLayoutEffect',
+  'useId',
+  'memo',
+  'lazy',
+  'Suspense',
+  'forwardRef',
+  'createRoot',
+  'toast',
+];
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -36,7 +61,7 @@ function walk(dir, out = []) {
   return out;
 }
 
-/** Bỏ comment và chuỗi để không bắt nhầm "line-clamp", "read:" hay tên trong import. */
+/** Bỏ comment, chuỗi và câu import để không bắt nhầm tên trong đó. */
 function stripNoise(code) {
   return code
     .replace(/import\s+[\s\S]*?\s+from\s+['"][^'"]+['"]\s*;?/g, '')
@@ -47,6 +72,7 @@ function stripNoise(code) {
     .replace(/"(?:[^"\\]|\\.)*"/g, '""')
     .replace(/`(?:[^`\\]|\\.)*`/g, '``');
 }
+
 function exportsOf(code) {
   const names = new Set();
   const patterns = [
@@ -102,10 +128,14 @@ function localNames(code) {
   return names;
 }
 
+function isUsed(body, name) {
+  return new RegExp(`(?<![-.:\\w$])${name}(?![\\w$:=])`).test(body);
+}
+
 const files = walk(ROOT);
 const sources = new Map(files.map((file) => [file, readFileSync(file, 'utf8')]));
 
-// Tên export -> danh sách file export tên đó
+// Tên export -> file định nghĩa
 const owners = new Map();
 for (const [file, code] of sources) {
   for (const name of exportsOf(code)) {
@@ -115,21 +145,34 @@ for (const [file, code] of sources) {
 }
 
 const problems = [];
+
 for (const [file, code] of sources) {
   const body = stripNoise(code);
   const imported = importedNames(code);
   const local = localNames(code);
+
+  // 1. Tên do src export, dùng ở file khác mà chưa import.
   for (const [name, from] of owners) {
     if (name.length < 3) continue;
-    if (from.includes(file)) continue; // chính file định nghĩa
-    if (from.length !== 1) continue; // trùng tên ở nhiều file: bỏ qua cho chắc
+    if (from.includes(file)) continue;
+    if (from.length !== 1) continue;
     if (imported.has(name) || local.has(name)) continue;
-    const used = new RegExp(`(?<![-.:\\w$])${name}(?![\\w$:=])`).test(body);
-    if (!used) continue;
+    if (!isUsed(body, name)) continue;
     problems.push({
       file: relative(process.cwd(), file),
       name,
       definedIn: relative(process.cwd(), from[0]),
+    });
+  }
+
+  // 2. Tên từ thư viện ngoài.
+  for (const name of EXTERNALS) {
+    if (imported.has(name) || local.has(name)) continue;
+    if (!isUsed(body, name)) continue;
+    problems.push({
+      file: relative(process.cwd(), file),
+      name,
+      definedIn: 'thư viện ngoài (react / react-router-dom / react-hot-toast)',
     });
   }
 }

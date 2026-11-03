@@ -1,33 +1,25 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  AlertTriangle,
   ArrowUpRight,
-  CalendarDays,
   Info,
   PiggyBank,
   Plus,
-  Receipt,
   Settings2,
   ShoppingBag,
   Store,
   Target,
-  Trash2,
+  UserRound,
   X,
 } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { useBudgetStore } from '../hooks/useBudgetStore';
 import { useCurrentUser } from '../hooks/useCurrentUser';
-import { CATEGORY_MAP, FUND_STATUS, TONES } from '../lib/constants';
-import { cn, formatCurrency, formatDate, monthLabel } from '../lib/utils';
+import { FUND_STATUS } from '../lib/constants';
+import { cn, formatCurrency, monthLabel } from '../lib/utils';
 import BudgetForm from '../components/budget/BudgetForm';
-import ExpenseForm from '../components/budget/ExpenseForm';
 import PiggyBankCard from '../components/budget/PiggyBankCard';
-import PiggyForecast from '../components/budget/PiggyForecast';
 import DailyFundStatus from '../components/budget/DailyFundStatus';
-import WeekChart from '../components/budget/WeekChart';
 import ExpenseCalendar from '../components/budget/ExpenseCalendar';
-import IncomeCard from '../components/budget/IncomeCard';
 import OverspendAlert from '../components/budget/OverspendAlert';
 
 function greeting() {
@@ -48,33 +40,21 @@ function Figure({ label, value, tone = 'text-ink-900', note }) {
   );
 }
 
+const QUICK_LINKS = [
+  { to: '/expenses', label: 'Ghi chi tiêu', hint: 'Thêm khoản chi, thu nhập', icon: Plus },
+  { to: '/marketplace', label: 'Chợ sinh viên', hint: 'Pass đồ, thuê đồ giá rẻ', icon: Store },
+  { to: '/deals', label: 'Gom đơn', hint: 'Mua chung, giảm đến 40%', icon: ShoppingBag },
+];
+
 export default function DashboardPage() {
   const currentUser = useCurrentUser();
-  const {
-    budget,
-    expenses,
-    incomes,
-    state,
-    addExpense,
-    removeExpense,
-    addIncome,
-    removeIncome,
-    updateBudget,
-  } = useBudgetStore();
+  const { budget, expenses, state, addExpense, removeExpense, updateBudget } = useBudgetStore();
   const [showBudget, setShowBudget] = useState(false);
-  const formRef = useRef(null);
 
   const displayName = currentUser.full_name || 'Sinh viên';
   const shortName = displayName.trim().split(/\s+/).slice(-1)[0];
-  const recent = expenses.slice(0, 6);
   const budgetMonth = Number(String(state.monthKey).split('-')[1]);
   const fundStatus = FUND_STATUS[state.fundStatus] || FUND_STATUS.safe;
-  const headerCopy =
-    state.fundStatus === 'over'
-      ? `Hôm nay bạn đã vượt hạn mức ${formatCurrency(state.overspendToday)}. Cùng cân lại chi tiêu nhé.`
-      : state.fundStatus === 'warning'
-        ? `Quỹ hôm nay chỉ còn ${formatCurrency(state.todayRemaining)}. Ưu tiên khoản cần thiết thôi nhé.`
-        : `Hôm nay bạn còn ${formatCurrency(state.todayRemaining)} trong hạn mức.`;
 
   async function handleAdd(expense) {
     try {
@@ -86,73 +66,73 @@ export default function DashboardPage() {
 
   async function handleDelete(id) {
     await removeExpense(id);
-    toast.success('Đã xóa khoản chi');
   }
 
-  function scrollToForm() {
-    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+  const profileLink = currentUser.id ? `/u/${currentUser.id}` : '/profile';
+  const links = [...QUICK_LINKS, { to: profileLink, label: 'Trang cá nhân', hint: 'Tin, kèo, số liệu của bạn', icon: UserRound }];
 
   return (
     <div className="mx-auto max-w-6xl">
       {/* ---------------------------------------------------------------- Đầu trang */}
-      <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow-accent">{monthLabel(state.monthKey)}</p>
-          <h1 className="mt-2 text-[1.75rem] font-extrabold tracking-[-0.035em] text-ink-900 sm:text-[2.125rem]">
+          <h1 className="mt-2 text-[1.7rem] font-extrabold tracking-[-0.035em] text-ink-900 sm:text-[2.125rem]">
             {greeting()}, {shortName}.
           </h1>
-          <p className="mt-1.5 text-sm text-ink-500">{headerCopy}</p>
+          <p className="mt-1.5 text-sm text-ink-500">
+            {state.fundStatus === 'over'
+              ? `Hôm nay vượt hạn mức ${formatCurrency(state.overspendToday)}.`
+              : `Hôm nay bạn còn ${formatCurrency(state.todayRemaining)} trong hạn mức.`}
+          </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           <button type="button" onClick={() => setShowBudget(true)} className="btn-secondary">
             <Settings2 className="h-4 w-4" />
             Ngân sách
           </button>
-          <button type="button" onClick={scrollToForm} className="btn-primary">
+          <Link to="/expenses" className="btn-primary">
             <Plus className="h-4 w-4" />
-            Thêm chi tiêu
-          </button>
+            Ghi chi tiêu
+          </Link>
         </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6">
-        {/* -------------------------------------------------------------- Cột chính */}
         <div className="min-w-0 space-y-5">
-          {/* Khối nhấn duy nhất của màn: quỹ tháng. */}
+          {/* Quỹ tháng: khối nhấn duy nhất của màn tổng quan. */}
           <section className="rounded-3xl bg-brand-600 px-5 py-6 text-white sm:px-7 sm:py-7">
-            <div className="flex items-start justify-between gap-4">
-              <div>
+            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+              <div className="min-w-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60">
                   Ngân sách tháng
                 </p>
-                <p className="figure-xl mt-2">{formatCurrency(state.M)}</p>
+                <p className="figure-xl mt-2 break-words">{formatCurrency(state.M)}</p>
               </div>
-              <span className="mt-1 shrink-0 rounded-md bg-white/15 px-2 py-1 text-[11px] font-bold tabular-nums">
+              <span className="shrink-0 whitespace-nowrap rounded-md bg-white/15 px-2 py-1 text-[11px] font-bold tabular-nums">
                 đã chi {Math.round(state.percent)}%
               </span>
             </div>
 
-            {/* Thanh tiến độ mảnh, sắc. */}
-            <div className="mt-6 h-1 overflow-hidden rounded-full bg-white/20">
+            <div className="mt-5 h-1 overflow-hidden rounded-full bg-white/20">
               <div
                 className="h-full rounded-full bg-white transition-[width] duration-700"
                 style={{ width: `${Math.max(1.5, Math.min(100, state.percent))}%` }}
               />
             </div>
 
-            <div className="mt-5 grid grid-cols-3 gap-0">
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-0">
               {[
                 { label: 'Hạn mức hôm nay', value: state.todayLimit },
                 { label: 'Đã chi hôm nay', value: state.todaySpent },
                 { label: 'Còn lại tháng', value: state.remaining },
-              ].map((item, i) => (
+              ].map((item, index) => (
                 <div
                   key={item.label}
                   className={cn(
-                    'pr-3',
-                    i > 0 && 'border-l border-white/15 pl-3'
+                    'min-w-0',
+                    index > 0 && 'border-t border-white/15 pt-3 sm:border-l sm:border-t-0 sm:pl-3 sm:pt-0'
                   )}
                 >
                   <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/55">
@@ -178,99 +158,10 @@ export default function DashboardPage() {
                 <PiggyBank className="h-3.5 w-3.5" />
                 Heo đất {formatCurrency(state.piggyBank)}
               </span>
-              {state.unexpectedTotal > 0 && (
-                <span className="inline-flex items-center gap-1.5 text-amber-200">
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                  Đột xuất {formatCurrency(state.unexpectedTotal)}
-                </span>
-              )}
             </div>
           </section>
 
-          <div ref={formRef}>
-            <ExpenseForm onAdd={handleAdd} />
-          </div>
-
-          <IncomeCard
-            incomes={incomes}
-            monthKey={state.monthKey}
-            onAdd={addIncome}
-            onRemove={removeIncome}
-          />
-
-          {/* Sổ chi tiêu gần đây */}
-          <section className="card-strong px-5 py-5 sm:px-6">
-            <div className="mb-4 flex items-baseline justify-between gap-3">
-              <h2 className="section-title">Chi tiêu gần đây</h2>
-              <span className="text-[11px] font-semibold tabular-nums text-ink-400">
-                {expenses.length} khoản
-              </span>
-            </div>
-
-            {recent.length === 0 ? (
-              <div className="flex flex-col items-center py-10 text-center">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-ink-100 text-ink-400">
-                  <Receipt className="h-5 w-5" />
-                </span>
-                <p className="mt-3 text-sm font-semibold text-ink-700">Chưa có chi tiêu nào</p>
-                <p className="mt-1 text-xs text-ink-400">
-                  Thêm khoản chi đầu tiên để bắt đầu theo dõi.
-                </p>
-              </div>
-            ) : (
-              <ul>
-                {recent.map((expense) => {
-                  const category = CATEGORY_MAP[expense.category] || CATEGORY_MAP.other;
-                  const Icon = category.icon;
-                  return (
-                    <li
-                      key={expense.id}
-                      className="group flex items-center gap-3 border-t border-brand-200/60 py-3 first:border-t-0 first:pt-0"
-                    >
-                      <span
-                        className={cn(
-                          'grid h-9 w-9 shrink-0 place-items-center rounded-lg',
-                          expense.is_unexpected
-                            ? 'bg-amber-50 text-amber-700'
-                            : TONES[category.tone] || TONES.slate
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-semibold text-ink-900">
-                          {expense.note}
-                        </p>
-                        <p className="text-[11px] text-ink-400">
-                          {expense.is_unexpected ? (
-                            <span className="font-semibold text-amber-700">
-                              Đột xuất · {expense.unexpected_reason || 'Khác'}
-                            </span>
-                          ) : (
-                            category.label
-                          )}
-                          {' · '}
-                          {formatDate(expense.date)}
-                        </p>
-                      </div>
-                      <span className="figure-md shrink-0 text-ink-900">
-                        −{formatCurrency(expense.amount)}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(expense.id)}
-                        className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-ink-300 transition hover:bg-rose-50 hover:text-rose-700"
-                        aria-label="Xóa khoản chi"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-
+          {/* Lịch chi tiêu: phần chính của tổng quan. */}
           <ExpenseCalendar
             expenses={expenses}
             budget={budget}
@@ -279,35 +170,46 @@ export default function DashboardPage() {
             onDelete={handleDelete}
           />
 
-          <WeekChart expenses={expenses} />
+          {/* Lối tắt sang các trang khác, thay cho việc nhồi hết vào một màn. */}
+          <section className="grid gap-2.5 sm:grid-cols-2">
+            {links.map(({ to, label, hint, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                className="group flex items-center gap-3 card-strong px-4 py-3 transition-colors hover:border-brand-300"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[13px] font-bold text-ink-900">{label}</span>
+                  <span className="block truncate text-[10px] text-ink-400">{hint}</span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-ink-300 transition-colors group-hover:text-brand-600" />
+              </Link>
+            ))}
+          </section>
         </div>
 
         {/* ------------------------------------------------------------- Cột phụ */}
         <aside className="space-y-5">
           <DailyFundStatus state={state} />
+          <OverspendAlert overspendToday={state.overspendToday} overspendTotal={state.overspendTotal} />
 
-          <OverspendAlert
-            overspendToday={state.overspendToday}
-            overspendTotal={state.overspendTotal}
-          />
-
-          {/* Các con số phụ gộp vào 1 khối, ngăn bằng đường kẻ. */}
           <section className="card-strong px-5 py-4">
             <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-400">
               Tổng quan
             </h2>
             <div className="space-y-3">
-              <div className="flex items-baseline justify-between gap-3 border-t border-brand-200/60 pt-3 first:border-t-0 first:pt-0">
+              <div className="flex items-baseline justify-between gap-3">
                 <Figure label="Đã chi cả tháng" value={formatCurrency(state.totalSpent)} />
-                <span className="text-[10px] font-semibold text-ink-400">/ {Math.round(state.percent)}%</span>
+                <span className="shrink-0 whitespace-nowrap text-[10px] font-semibold text-ink-400">
+                  / {Math.round(state.percent)}%
+                </span>
               </div>
               <div className="flex items-baseline justify-between gap-3 border-t border-brand-200/60 pt-3">
-                <Figure
-                  label="Heo đất"
-                  value={formatCurrency(state.piggyBank)}
-                  tone="text-brand-700"
-                />
-                <span className="text-[10px] font-semibold text-ink-400">10% tự trích</span>
+                <Figure label="Heo đất" value={formatCurrency(state.piggyBank)} tone="text-brand-700" />
+                <span className="shrink-0 text-[10px] font-semibold text-ink-400">10% tự trích</span>
               </div>
               <div className="flex items-baseline justify-between gap-3 border-t border-brand-200/60 pt-3">
                 <Figure
@@ -315,14 +217,12 @@ export default function DashboardPage() {
                   value={formatCurrency(state.unexpectedTotal)}
                   tone={state.unexpectedTotal > 0 ? 'text-amber-700' : 'text-ink-500'}
                 />
-                <span className="text-[10px] font-semibold text-ink-400">trải đều tháng</span>
+                <span className="shrink-0 text-[10px] font-semibold text-ink-400">trải đều tháng</span>
               </div>
             </div>
           </section>
 
           <PiggyBankCard piggyBank={state.piggyBank} target={state.savingsTarget} />
-
-          <PiggyForecast state={state} />
 
           <div className="card-strong px-5 py-4">
             <div className="flex items-center gap-2 text-ink-500">
@@ -335,36 +235,6 @@ export default function DashboardPage() {
               <li>· Chi ít hơn hạn mức: phần dư chảy vào heo đất.</li>
               <li>· Khoản đột xuất được trải đều cả tháng.</li>
             </ul>
-          </div>
-
-          <div className="grid gap-2.5">
-            <Link
-              to="/marketplace"
-              className="group flex items-center gap-3 card-strong px-4 py-3 transition-colors hover:border-brand-300"
-            >
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-ink-100 text-ink-600">
-                <Store className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-bold text-ink-900">Chợ sinh viên</p>
-                <p className="text-[10px] text-ink-400">Pass đồ, thuê đồ giá rẻ</p>
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-ink-300 transition-colors group-hover:text-brand-600" />
-            </Link>
-
-            <Link
-              to="/deals"
-              className="group flex items-center gap-3 card-strong px-4 py-3 transition-colors hover:border-brand-300"
-            >
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-ink-100 text-ink-600">
-                <ShoppingBag className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-bold text-ink-900">Gom đơn</p>
-                <p className="text-[10px] text-ink-400">Mua chung, giảm đến 40%</p>
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-ink-300 transition-colors group-hover:text-brand-600" />
-            </Link>
           </div>
         </aside>
       </div>
