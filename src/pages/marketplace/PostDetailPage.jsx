@@ -28,6 +28,7 @@ import Avatar from '../../components/ui/Avatar';
 import VerifiedBadge from '../../components/ui/VerifiedBadge';
 import PostCard from '../../components/marketplace/PostCard';
 import ReportDialog from '../../components/reports/ReportDialog';
+import PostLocationMap from '../../components/marketplace/PostLocationMap';
 import { useMarketplace } from '../../hooks/useMarketplace';
 import { usePostComments } from '../../hooks/usePostComments';
 import { POST_CATEGORY_MAP, POST_GRADIENTS } from '../../lib/constants';
@@ -463,6 +464,14 @@ export default function PostDetailPage() {
             </div>
           </div>
 
+          {/* ------------------------------------------------- Vị trí người bán */}
+          <div className="card-strong animate-in-delay-1 p-5 sm:p-6">
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <h2 className="section-title">Vị trí nhận hàng</h2>
+              <span className="text-[11px] font-semibold text-ink-400">Làm mờ 50m</span>
+            </div>
+            <PostLocationMap post={post} />
+          </div>
           {/* ------------------------------------------------------ Bình luận */}
           <div className="card-strong animate-in-delay-2 p-5 sm:p-6">
             <div className="flex items-baseline justify-between gap-3">

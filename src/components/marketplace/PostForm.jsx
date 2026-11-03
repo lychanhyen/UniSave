@@ -285,8 +285,8 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
       <section className="card space-y-4 p-5 sm:p-6">
         <LocationPicker value={coords} onChange={setCoords} />
         <p className="text-xs leading-relaxed text-ink-500">
-          Vị trí chỉ dùng để người mua thấy món đồ trên bản đồ chợ và biết nên hẹn ở đâu. Toạ độ
-          được làm tròn trước khi lưu nên không lộ chính xác phòng ở.
+          Người mua sẽ thấy món đồ trên bản đồ chợ và trên trang tin để biết nên hẹn ở đâu. Toạ độ
+          được làm mờ trong bán kính 50m trước khi lưu nên không lộ chính xác phòng ở.
         </p>
       </section>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">

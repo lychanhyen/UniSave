@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { Circle, MapContainer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import MapTiles from './MapTiles';
 import { Check, Crosshair, Loader2, MapPin, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { pinIcon } from '../../lib/leafletSetup';
 import {
+  BLUR_RADIUS_METERS,
   DEFAULT_MAP_CENTER,
   PICKER_MAP_ZOOM,
+  blurCoords,
   hasPostCoords,
-  roundCoords,
 } from '../../lib/location';
 import { cn } from '../../lib/utils';
 
@@ -44,7 +45,7 @@ export default function LocationPicker({ value, onChange, className }) {
   const center = hasPoint ? [Number(value.lat), Number(value.lng)] : [DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng];
 
   function commit(lat, lng) {
-    const next = roundCoords({ lat, lng });
+    const next = blurCoords({ lat, lng });
     if (!next) {
       toast.error('Toạ độ không hợp lệ.');
       return;
@@ -60,7 +61,7 @@ export default function LocationPicker({ value, onChange, className }) {
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const next = roundCoords({
+        const next = blurCoords({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
@@ -97,7 +98,7 @@ export default function LocationPicker({ value, onChange, className }) {
           <div>
             <p className="text-[13px] font-bold text-ink-900">Ghim vị trí trên bản đồ</p>
             <p className="text-[11px] text-ink-500">
-              Bấm lên bản đồ hoặc kéo điểm ghim. Toạ độ lưu được làm tròn ~11m.
+              Bấm lên bản đồ hoặc kéo điểm ghim. Vị trí lưu được làm mờ trong bán kính 50m.
             </p>
           </div>
         </div>
@@ -140,6 +141,12 @@ export default function LocationPicker({ value, onChange, className }) {
           <ClickToPick onPick={commit} />
           <FlyTo target={flyTarget} />
           {hasPoint && (
+            <>
+            <Circle
+              center={[Number(value.lat), Number(value.lng)]}
+              radius={BLUR_RADIUS_METERS}
+              pathOptions={{ color: '#00834a', weight: 1.5, dashArray: '5 5', fillColor: '#00834a', fillOpacity: 0.08 }}
+            />
             <Marker
               position={[Number(value.lat), Number(value.lng)]}
               icon={pinIcon('brand')}
@@ -152,6 +159,7 @@ export default function LocationPicker({ value, onChange, className }) {
                 },
               }}
             />
+            </>
           )}
         </MapContainer>
       </div>
@@ -161,7 +169,7 @@ export default function LocationPicker({ value, onChange, className }) {
           <>
             <span className="inline-flex items-center gap-1 font-semibold text-brand-700">
               <Check className="h-3.5 w-3.5" />
-              Đã ghim: {Number(value.lat).toFixed(4)}, {Number(value.lng).toFixed(4)}
+              Đã ghim (làm mờ ±{BLUR_RADIUS_METERS}m): {Number(value.lat).toFixed(5)}, {Number(value.lng).toFixed(5)}
             </span>
             <span className="text-ink-500">Người mua sẽ thấy tin này trên bản đồ chợ.</span>
           </>
