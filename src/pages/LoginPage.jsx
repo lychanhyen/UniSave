@@ -9,6 +9,7 @@ import {
   Sparkles,
   UsersRound,
   BadgeCheck,
+  Landmark,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -39,6 +40,30 @@ const DEMO_ACCOUNTS = [
     icon: ShieldCheck,
   },
 ];
+
+/**
+ * Màu chủ đạo của trang đăng nhập: #00834a.
+ * Ghi đè thang brand trong phạm vi trang nên nút, liên kết, viền đều đổi theo
+ * mà không ảnh hưởng các màn khác đang dùng xanh emerald.
+ */
+const BRAND_SCALE = {
+  '--color-brand-50': '#e9f7f0',
+  '--color-brand-100': '#ccefdd',
+  '--color-brand-200': '#a2e0c1',
+  '--color-brand-300': '#6ccfa1',
+  '--color-brand-400': '#26b276',
+  '--color-brand-500': '#0a9c5a',
+  '--color-brand-600': '#00834a',
+  '--color-brand-700': '#006b3c',
+  '--color-brand-800': '#00552f',
+  '--color-brand-900': '#004226',
+};
+
+/**
+ * Ảnh nền minh hoạ khuôn viên trường, neo đáy giữa khung.
+ * CSS tương đương: background: #00834a url(...) center bottom / 100% auto no-repeat.
+ */
+const CAMPUS_IMAGE = '/assets/images/uda-dashboard/sidebar-campus-v2.png';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -77,9 +102,7 @@ export default function LoginPage() {
         emailRedirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
-      toast.success(
-        `Đã gửi email đặt lại mật khẩu đến ${email}. Vui lòng kiểm tra hộp thư.`
-      );
+      toast.success(`Đã gửi email đặt lại mật khẩu đến ${email}. Vui lòng kiểm tra hộp thư.`);
     } catch (error) {
       toast.error(error.message || 'Không gửi được email đặt lại mật khẩu.');
     } finally {
@@ -103,155 +126,176 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left showcase */}
-      <div className="relative hidden w-1/2 overflow-hidden bg-brand-600 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <Link to="/" className="relative flex items-center gap-3">
-          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 backdrop-blur">
-            <PiggyBank className="h-6 w-6" />
-          </span>
-          <div>
-            <p className="text-xl font-extrabold tracking-tight">UniSave</p>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-200">
-              Student finance
-            </p>
-          </div>
-        </Link>
+    <div style={BRAND_SCALE} className="min-h-screen bg-white">
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:py-10">
+        <div className="grid flex-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          {/* ----------------------------------------------------- Khối hình ảnh */}
+          <section
+            className="animate-in relative order-2 min-h-[320px] overflow-hidden rounded-[2rem] lg:order-1 lg:min-h-[620px]"
+            style={{ backgroundColor: '#00834a' }}
+          >
+            {/* 1. Ảnh khuôn viên neo đáy, rộng 100% */}
+            <img
+              src={CAMPUS_IMAGE}
+              alt="Khuôn viên trường đại học với toà nhà, tháp đồng hồ và cây xanh"
+              className="pointer-events-none absolute inset-x-0 bottom-0 w-full select-none"
+            />
 
-        <div className="relative">
-          <h2 className="text-balance text-4xl font-extrabold leading-tight tracking-tight">
-            Quản lý tiền thông minh,
-            <br />
-            sống thoải mái hơn.
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-brand-100">
-            Theo dõi chi tiêu, nuôi heo đất và săn kèo gom đơn cùng hàng nghìn sinh viên khác.
-          </p>
+            {/* 2. Lớp phủ xanh xuyên thấu: ảnh chỉ còn gợi ý dưới nền */}
 
-          <div className="mt-8 space-y-3">
-            {[
-              { icon: ShieldCheck, text: 'Quản trị viên duyệt sinh viên thật, chống lừa đảo' },
-              { icon: Sparkles, text: 'Heo đất tự động lớn mỗi ngày' },
-              { icon: ArrowRight, text: 'Kèo gom đơn tiết kiệm đến 40%' },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-3 text-sm text-brand-50">
-                <span className="grid h-8 w-8 place-items-center rounded-xl bg-white/15">
-                  <Icon className="h-4 w-4" />
+            <div className="absolute inset-0 bg-[#00834a]/78" />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[#00351d]/30" />
+
+            {/* 3. Nội dung nằm trên cùng */}
+            <div className="relative z-10 flex h-full min-h-[320px] flex-col justify-between gap-10 p-7 text-white sm:p-10">
+              <Link to="/" className="flex items-center gap-3">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur">
+                  <PiggyBank className="h-6 w-6" />
                 </span>
-                {text}
+                <span className="text-xl font-extrabold tracking-tight">UniSave</span>
+              </Link>
+
+              <div className="max-w-xl">
+                <h2 className="text-balance text-[clamp(2rem,3.9vw,3.25rem)] font-extrabold leading-[1.04] tracking-[-0.03em]">
+                  Quản lý tiền gọn, sống thoải mái.
+                </h2>
+                <p className="mt-4 max-w-md text-[16px] leading-relaxed text-white/90">
+                  Theo dõi chi tiêu, nuôi heo đất và săn kèo gom đơn cùng hàng nghìn sinh viên khác.
+                </p>
+
+                <ul className="mt-7 space-y-3">
+                  {[
+                    { icon: ShieldCheck, text: 'Quản trị viên duyệt sinh viên thật, chống lừa đảo' },
+                    { icon: Sparkles, text: 'Heo đất tự động lớn mỗi ngày' },
+                    { icon: Landmark, text: 'Kèo gom đơn tiết kiệm đến 40%' },
+                  ].map(({ icon: Icon, text }) => (
+                    <li key={text} className="flex items-start gap-3 text-[15px] leading-relaxed text-white/95">
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-white/80" />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </div>
-        </div>
 
-        <p className="relative text-xs text-brand-200">© 2026 UniSave. Dành cho sinh viên Việt Nam.</p>
-      </div>
+              <p className="text-[13px] font-medium text-white/80">
+                © 2026 UniSave. Dành cho sinh viên Việt Nam.
+              </p>
+            </div>
+          </section>
 
-      {/* Form */}
-      <div className="flex w-full items-center justify-center px-5 py-10 lg:w-1/2">
-        <div className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <Link to="/" className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 text-white shadow-soft">
-                <PiggyBank className="h-5 w-5" />
-              </span>
-              <span className="text-xl font-extrabold tracking-tight text-ink-900">UniSave</span>
-            </Link>
-          </div>
+          {/* ------------------------------------------------------------ Biểu mẫu */}
+          <section className="animate-in-delay-1 order-1 w-full lg:order-2">
+            <div className="w-full max-w-md lg:ml-auto">
+              <div className="mb-8 flex items-center gap-3 lg:hidden">
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 text-white ring-1 ring-brand-700/25">
+                  <PiggyBank className="h-5 w-5" />
+                </span>
+                <span className="text-xl font-extrabold tracking-tight text-ink-900">UniSave</span>
+              </div>
 
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink-900">Chào mừng trở lại 👋</h1>
-          <p className="mt-1.5 text-sm text-ink-500">Đăng nhập để tiếp tục hành trình tiết kiệm.</p>
+              <h1 className="text-[1.65rem] font-extrabold leading-tight tracking-[-0.03em] text-ink-900 sm:text-[2rem]">
+                Chào mừng trở lại
+              </h1>
+              <p className="mt-2 text-[16px] leading-relaxed text-ink-700">
+                Đăng nhập để tiếp tục hành trình tiết kiệm.
+              </p>
 
-          <form onSubmit={handleSubmit} className="mt-7">
-            <Input
-              label="Email"
-              type="email"
-              icon={Mail}
-              placeholder="ban@sinhvien.edu.vn"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              label="Mật khẩu"
-              type="password"
-              icon={Lock}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
-            <div className="mb-5 flex items-center justify-between text-xs">
-              <label className="flex items-center gap-2 font-medium text-ink-600">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500"
+              <form onSubmit={handleSubmit} className="mt-7">
+                <Input
+                  label="Email"
+                  type="email"
+                  icon={Mail}
+                  placeholder="ban@sinhvien.edu.vn"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
-                Ghi nhớ đăng nhập
-              </label>
-              <button type="button" onClick={handleResetPassword} className="font-semibold text-brand-600 hover:text-brand-700">
-                Quên mật khẩu?
-              </button>
-            </div>
+                <Input
+                  label="Mật khẩu"
+                  type="password"
+                  icon={Lock}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
 
-            <Button type="submit" size="lg" loading={loading} className="w-full">
-              Đăng nhập
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </form>
+                <div className="mb-5 flex items-center justify-between text-[13px]">
+                  <label className="flex items-center gap-2 font-medium text-ink-700">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500"
+                    />
+                    Ghi nhớ đăng nhập
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleResetPassword}
+                    className="font-bold text-brand-700 transition-colors hover:text-brand-800"
+                  >
+                    Quên mật khẩu?
+                  </button>
+                </div>
 
-          {demoMode && (
-            <div className="mt-6 rounded-2xl border border-dashed border-brand-200 bg-brand-50/60 p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-brand-700">
-                Tài khoản demo
+                <Button type="submit" size="lg" loading={loading} className="w-full">
+                  Đăng nhập
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </form>
+
+              {demoMode && (
+                <div className="mt-6 rounded-2xl border-2 border-brand-200 bg-brand-50/60 p-4">
+                  <p className="text-[13px] font-bold uppercase tracking-wide text-brand-800">
+                    Tài khoản demo
+                  </p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-ink-700">
+                    Chưa cấu hình Supabase nên app dùng tài khoản mẫu. Bấm để đăng nhập nhanh:
+                  </p>
+                  <div className="mt-3 space-y-2">
+                    {DEMO_ACCOUNTS.map((account) => {
+                      const Icon = account.icon;
+                      return (
+                        <button
+                          key={account.email}
+                          type="button"
+                          onClick={() => handleQuick(account)}
+                          disabled={Boolean(quickLoading)}
+                          className="flex w-full items-center gap-3 rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-left transition hover:border-brand-400 disabled:opacity-60"
+                        >
+                          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700">
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-[13px] font-bold text-ink-900">
+                              {account.label}
+                            </span>
+                            <span className="block truncate text-[13px] text-ink-700">
+                              {account.email} · {account.password} · {account.hint}
+                            </span>
+                          </span>
+                          {quickLoading === account.email ? (
+                            <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
+                          ) : (
+                            <ArrowRight className="h-4 w-4 shrink-0 text-brand-600" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <p className="mt-6 text-center text-[15px] text-ink-700">
+                Chưa có tài khoản?{' '}
+                <Link to="/register" className="font-bold text-brand-700 hover:text-brand-800">
+                  Đăng ký ngay
+                </Link>
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-ink-500">
-                Chưa cấu hình Supabase nên app dùng tài khoản mẫu. Bấm để đăng nhập nhanh:
+              <p className="mt-2 text-center text-[13px] text-ink-700">
+                Tài khoản bị khóa? Liên hệ quản trị viên UniSave để được hỗ trợ.
               </p>
-              <div className="mt-3 space-y-2">
-                {DEMO_ACCOUNTS.map((account) => {
-                  const Icon = account.icon;
-                  return (
-                    <button
-                      key={account.email}
-                      type="button"
-                      onClick={() => handleQuick(account)}
-                      disabled={Boolean(quickLoading)}
-                      className="flex w-full items-center gap-3 rounded-xl border border-white bg-white px-3 py-2.5 text-left shadow-soft transition hover:border-brand-300 disabled:opacity-60"
-                    >
-                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-xs font-bold text-ink-900">
-                          {account.label}
-                        </span>
-                        <span className="block truncate text-[10px] text-ink-400">
-                          {account.email} · {account.password} · {account.hint}
-                        </span>
-                      </span>
-                      {quickLoading === account.email ? (
-                        <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
-                      ) : (
-                        <ArrowRight className="h-4 w-4 shrink-0 text-brand-500" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
             </div>
-          )}
-
-          <p className="mt-6 text-center text-sm text-ink-500">
-            Chưa có tài khoản?{' '}
-            <Link to="/register" className="font-semibold text-brand-600 hover:text-brand-700">
-              Đăng ký ngay
-            </Link>
-          </p>
-          <p className="mt-2 text-center text-[11px] text-ink-400">
-            Tài khoản bị khóa? Liên hệ quản trị viên UniSave để được hỗ trợ.
-          </p>
+          </section>
         </div>
       </div>
     </div>
