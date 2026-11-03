@@ -1,4 +1,4 @@
-﻿import { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -26,6 +26,7 @@ import PiggyBankCard from '../components/budget/PiggyBankCard';
 import PiggyForecast from '../components/budget/PiggyForecast';
 import DailyFundStatus from '../components/budget/DailyFundStatus';
 import WeekChart from '../components/budget/WeekChart';
+import ExpenseCalendar from '../components/budget/ExpenseCalendar';
 import OverspendAlert from '../components/budget/OverspendAlert';
 
 function greeting() {
@@ -251,6 +252,14 @@ export default function DashboardPage() {
               </ul>
             )}
           </section>
+
+          <ExpenseCalendar
+            expenses={expenses}
+            budget={budget}
+            currentMonthKey={state.monthKey}
+            onAdd={handleAdd}
+            onDelete={handleDelete}
+          />
 
           <WeekChart expenses={expenses} />
         </div>
