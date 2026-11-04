@@ -7,6 +7,7 @@ import { POST_CATEGORIES, POST_TYPES } from '../../lib/constants';
 import { Button } from '../ui/Button';
 import ImageUploader from './ImageUploader';
 import LocationPicker from './LocationPicker';
+import MoneyInput from '../ui/MoneyInput';
 
 export default function PostForm({ initial, onSubmit, onCancel, submitLabel = 'Đăng tin' }) {
   const { active: campusOptions, itemOf } = useCampuses();
@@ -223,10 +224,9 @@ export default function PostForm({ initial, onSubmit, onCancel, submitLabel = '�
             </label>
             <div className="relative">
               <Tag className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-              <input
-                type="number"
+              <MoneyInput
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={setPrice}
                 placeholder="65000"
                 min={0}
                 step={1}

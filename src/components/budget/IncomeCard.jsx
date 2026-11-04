@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Check, Coins, Loader2, Plus, Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { INCOME_SOURCES, INCOME_SOURCE_MAP } from '../../lib/constants';
+import MoneyInput from '../ui/MoneyInput';
 import { cn, formatCurrency, formatDate } from '../../lib/utils';
 
 /**
@@ -126,15 +127,12 @@ export default function IncomeCard({ incomes = [], monthKey, onAdd, onRemove }) 
               <label className="label mb-1 text-[10px]" htmlFor="income-amount">
                 Số tiền (VND)
               </label>
-              <input
+              <MoneyInput
                 id="income-amount"
-                type="number"
-                min={0}
-                step={1}
                 value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-                placeholder="1500000"
-                className="input py-2 text-[12px]"
+                onChange={setAmount}
+                placeholder="1.500.000"
+                className="py-2 text-[12px]"
                 autoFocus
               />
             </div>

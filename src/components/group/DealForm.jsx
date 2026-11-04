@@ -3,6 +3,7 @@ import { ArrowLeft, Banknote, CalendarClock, Sparkles, Truck, Users, Wallet } fr
 import toast from 'react-hot-toast';
 import { cn, formatCurrency } from '../../lib/utils';
 import { Button } from '../ui/Button';
+import MoneyInput from '../ui/MoneyInput';
 
 const QUICK_HOURS = [
   { value: 6, label: '6 giờ' },
@@ -10,6 +11,9 @@ const QUICK_HOURS = [
   { value: 24, label: '1 ngày' },
   { value: 48, label: '2 ngày' },
   { value: 72, label: '3 ngày' },
+  { value: 120, label: '5 ngày' },
+  { value: 168, label: '7 ngày' },
+  { value: 336, label: '14 ngày' },
 ];
 
 export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'Tạo kèo gom đơn' }) {
@@ -97,10 +101,9 @@ export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'T
             <label className="label">Giá gốc (VND)</label>
             <div className="relative">
               <Wallet className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-              <input
-                type="number"
+              <MoneyInput
                 value={originalPrice}
-                onChange={(e) => setOriginalPrice(e.target.value)}
+                onChange={setOriginalPrice}
                 placeholder="45000"
                 min={0}
                 step={1}
@@ -116,10 +119,9 @@ export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'T
             <label className="label">Giá khi gom đơn (VND)</label>
             <div className="relative">
               <Sparkles className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-              <input
-                type="number"
+              <MoneyInput
                 value={dealPrice}
-                onChange={(e) => setDealPrice(e.target.value)}
+                onChange={setDealPrice}
                 placeholder="33000"
                 min={0}
                 step={1}
@@ -170,10 +172,9 @@ export default function DealForm({ initial, onSubmit, onCancel, submitLabel = 'T
             <label className="label">Tiết kiệm phí ship / người (VND)</label>
             <div className="relative">
               <Truck className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-              <input
-                type="number"
+              <MoneyInput
                 value={shipSaving}
-                onChange={(e) => setShipSaving(e.target.value)}
+                onChange={setShipSaving}
                 placeholder="15000"
                 min={0}
                 step={1}

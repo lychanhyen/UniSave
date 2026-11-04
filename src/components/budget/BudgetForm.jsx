@@ -3,6 +3,7 @@ import { Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import MoneyInput from '../ui/MoneyInput';
 
 export default function BudgetForm({
   onComplete,
@@ -30,16 +31,21 @@ export default function BudgetForm({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Input
-          label="Ngân sách tháng (VND)"
-          type="number"
-          icon={Wallet}
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="5.000.000"
-          min={100000}
-          step={1}
-        />
+        <div>
+          <label className="label" htmlFor="budget-amount">
+            Ngân sách tháng (VND)
+          </label>
+          <div className="relative">
+            <Wallet className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+            <MoneyInput
+              id="budget-amount"
+              value={amount}
+              onChange={(value) => setAmount(value || 0)}
+              placeholder="5.000.000"
+              className="pl-10"
+            />
+          </div>
+        </div>
         <Input
           label="Tháng"
           type="number"

@@ -344,71 +344,169 @@ function proteinGroup(dish) {
  * Lập thực đơn: chọn `days` món, không lặp nhóm đạm liên tiếp, tổng tiền nằm
  * trong ngân sách, rồi gộp nguyên liệu thành một danh sách đi chợ duy nhất.
  */
-export function buildMealPlan({ days = 7, budget = 500000, people = 1, seed = 0, prices = {} }) {
-  const safeDays = Math.max(1, Math.min(14, Number(days) || 7));
-  const safePeople = Math.max(1, Math.min(6, Number(people) || 1));
-  const safeBudget = Math.max(100000, Number(budget) || 500000);
-  const perDayBudget = safeBudget / safeDays;
+/** Món mặn: có đạm, không phải canh, không phải bữa sáng. */
+export function isMainDish(dish) {
+  const savory = ['kho', 'xao', 'chien', 'hap', 'luoc', 'nuong'];
+  if (dish.tags.includes('canh')) return false;
+  if (dish.tags.includes('sang')) return false;
+  if (!dish.tags.some((tag) => savory.includes(tag))) return false;
+  return dish.protein >= 10;
+}
 
-  const pool = DISHES.filter((dish) => dish.protein >= 12).map((dish) => ({
+/** Món canh. */
+export function isSoupDish(dish) {
+  return dish.tags.includes('canh');
+}
+
+/** Định lượng từng nguyên liệu của món cho số người ăn. */
+export function dishIngredients(dish, people = 1, prices = {}) {
+  return dish.items.map(([key, qty]) => {
+    const ingredient = INGREDIENTS[key];
+    const amount = qty * people;
+    return {
+      key,
+      name: ingredient.name,
+      unit: ingredient.unit,
+      amount,
+      display: formatAmount(amount, ingredient.unit),
+      cost: priceOf(key, prices) * amount,
+    };
+  });
+}
+
+/** Đổi số lượng sang đơn vị dễ đọc khi nấu: kg → g, lít → ml. */
+function formatAmount(amount, unit) {
+  if (unit === 'kg') return `${Math.round(amount * 1000)}g`;
+  if (unit === 'lít') return `${Math.round(amount * 1000)}ml`;
+  if (amount >= 1) return `${Number(amount.toFixed(1))} ${unit}`;
+  return `${Math.round(amount * 100) / 100} ${unit}`;
+}
+
+/** Các bước nấu: sơ chế (kèm định lượng) → cách làm → hoàn thiện. */
+export function recipeSteps(dish, people = 1) {
+  const prep = dishIngredients(dish, people)
+    .map((item) => `${item.name} ${item.display}`)
+    .join(', ');
+  return [
+    `Sơ chế: chuẩn bị ${prep}. Rửa sạch, cắt miếng vừa ăn.`,
+    dish.steps,
+    `Nấu khoảng ${dish.minutes} phút. Nêm nếm vừa ăn, tắt bếp và dọn ra đĩa.`,
+  ];
+}
+
+function withCost(list, people, prices) {
+  return list.map((dish) => ({
     ...dish,
-    cost: dishCost(dish, safePeople, prices),
+    cost: dishCost(dish, people, prices),
     group: proteinGroup(dish),
   }));
+}
 
-  // Trong khoảng tiền cho phép, ưu tiên món đắt hơn một chút (thường nhiều đạm hơn).
-  const affordable = shuffle(
-    pool.filter((dish) => dish.cost <= perDayBudget * 0.75),
-    seed + safeDays * 31 + Math.round(safeBudget / 1000)
-  ).sort((a, b) => b.cost - a.cost);
-
-  // Đổi thực đơn: xoay vòng danh sách theo seed để mỗi lần bấm ra bộ món khác.
-  const stride = 13;
-  const rotateBy = affordable.length ? (seed * stride + seed * seed) % affordable.length : 0;
-  const ordered = affordable.length
-    ? [...affordable.slice(rotateBy), ...affordable.slice(0, rotateBy)]
-    : [];
-  const source = ordered.length >= safeDays ? ordered : shuffle(pool, seed + 7);
-
+/**
+ * Chọn danh sách món: xoay vòng theo nhóm đạm để bữa ăn không lặp,
+ * thiếu món thì lặp lại từ đầu danh sách đã sắp theo giá.
+ */
+function pickRotating(pool, count, seed) {
+  if (!pool.length) return [];
+  const shuffled = shuffle(pool, seed).sort((a, b) => a.cost - b.cost);
+  const buckets = new Map();
+  for (const dish of shuffled) {
+    const key = dish.group || 'khac';
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(dish);
+  }
+  const queues = [...buckets.values()];
   const picked = [];
-  const usedGroups = [];
-  for (const dish of source) {
-    if (picked.length >= safeDays) break;
-    if (picked.some((item) => item.id === dish.id)) continue;
-    const lastGroup = usedGroups[usedGroups.length - 1];
-    if (dish.group === lastGroup && usedGroups.length > 0) continue;
-    picked.push(dish);
-    usedGroups.push(dish.group);
-  }
-
-  // Nếu vẫn thiếu (bộ lọc quá chặt), lấy thêm món rẻ nhất chưa dùng.
-  if (picked.length < safeDays) {
-    for (const dish of shuffle(pool, seed + 99).sort((a, b) => a.cost - b.cost)) {
-      if (picked.length >= safeDays) break;
-      if (picked.some((item) => item.id === dish.id)) continue;
-      picked.push(dish);
+  let round = 0;
+  while (picked.length < count) {
+    let progressed = false;
+    for (const queue of queues) {
+      if (!queue[round]) continue;
+      picked.push(queue[round]);
+      progressed = true;
+      if (picked.length >= count) break;
     }
+    if (!progressed) break;
+    round += 1;
+  }
+  let index = 0;
+  while (picked.length < count && shuffled.length) {
+    picked.push(shuffled[index % shuffled.length]);
+    index += 1;
+  }
+  return picked;
+}
+
+/**
+ * Lập thực đơn 2 bữa mỗi ngày (trưa và tối), mỗi bữa 1 món mặn + 1 món canh.
+ * Tổng tiền nguyên liệu nằm trong ngân sách; nguyên liệu gộp thành một lần đi chợ.
+ */
+export function buildMealPlan({ days = 7, budget = 700000, people = 1, seed = 0, prices = {} }) {
+  const safeDays = Math.max(1, Math.min(14, Number(days) || 7));
+  const safePeople = Math.max(1, Math.min(6, Number(people) || 1));
+  const safeBudget = Math.max(100000, Number(budget) || 700000);
+  const perDayBudget = safeBudget / safeDays;
+  const needed = safeDays * 2; // 2 bữa mỗi ngày
+
+  const mains = withCost(DISHES.filter(isMainDish), safePeople, prices);
+  const soups = withCost(DISHES.filter(isSoupDish), safePeople, prices);
+
+  // Chia tiền mỗi ngày: món mặn ~ 2/3, canh ~ 1/3 để bữa ăn cân đối.
+  const mainBudget = perDayBudget * 0.6;
+  const soupBudget = perDayBudget * 0.3;
+
+  const affordableMains = mains.filter((dish) => dish.cost <= mainBudget);
+  const affordableSoups = soups.filter((dish) => dish.cost <= soupBudget);
+
+  const mainPicks = pickRotating(
+    affordableMains.length >= needed ? affordableMains : mains,
+    needed,
+    seed * 7 + 1
+  );
+  const soupPicks = pickRotating(
+    affordableSoups.length >= needed ? affordableSoups : soups,
+    needed,
+    seed * 11 + 3
+  );
+
+  const meals = [];
+  for (let index = 0; index < safeDays; index += 1) {
+    meals.push({
+      day: index + 1,
+      lunch: { main: mainPicks[index * 2], soup: soupPicks[index * 2] },
+      dinner: { main: mainPicks[index * 2 + 1], soup: soupPicks[index * 2 + 1] },
+    });
   }
 
-  // Vượt ngân sách: thay món đắt nhất bằng món rẻ hơn chưa dùng.
-  let total = picked.reduce((sum, dish) => sum + dish.cost, 0);
+  // Mọi món được nấu trong kế hoạch (giữ thứ tự để hiển thị và tính tiền).
+  const allDishes = meals.flatMap((meal) => [
+    meal.lunch.main,
+    meal.lunch.soup,
+    meal.dinner.main,
+    meal.dinner.soup,
+  ]);
+
+  // Vượt ngân sách: đổi món mặn đắt nhất sang món mặn rẻ hơn chưa dùng.
+  let total = allDishes.reduce((sum, dish) => sum + dish.cost, 0);
   let guard = 0;
-  while (total > safeBudget && guard < 40) {
+  while (total > safeBudget && guard < 60) {
     guard += 1;
-    const worst = [...picked].sort((a, b) => b.cost - a.cost)[0];
-    const replacement = pool
-      .filter((dish) => !picked.some((item) => item.id === dish.id) && dish.cost < worst.cost)
+    const worst = [...allDishes].filter(Boolean).sort((a, b) => b.cost - a.cost)[0];
+    if (!worst) break;
+    const replacement = mains
+      .filter((dish) => dish.cost < worst.cost && !allDishes.includes(dish))
       .sort((a, b) => a.cost - b.cost)[0];
     if (!replacement) break;
-    picked[picked.indexOf(worst)] = replacement;
-    total = picked.reduce((sum, dish) => sum + dish.cost, 0);
+    const position = allDishes.indexOf(worst);
+    allDishes[position] = replacement;
+    total = allDishes.reduce((sum, dish) => sum + dish.cost, 0);
   }
 
-  // Gộp nguyên liệu thành một lần đi chợ. Mỗi ngày tính thêm 150g gạo/người
-  // vì món chính luôn ăn kèm cơm.
-  const RICE_PER_PERSON_DAY = 0.15;
+  // Gộp nguyên liệu: cộng cả gạo cho 2 bữa mỗi ngày.
+  const RICE_PER_PERSON_DAY = 0.2;
   const quantities = new Map([['gao', RICE_PER_PERSON_DAY * safeDays * safePeople]]);
-  for (const dish of picked) {
+  for (const dish of allDishes) {
+    if (!dish) continue;
     for (const [key, qty] of dish.items) {
       quantities.set(key, (quantities.get(key) || 0) + qty * safePeople);
     }
@@ -425,24 +523,25 @@ export function buildMealPlan({ days = 7, budget = 500000, people = 1, seed = 0,
         group: ingredient.group,
         qty: buyQty,
         pricePerUnit: priceOf(key, prices),
-        cost: buyQty * ingredient.price,
+        cost: buyQty * priceOf(key, prices),
       };
     })
     .sort((a, b) => a.group.localeCompare(b.group) || b.cost - a.cost);
 
   const estimate = shopping.reduce((sum, item) => sum + item.cost, 0);
-  // 100g gạo ≈ 350 kcal và 7g đạm; đây là ước tính để tham khảo.
   const riceKcal = RICE_PER_PERSON_DAY * safeDays * safePeople * 3500;
   const riceProtein = RICE_PER_PERSON_DAY * safeDays * safePeople * 70;
-  const kcalTotal = picked.reduce((sum, dish) => sum + dish.kcal, 0) * safePeople + riceKcal;
-  const proteinTotal = picked.reduce((sum, dish) => sum + dish.protein, 0) * safePeople + riceProtein;
+  const kcalTotal = allDishes.reduce((sum, dish) => sum + (dish?.kcal || 0), 0) * safePeople + riceKcal;
+  const proteinTotal =
+    allDishes.reduce((sum, dish) => sum + (dish?.protein || 0), 0) * safePeople + riceProtein;
 
   return {
     days: safeDays,
     people: safePeople,
     budget: safeBudget,
     perDayBudget,
-    dishes: picked.map((dish, index) => ({ day: index + 1, dish })),
+    meals,
+    dishCount: allDishes.filter(Boolean).length,
     shopping,
     estimate,
     dishCostTotal: Math.round(total),

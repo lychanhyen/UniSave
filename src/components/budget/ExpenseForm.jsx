@@ -2,6 +2,7 @@
 import { AlertTriangle, Plus, Receipt, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
+import MoneyInput from '../ui/MoneyInput';
 import { CATEGORIES, UNEXPECTED_REASONS } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 
@@ -65,14 +66,7 @@ export default function ExpenseForm({ onAdd }) {
       </div>
 
       <div className="grid gap-2.5 sm:grid-cols-[1fr_1.5fr_auto]">
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Số tiền"
-          inputMode="numeric"
-          className="input tabular-nums"
-        />
+        <MoneyInput value={amount} onChange={setAmount} placeholder="Số tiền" />
         <input
           type="text"
           value={note}

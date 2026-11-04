@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import MoneyInput from '../ui/MoneyInput';
 import {
   AlertTriangle,
   CalendarDays,
@@ -367,15 +368,12 @@ export default function ExpenseCalendar({
                     <label className="label mb-1 text-[10px]" htmlFor="cal-amount">
                       Số tiền (VND)
                     </label>
-                    <input
+                    <MoneyInput
                       id="cal-amount"
-                      type="number"
-                      min={0}
-                      step={1}
                       value={amount}
-                      onChange={(event) => setAmount(event.target.value)}
-                      placeholder="25000"
-                      className="input py-2 text-[12px]"
+                      onChange={setAmount}
+                      placeholder="25.000"
+                      className="py-2 text-[12px]"
                       autoFocus
                     />
                   </div>
