@@ -56,7 +56,7 @@ function Logo({ compact = false, to = '/dashboard' }) {
         <span className="flex flex-col leading-none">
           <span className="text-[15px] font-extrabold tracking-[-0.02em] text-ink-900">UniSave</span>
           <span className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-500">
-            Student finance
+            Quản tiền sinh viên
           </span>
         </span>
       )}

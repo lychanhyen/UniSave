@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import StarRating from '../components/feedback/StarRating';
+import Avatar from '../components/ui/Avatar';
 import { useAppFeedback } from '../hooks/useAppFeedback';
 import { formatRelativeTime } from '../lib/utils';
 
@@ -88,9 +89,6 @@ function LedgerFragment() {
           ['Gửi xe tháng', 'Đi lại', '5.000'],
         ].map(([note, cat, amount]) => (
           <div key={note} className="flex items-center gap-3 py-2">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-ink-50 text-ink-500">
-              <Wallet className="h-3.5 w-3.5" />
-            </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[13px] font-semibold text-ink-900">{note}</p>
               <p className="text-[12px] text-ink-500">{cat}</p>
@@ -288,12 +286,12 @@ export default function LandingPage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14 lg:pb-24 lg:pt-16">
         <div>
           <h1 className="text-balance text-[clamp(2.4rem,4.3vw,3.5rem)] font-extrabold leading-[0.98] tracking-[-0.05em]">
-            Cuối tháng vẫn dư.
+            Biết tiền của mình đi đâu.
           </h1>
 
           <p className="mt-5 max-w-lg text-[18px] leading-relaxed text-ink-700">
-            Tiền về đúng ví. UniSave chia ngân sách theo từng ngày, tự trích 10% vào heo đất, và nối
-            bạn với chợ đồ cũ của chính trường mình.
+            Ngân sách chia theo từng ngày, tự trích 10% vào heo đất, và nối bạn với chợ đồ cũ, kèo
+            gom đơn cùng thực đơn đi chợ của chính sinh viên Việt Nam.
           </p>
 
           <div className="mt-8 flex flex-col gap-2.5 sm:flex-row">
@@ -350,10 +348,10 @@ export default function LandingPage() {
             data-reveal
             className="reveal max-w-3xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
           >
-            Đây là thứ bạn mở mỗi sáng.
+            Mở ra là biết hôm nay tiêu được bao nhiêu.
           </h2>
           <p data-reveal className="reveal mt-3 max-w-xl text-[16px] leading-relaxed text-ink-700">
-            Sổ chi tiêu, chợ đồ cũ và kèo gom đơn — cùng một tài khoản sinh viên.
+            Sổ chi tiêu, chợ đồ cũ, kèo gom đơn và thực đơn đi chợ — cùng một tài khoản sinh viên.
           </p>
 
           <div className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
@@ -405,7 +403,7 @@ export default function LandingPage() {
             data-reveal
             className="reveal max-w-2xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
           >
-            Ba việc, gọn trong một chỗ.
+            Bốn việc, gọn trong một chỗ.
           </h2>
 
           <div className="card-strong mt-10 space-y-6 p-6 sm:p-8">
@@ -427,6 +425,12 @@ export default function LandingPage() {
                 body: 'Rủ bạn cùng lớp gom đơn lấy giá sỉ. Công cụ chia tiền nói rõ từng người chuyển bao nhiêu.',
                 link: '/deals',
                 label: 'Xem kèo đang mở',
+              },
+              {
+                title: 'Đi chợ một lần',
+                body: 'Nhập ngân sách và số ngày, app chọn món Việt rẻ, dễ nấu rồi gộp nguyên liệu thành một danh sách đi chợ kèm giá tham khảo.',
+                link: '/nutrition',
+                label: 'Xem thực đơn',
               },
             ].map((item, i) => (
               <div
@@ -507,7 +511,7 @@ export default function LandingPage() {
             data-reveal
             className="reveal max-w-2xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
           >
-            Vì sao sinh viên ở lại.
+            Làm cho sinh viên, không phải cho ngân hàng.
           </h2>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -597,29 +601,32 @@ export default function LandingPage() {
                   </p>
                 </div>
               ) : (
-                feedbackItems.slice(0, 3).map((item) => (
-                  <article
-                    key={item.id}
-                    className="rounded-2xl border-2 border-brand-200/60 bg-white px-4 py-3.5"
-                  >
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="text-[13px] font-bold text-ink-900">{item.author_name}</span>
-                      <StarRating value={Number(item.rating)} size="sm" />
-                      <span className="text-[13px] text-ink-500">
-                        {formatRelativeTime(item.created_at)}
-                      </span>
-                    </div>
-                    {item.review && (
-                      <p className="mt-1.5 text-[13px] leading-relaxed text-ink-700">{item.review}</p>
-                    )}
-                    {item.suggestion && (
-                      <p className="mt-2 rounded-xl bg-amber-50 px-2.5 py-1.5 text-[13px] leading-relaxed text-amber-900">
-                        <span className="font-bold">Đề xuất: </span>
-                        {item.suggestion}
-                      </p>
-                    )}
-                  </article>
-                ))
+                <div className="space-y-4 rounded-2xl bg-brand-50/60 p-4 sm:p-5">
+                  {feedbackItems.slice(0, 3).map((item, index) => (
+                    <article
+                      key={item.id}
+                      className={index > 0 ? 'pt-1' : ''}
+                    >
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <Avatar size="sm" name={item.author_name} src={item.author_avatar} />
+                        <span className="text-[13px] font-bold text-ink-900">{item.author_name}</span>
+                        <StarRating value={Number(item.rating)} size="sm" />
+                        <span className="text-[13px] text-ink-500">
+                          {formatRelativeTime(item.created_at)}
+                        </span>
+                      </div>
+                      {item.review && (
+                        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-700">{item.review}</p>
+                      )}
+                      {item.suggestion && (
+                        <p className="mt-2 rounded-xl bg-amber-50 px-2.5 py-1.5 text-[13px] leading-relaxed text-amber-900">
+                          <span className="font-bold">Đề xuất: </span>
+                          {item.suggestion}
+                        </p>
+                      )}
+                    </article>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -634,7 +641,7 @@ export default function LandingPage() {
         >
           <div>
             <h2 className="max-w-2xl text-balance text-[clamp(1.8rem,3.4vw,2.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-white">
-              Đừng để cuối tháng hết tiền.
+              Bắt đầu từ tháng này.
             </h2>
             <p className="mt-3 max-w-lg text-[16px] leading-relaxed text-white/75">
               Đặt ngân sách hôm nay, ghi khoản chi đầu tiên, và xem heo đất lớn lên mỗi ngày.

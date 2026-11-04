@@ -165,7 +165,7 @@ export default function FeedbackPage() {
               return (
                 <li key={item.id} className="rounded-2xl border border-brand-200/60 px-3.5 py-3">
                   <div className="flex items-start gap-3">
-                    <Avatar size="sm" name={item.author_name} />
+                    <Avatar size="sm" name={item.author_name} src={item.author_avatar} />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                         <span className="text-[13px] font-bold text-ink-900">{item.author_name}</span>

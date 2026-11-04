@@ -657,7 +657,11 @@ export async function fetchAppFeedback({ limit = 60 } = {}) {
     return loadFeedback()
       .filter((item) => item.status !== 'hidden')
       .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
-      .slice(0, limit);
+      .slice(0, limit)
+      .map((item) => ({
+        ...item,
+        author_avatar: findAccount(item.user_id)?.avatar_url || item.author_avatar || '',
+      }));
   }
 
   const { data, error } = await supabase
@@ -667,7 +671,26 @@ export async function fetchAppFeedback({ limit = 60 } = {}) {
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return data || [];
+
+  const rows = data || [];
+  const userIds = [...new Set(rows.map((row) => row.user_id))];
+  let people = {};
+  if (userIds.length) {
+    const { data: profiles, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url')
+      .in('id', userIds);
+    if (!profileError) {
+      people = Object.fromEntries((profiles || []).map((person) => [person.id, person]));
+    }
+  }
+
+  // Ưu tiên tên và ảnh hiện tại trong hồ sơ để người dùng đổi avatar là cập nhật theo.
+  return rows.map((row) => ({
+    ...row,
+    author_name: people[row.user_id]?.full_name || row.author_name,
+    author_avatar: people[row.user_id]?.avatar_url || '',
+  }));
 }
 
 export async function createAppFeedback({ user, rating, review, suggestion }) {
