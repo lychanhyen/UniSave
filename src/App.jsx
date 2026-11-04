@@ -5,6 +5,7 @@ import AppLayout from './components/layout/AppLayout';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LandingPage from './pages/LandingPage';
+import FeedbackPage from './pages/FeedbackPage';
 import DashboardPage from './pages/DashboardPage';
 import ExpensesPage from './pages/ExpensesPage';
 import NutritionPage from './pages/NutritionPage';
@@ -89,6 +90,7 @@ export default function App() {
           <AppLayout>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/feedback" element={<FeedbackPage />} />
               <Route
                 path="/login"
                 element={

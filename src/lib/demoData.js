@@ -529,6 +529,15 @@ export function saveIncomes(list) {
   write('incomes', list);
 }
 
+export function loadFeedback() {
+  const existing = read('feedback', null);
+  return Array.isArray(existing) ? existing : [];
+}
+
+export function saveFeedback(list) {
+  write('feedback', list);
+}
+
 /* -------------------------------- Campuses ------------------------------- */
 
 /**

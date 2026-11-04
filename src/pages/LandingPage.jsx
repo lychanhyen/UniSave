@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -8,6 +8,9 @@ import {
   Wallet,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import StarRating from '../components/feedback/StarRating';
+import { useAppFeedback } from '../hooks/useAppFeedback';
+import { formatRelativeTime } from '../lib/utils';
 
 /* --------------------------------------------------------------------------
    Reveal on scroll. Transform + opacity only; reduced motion shows content.
@@ -231,6 +234,11 @@ function SplitBillFragment() {
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const {
+    items: feedbackItems,
+    stats: feedbackStats,
+    loading: feedbackLoading,
+  } = useAppFeedback();
   const loggedIn = Boolean(user);
   const isAdmin = user?.role === 'admin';
   const reveal = useReveal();
@@ -535,6 +543,85 @@ export default function LandingPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------------- Đánh giá công khai */}
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <div data-reveal className="reveal grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+            <div>
+              <h2 className="text-balance text-[clamp(1.6rem,3vw,2.25rem)] font-extrabold leading-[1.05] tracking-[-0.04em] text-ink-900">
+                Sinh viên đã dùng và nói gì về UniSave.
+              </h2>
+              <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink-600">
+                Điểm và đề xuất bên dưới do chính người dùng gửi, hiển thị công khai để người mới có
+                cái nhìn tổng quan trước khi tạo tài khoản.
+              </p>
+
+              <div className="mt-6 flex items-end gap-3 rounded-2xl border-2 border-brand-200 bg-brand-50/70 px-4 py-3">
+                <p className="text-[34px] font-extrabold leading-none tracking-[-0.04em] text-ink-900">
+                  {feedbackStats.average || '—'}
+                </p>
+                <div className="pb-0.5">
+                  <StarRating value={Math.round(feedbackStats.average)} size="sm" />
+                  <p className="mt-1 text-[13px] font-semibold text-ink-600">
+                    {feedbackStats.count > 0
+                      ? `${feedbackStats.count} đánh giá · ${feedbackStats.suggestions} đề xuất`
+                      : 'Chưa có đánh giá nào'}
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                to="/feedback"
+                className="mt-5 inline-flex items-center gap-2 rounded-2xl border-2 border-brand-600 bg-white px-5 py-3 text-[15px] font-bold text-brand-700 transition hover:bg-brand-600 hover:text-white"
+              >
+                Đánh giá UniSave
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid gap-3">
+              {feedbackLoading ? (
+                <div className="rounded-2xl border-2 border-brand-200/60 bg-white px-4 py-8 text-center text-[13px] font-medium text-ink-400">
+                  Đang tải đánh giá…
+                </div>
+              ) : feedbackItems.length === 0 ? (
+                <div className="rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50/40 px-5 py-8 text-center">
+                  <p className="text-[14px] font-bold text-ink-800">Chưa có đánh giá nào</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-ink-500">
+                    Hãy là người đầu tiên chia sẻ cảm nhận, để sinh viên khác biết UniSave có ích thế
+                    nào.
+                  </p>
+                </div>
+              ) : (
+                feedbackItems.slice(0, 3).map((item) => (
+                  <article
+                    key={item.id}
+                    className="rounded-2xl border-2 border-brand-200/60 bg-white px-4 py-3.5"
+                  >
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="text-[13px] font-bold text-ink-900">{item.author_name}</span>
+                      <StarRating value={Number(item.rating)} size="sm" />
+                      <span className="text-[13px] text-ink-500">
+                        {formatRelativeTime(item.created_at)}
+                      </span>
+                    </div>
+                    {item.review && (
+                      <p className="mt-1.5 text-[13px] leading-relaxed text-ink-700">{item.review}</p>
+                    )}
+                    {item.suggestion && (
+                      <p className="mt-2 rounded-xl bg-amber-50 px-2.5 py-1.5 text-[13px] leading-relaxed text-amber-900">
+                        <span className="font-bold">Đề xuất: </span>
+                        {item.suggestion}
+                      </p>
+                    )}
+                  </article>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </section>

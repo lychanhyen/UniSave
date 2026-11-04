@@ -14,6 +14,8 @@ import {
   saveInquiries,
   loadIncomes,
   saveIncomes,
+  loadFeedback,
+  saveFeedback,
   loadComments as loadDemoComments,
   saveComments as saveDemoComments,
   loadReports,
@@ -643,6 +645,86 @@ export async function sendUserNotification(userId, { type, title, body, link }) 
   return true;
 }
 
+
+/* --------------------------- Đánh giá sản phẩm --------------------------- */
+
+/**
+ * Đánh giá công khai của người dùng. Ai cũng đọc được (kể cả khách chưa đăng
+ * nhập) nên trang chủ hiển thị được ngay mà không cần đăng nhập.
+ */
+export async function fetchAppFeedback({ limit = 60 } = {}) {
+  if (!isRemote()) {
+    return loadFeedback()
+      .filter((item) => item.status !== 'hidden')
+      .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+      .slice(0, limit);
+  }
+
+  const { data, error } = await supabase
+    .from('app_feedback')
+    .select('id, user_id, author_name, rating, review, suggestion, status, created_at')
+    .eq('status', 'visible')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createAppFeedback({ user, rating, review, suggestion }) {
+  const item = {
+    id: newId(),
+    user_id: user.id,
+    author_name: user.full_name || 'Sinh viên UniSave',
+    rating: Math.max(1, Math.min(5, Number(rating) || 5)),
+    review: String(review || '').trim(),
+    suggestion: String(suggestion || '').trim(),
+    status: 'visible',
+    created_at: new Date().toISOString(),
+  };
+
+  if (!isRemote()) {
+    saveFeedback([item, ...loadFeedback()]);
+    return item;
+  }
+
+  const { data, error } = await supabase
+    .from('app_feedback')
+    .insert({
+      user_id: item.user_id,
+      author_name: item.author_name,
+      rating: item.rating,
+      review: item.review,
+      suggestion: item.suggestion,
+    })
+    .select('id, user_id, author_name, rating, review, suggestion, status, created_at')
+    .single();
+  if (error) {
+    if (error.code === '42501' || error.status === 403) {
+      throw new Error('Bạn cần đăng nhập bằng tài khoản đã xác minh để gửi đánh giá.');
+    }
+    throw error;
+  }
+  return data;
+}
+
+export async function deleteAppFeedback(id) {
+  if (!isRemote()) {
+    saveFeedback(loadFeedback().filter((item) => item.id !== id));
+    return;
+  }
+  const { error } = await supabase.from('app_feedback').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/** Quản trị viên ẩn một đánh giá khỏi trang công khai. */
+export async function hideAppFeedback(id) {
+  if (!isRemote()) {
+    saveFeedback(loadFeedback().map((item) => (item.id === id ? { ...item, status: 'hidden' } : item)));
+    return;
+  }
+  const { error } = await supabase.from('app_feedback').update({ status: 'hidden' }).eq('id', id);
+  if (error) throw error;
+}
 
 /* --------------------------- Trang cá nhân công khai --------------------------- */
 

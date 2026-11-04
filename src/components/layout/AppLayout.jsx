@@ -16,6 +16,7 @@ import {
   Flag,
   ShieldAlert,
   MapPin,
+  Star,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -32,6 +33,7 @@ const STUDENT_NAV = [
   { to: '/marketplace', label: 'Chợ sinh viên', icon: Store },
   { to: '/deals', label: 'Gom đơn', icon: ShoppingBag },
   { to: '/profile', label: 'Hồ sơ', icon: UserRound },
+  { to: '/feedback', label: 'Đánh giá', icon: Star },
 ];
 
 const ADMIN_NAV = [
@@ -41,6 +43,7 @@ const ADMIN_NAV = [
   { to: '/admin/reports', label: 'Tố cáo', icon: Flag },
   { to: '/admin/campuses', label: 'Khu vực', icon: MapPin },
   { to: '/profile', label: 'Hồ sơ', icon: UserRound },
+  { to: '/feedback', label: 'Đánh giá', icon: Star },
 ];
 
 function Logo({ compact = false, to = '/dashboard' }) {
@@ -52,7 +55,7 @@ function Logo({ compact = false, to = '/dashboard' }) {
       {!compact && (
         <span className="flex flex-col leading-none">
           <span className="text-[15px] font-extrabold tracking-[-0.02em] text-ink-900">UniSave</span>
-          <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-ink-400">
+          <span className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-500">
             Student finance
           </span>
         </span>
@@ -138,7 +141,7 @@ export default function AppLayout({ children }) {
         </div>
         <nav className="mt-8 flex flex-1 flex-col gap-1.5">
           {isAdmin && (
-            <p className="px-3.5 pb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-400">
+            <p className="px-3.5 pb-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-500">
               Quản trị hệ thống
             </p>
           )}
@@ -177,7 +180,7 @@ export default function AppLayout({ children }) {
                   </span>
                 )}
               </p>
-              <p className="truncate text-[10px] font-medium text-ink-400">
+              <p className="truncate text-[11px] font-medium text-ink-500">
                 {currentUser.email || (demoMode ? 'Tài khoản demo' : '')}
               </p>
             </div>
@@ -346,7 +349,7 @@ export default function AppLayout({ children }) {
                   key={item.to}
                   to={item.to}
                   className={cn(
-                    'flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[10px] font-semibold transition-colors',
+                    'flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition-colors',
                     active ? 'text-brand-600' : 'text-ink-400'
                   )}
                 >
