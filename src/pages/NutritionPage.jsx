@@ -28,6 +28,7 @@ import {
   recipeSteps,
 } from '../lib/nutrition';
 import { cn, formatCurrency } from '../lib/utils';
+import { RECIPES } from '../lib/recipes';
 
 const STORE_KEY = 'unisave:nutrition';
 const GROUP_ORDER = ['Đạm', 'Rau củ', 'Tinh bột', 'Gia vị', 'Trái cây'];
@@ -54,6 +55,7 @@ function saveSaved(patch) {
 function DishCard({ dish, people, prices, label }) {
   const ingredients = useMemo(() => dishIngredients(dish, people, prices), [dish, people, prices]);
   const steps = useMemo(() => recipeSteps(dish, people), [dish, people]);
+  const recipe = RECIPES[dish.id];
 
   return (
     <details className="group rounded-xl border border-brand-200/70 bg-white px-3 py-2">
@@ -73,6 +75,11 @@ function DishCard({ dish, people, prices, label }) {
               {dish.kcal} kcal · {dish.protein}g đạm
             </span>
             <span className="font-semibold text-brand-700">{formatCurrency(dish.cost || 0)}</span>
+            {recipe && (
+              <span className="rounded bg-brand-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-brand-700">
+                Chi tiết
+              </span>
+            )}
           </span>
         </span>
         <ChevronDown className="mt-1 h-3.5 w-3.5 shrink-0 text-ink-400 transition-transform group-open:rotate-180" />
@@ -90,15 +97,35 @@ function DishCard({ dish, people, prices, label }) {
           ))}
         </ul>
 
+        {recipe && (
+          <>
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-ink-400">Gia vị</p>
+            <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+              {recipe.seasoning.map((item) => (
+                <li key={item} className="rounded bg-brand-50/70 px-1.5 py-0.5 text-[11px] text-ink-700">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
         <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-ink-400">Cách nấu</p>
         <ol className="mt-1 space-y-1">
-          {steps.map((step, index) => (
+          {(recipe ? recipe.steps : steps).map((step, index) => (
             <li key={index} className="flex gap-1.5 text-[11px] leading-relaxed text-ink-700">
               <span className="shrink-0 font-bold text-brand-700">{index + 1}.</span>
               <span>{step}</span>
             </li>
           ))}
         </ol>
+
+        {recipe?.tip && (
+          <p className="mt-1.5 rounded-lg bg-amber-50 px-2 py-1.5 text-[11px] leading-relaxed text-amber-800">
+            <span className="font-bold">Mẹo: </span>
+            {recipe.tip}
+          </p>
+        )}
 
         <div className="mt-1.5 flex flex-wrap gap-1">
           {dish.tags.map((tag) => (
