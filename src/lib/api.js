@@ -709,7 +709,7 @@ export async function fetchPublicProfile(userId) {
       .limit(6),
     supabase
       .from('deals')
-      .select('id, title, deal_price, original_price, status, deadline, current_members, min_members')
+      .select('id, title, deal_price, original_price, status, deadline, min_members')
       .eq('owner_id', userId)
       .order('created_at', { ascending: false })
       .limit(6),

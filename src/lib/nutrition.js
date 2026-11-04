@@ -406,6 +406,12 @@ function withCost(list, people, prices) {
  * Chọn danh sách món: xoay vòng theo nhóm đạm để bữa ăn không lặp,
  * thiếu món thì lặp lại từ đầu danh sách đã sắp theo giá.
  */
+function rotateList(list, by) {
+  if (!list.length) return list;
+  const offset = ((by % list.length) + list.length) % list.length;
+  return [...list.slice(offset), ...list.slice(0, offset)];
+}
+
 function pickRotating(pool, count, seed) {
   if (!pool.length) return [];
   const shuffled = shuffle(pool, seed).sort((a, b) => a.cost - b.cost);
@@ -415,7 +421,9 @@ function pickRotating(pool, count, seed) {
     if (!buckets.has(key)) buckets.set(key, []);
     buckets.get(key).push(dish);
   }
-  const queues = [...buckets.values()];
+  // Sắp theo giá xong phải xoay vòng theo seed, nếu không mọi seed ra cùng thứ tự.
+  const keys = shuffle([...buckets.keys()], seed + 17);
+  const queues = keys.map((key) => rotateList(buckets.get(key), seed + key.length * 3));
   const picked = [];
   let round = 0;
   while (picked.length < count) {
