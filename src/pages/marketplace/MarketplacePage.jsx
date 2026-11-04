@@ -121,17 +121,17 @@ export default function MarketplacePage() {
         }
       />
 
-      <div className="animate-in relative mb-6 overflow-hidden rounded-3xl bg-ink-900 p-6 text-white sm:p-7">
+      <div className="animate-in relative mb-6 overflow-hidden rounded-3xl border-2 border-brand-200 bg-brand-50 p-6 text-ink-900 sm:p-7">
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-lg">
-            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">
+            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-700/70">
               Cộng đồng sinh viên
             </span>
             <h2 className="mt-2.5 text-[clamp(1.5rem,3vw,1.9rem)] font-extrabold leading-[1.06] tracking-[-0.035em]">
               Món đồ bạn không dùng,
               <br className="hidden sm:block" /> là bảo bối của người khác.
             </h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-white/60">
+            <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
               Lọc theo trường/KTX để giao dịch gần, không phát sinh phí vận chuyển.
             </p>
           </div>
@@ -145,11 +145,11 @@ export default function MarketplacePage() {
             ].map(({ label, value, icon: Icon }) => (
               <div
                 key={label}
-                className="rounded-xl border border-white/15 bg-white/10 px-4 py-3"
+                className="rounded-xl border border-brand-200 bg-white px-4 py-3"
               >
-                <Icon className="h-4 w-4 text-white/60" />
-                <p className="mt-2 figure-lg text-[20px]">{formatCompact(value)}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/50">
+                <Icon className="h-4 w-4 text-brand-600" />
+                <p className="mt-2 figure-lg text-[20px] text-ink-900">{formatCompact(value)}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-500">
                   {label}
                 </p>
               </div>

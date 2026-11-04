@@ -165,7 +165,7 @@ export default function LoginPage() {
               <div className="max-w-xl">
                 <p className="hero-eyebrow mb-5">Chào mừng đến với UniSave</p>
 
-                <h2 className="text-balance text-[clamp(2.35rem,4.4vw,3.6rem)] font-extrabold leading-[1.03] tracking-[-0.035em]">
+                <h2 className="text-balance text-[clamp(1.6rem,6.6vw,3.4rem)] font-extrabold uppercase leading-[1.03] tracking-[-0.02em]">
                   Quản lý tiền gọn,
                   <br />
                   <span className="text-[#ffb48f]">sống thoải mái.</span>

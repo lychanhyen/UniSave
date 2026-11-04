@@ -225,7 +225,7 @@ export default function StudentProfilePage() {
               {deals.map((deal) => (
                 <li key={deal.id}>
                   <Link
-                    to="/deals"
+                    to={`/deals/${deal.id}`}
                     className="flex items-center gap-3 rounded-xl border border-brand-200/60 px-2.5 py-2 transition hover:border-brand-300 hover:bg-brand-50/50"
                   >
                     <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700">

@@ -236,27 +236,13 @@ export default function GroupDealsPage() {
       ) : (
         <div className="animate-in-delay-2 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((deal) => (
-            <DealCard
-              key={deal.id}
-              deal={deal}
-              joined={(deal.joined_ids || []).includes(currentUser.id)}
-              isOwner={deal.owner_id === currentUser.id}
-              currentUserId={currentUser.id}
-              onJoin={handleJoin}
-              onLeave={handleLeave}
-              onDelete={handleDelete}
-              onEdit={handleEditDeal}
-              onDeclarePayment={handleDeclarePayment}
-              onReviewPayment={handleReviewPayment}
-              onAttachBill={attachBill}
-              isAdmin={currentUser.role === 'admin'}
-            />
+            <DealCard key={deal.id} deal={deal} />
           ))}
         </div>
       )}
 
-      <div className="mt-8 flex items-start gap-3 rounded-3xl border border-brand-200/60 bg-white/70 p-5 backdrop-blur-sm">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-600">
+      <div className="mt-8 flex items-start gap-3 rounded-3xl border border-brand-200 bg-brand-50/70 p-5">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white text-brand-600">
           <Sparkles className="h-5 w-5" />
         </span>
         <div>
