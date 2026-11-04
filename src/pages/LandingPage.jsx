@@ -286,12 +286,15 @@ export default function LandingPage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14 lg:pb-24 lg:pt-16">
         <div>
           <h1 className="text-balance text-[clamp(2.4rem,4.3vw,3.5rem)] font-extrabold leading-[0.98] tracking-[-0.05em]">
-            Biết tiền của mình đi đâu.
+            Rõ từng đồng.
+            <br />
+            Nhẹ cả tháng.
           </h1>
 
           <p className="mt-5 max-w-lg text-[18px] leading-relaxed text-ink-700">
-            Ngân sách chia theo từng ngày, tự trích 10% vào heo đất, và nối bạn với chợ đồ cũ, kèo
-            gom đơn cùng thực đơn đi chợ của chính sinh viên Việt Nam.
+            Ghi một khoản chi là hạn mức hôm nay tự tính lại, 10% ngân sách tự chảy vào heo đất —
+            cuối tháng không phải ngồi đếm lại. Kèm chợ đồ cũ trong trường, kèo gom đơn và thực đơn
+            đi chợ cho sinh viên Việt Nam.
           </p>
 
           <div className="mt-8 flex flex-col gap-2.5 sm:flex-row">
@@ -348,10 +351,11 @@ export default function LandingPage() {
             data-reveal
             className="reveal max-w-3xl text-balance text-[clamp(1.7rem,3.6vw,2.4rem)] font-extrabold leading-[1.02] tracking-[-0.04em]"
           >
-            Mở ra là biết hôm nay tiêu được bao nhiêu.
+            Mở app là thấy hạn mức của hôm nay.
           </h2>
           <p data-reveal className="reveal mt-3 max-w-xl text-[16px] leading-relaxed text-ink-700">
-            Sổ chi tiêu, chợ đồ cũ, kèo gom đơn và thực đơn đi chợ — cùng một tài khoản sinh viên.
+            Sổ chi tiêu theo ngày, chợ đồ cũ trong trường, kèo gom đơn và thực đơn đi chợ — không
+            phải mở thêm app nào khác.
           </p>
 
           <div className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
