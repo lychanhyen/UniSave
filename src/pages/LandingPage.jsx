@@ -286,9 +286,9 @@ export default function LandingPage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14 lg:pb-24 lg:pt-16">
         <div>
           <h1 className="text-balance text-[clamp(2.4rem,4.3vw,3.5rem)] font-extrabold leading-[0.98] tracking-[-0.05em]">
-            Rõ từng đồng.
+            Rõ từng đồng
             <br />
-            Nhẹ cả tháng.
+            Nhẹ cả tháng
           </h1>
 
           <p className="mt-5 max-w-lg text-[18px] leading-relaxed text-ink-700">
