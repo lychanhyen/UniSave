@@ -28,7 +28,7 @@ import {
   recipeSteps,
 } from '../lib/nutrition';
 import { cn, formatCurrency } from '../lib/utils';
-import { RECIPES } from '../lib/recipes';
+import { DETAILED_RECIPE_COUNT, RECIPES } from '../lib/recipes';
 
 const STORE_KEY = 'unisave:nutrition';
 const GROUP_ORDER = ['Đạm', 'Rau củ', 'Tinh bột', 'Gia vị', 'Trái cây'];
@@ -600,7 +600,8 @@ export default function NutritionPage() {
 
       <p className="rounded-2xl border border-brand-200/60 bg-brand-50/50 px-4 py-3 text-[11px] leading-relaxed text-ink-500">
         <Sparkles className="mr-1 inline h-3 w-3 text-brand-600" />
-        Thực đơn chọn từ {DISHES.length} món Việt có sẵn trong ứng dụng — không gọi AI, không tốn phí.
+        Thực đơn chọn từ {DISHES.length} món Việt có sẵn trong ứng dụng — không gọi AI, không tốn phí.{' '}
+        Trong đó {DETAILED_RECIPE_COUNT} món có công thức viết tay kèm định lượng gia vị từng bước.
         Giá là tham khảo để dự toán; dinh dưỡng tính cho món + cơm, chưa gồm bữa sáng và ăn vặt.
       </p>
 

@@ -1,3 +1,7 @@
+import { RECIPES_BATCH_1 } from './recipes-batch1.js';
+import { RECIPES_BATCH_2 } from './recipes-batch2.js';
+import { RECIPES_BATCH_3 } from './recipes-batch3.js';
+
 /**
  * Công thức viết tay cho 30 món phổ biến nhất.
  *
@@ -7,7 +11,7 @@
  *
  * Quy ước: 1 thìa canh ≈ 15ml, 1 thìa cà phê ≈ 5ml. Nước mắm loại 30 độ đạm.
  */
-export const RECIPES = {
+const CORE_RECIPES = {
   /* --------------------------------- Canh --------------------------------- */
   'canh-cai-thit': {
     prepMinutes: 10,
@@ -476,6 +480,14 @@ export const RECIPES = {
     ],
     tip: 'Khuấy cháo theo một chiều và giữ lửa nhỏ để cháo sánh mịn, không vón cục.',
   },
+};
+
+/** Gộp công thức viết tay của cả bốn đợt (30 + 70 = 100 món). */
+export const RECIPES = {
+  ...CORE_RECIPES,
+  ...RECIPES_BATCH_1,
+  ...RECIPES_BATCH_2,
+  ...RECIPES_BATCH_3,
 };
 
 export const DETAILED_RECIPE_COUNT = Object.keys(RECIPES).length;
