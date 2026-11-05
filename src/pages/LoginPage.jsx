@@ -6,17 +6,40 @@ import {
   ArrowRight,
   PiggyBank,
   ShieldCheck,
-  Sparkles,
+  TrendingUp,
   UsersRound,
+  Users,
   BadgeCheck,
-  Landmark,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { supabase } from '../lib/supabase';
-import coinsBg from '../assets/coins-bg.webp';
+import { isGoogleProviderEnabled, isSupabaseConfigured, supabase } from '../lib/supabase';
+
+/** Biểu tượng Google bốn màu, vẽ trực tiếp bằng SVG để không thêm thư viện. */
+function GoogleMark() {
+  return (
+    <svg viewBox="0 0 48 48" className="h-[18px] w-[18px] shrink-0" aria-hidden="true">
+      <path
+        fill="#EA4335"
+        d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.1 0 24 0 14.6 0 6.4 5.4 2.5 13.2l7.8 6.1C12.2 13.3 17.6 9.5 24 9.5z"
+      />
+      <path
+        fill="#4285F4"
+        d="M46.1 24.5c0-1.6-.1-2.8-.4-4.1H24v8.5h12.5c-.3 2.1-1.5 5.2-4.3 7.3l7.6 5.9c4.5-4.2 6.3-10.3 6.3-17.6z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M10.3 28.7c-.5-1.4-.8-2.9-.8-4.7s.3-3.3.8-4.7l-7.8-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.5 10.8l7.8-6.1z"
+      />
+      <path
+        fill="#34A853"
+        d="M24 48c6.1 0 11.2-2 14.9-5.5l-7.6-5.9c-2 1.4-4.7 2.4-7.3 2.4-6.4 0-11.8-3.8-13.7-9.3l-7.8 6.1C6.4 42.6 14.6 48 24 48z"
+      />
+    </svg>
+  );
+}
 
 const DEMO_ACCOUNTS = [
   {
@@ -64,7 +87,14 @@ const BRAND_SCALE = {
  * Ảnh nền minh hoạ khuôn viên trường, neo đáy giữa khung.
  * CSS tương đương: background: #00834a url(...) center bottom / 100% auto no-repeat.
  */
-const CAMPUS_IMAGE = '/assets/images/uda-dashboard/sidebar-campus-v2.png';
+const HERO_IMAGE = '/assets/images/login/login-hero.png';
+
+/** Ba tính năng nổi bật bên trái trang đăng nhập. */
+const LOGIN_FEATURES = [
+  { icon: TrendingUp, title: 'Theo dõi chi tiêu', note: 'Dễ dàng, trực quan' },
+  { icon: PiggyBank, title: 'Tiết kiệm thông minh', note: 'Tích lũy cho tương lai' },
+  { icon: Users, title: 'Kèo gom đơn', note: 'Cùng bạn bè, tiết kiệm hơn' },
+];
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -73,6 +103,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [quickLoading, setQuickLoading] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   function goTo(user) {
     navigate(user?.role === 'admin' ? '/admin' : '/dashboard');
@@ -126,73 +157,107 @@ export default function LoginPage() {
     }
   }
 
+  /**
+   * Đăng nhập bằng Google qua Supabase OAuth.
+   *
+   * Sau khi bấm, trình duyệt chuyển sang trang chọn tài khoản của Google rồi quay lại
+   * /dashboard. Supabase tự đọc phiên trong URL và AuthContext tự cập nhật người dùng,
+   * nên ở đây không cần xử lý thêm bước đăng nhập.
+   */
+  async function handleGoogle() {
+    if (!isSupabaseConfigured()) {
+      toast.error('Chưa cấu hình Supabase nên chưa dùng được đăng nhập Google.');
+      return;
+    }
+    setGoogleLoading(true);
+    const enabled = await isGoogleProviderEnabled();
+    if (!enabled) {
+      setGoogleLoading(false);
+      toast.error('Google chưa được bật trong Supabase (Authentication → Providers → Google).');
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: { prompt: 'select_account' },
+        },
+      });
+      if (error) throw error;
+      // Trình duyệt sẽ chuyển hướng sang Google, giữ trạng thái chờ cho tới lúc đó.
+    } catch (error) {
+      setGoogleLoading(false);
+      const message = String(error?.message || '');
+      if (/provider is not enabled|unsupported provider/i.test(message)) {
+        toast.error('Google chưa được bật trong Supabase. Vào Authentication → Providers để bật.');
+        return;
+      }
+      toast.error('Không đăng nhập được bằng Google. Vui lòng thử lại.');
+    }
+  }
+
   return (
     <div style={BRAND_SCALE} className="min-h-screen bg-white">
       <div className="flex min-h-screen flex-col lg:flex-row">
           {/* ----------------------------------------------------- Khối hình ảnh */}
-          <section
-            className="animate-in relative isolate flex min-h-[360px] flex-col justify-between overflow-hidden p-8 text-white sm:p-10 lg:min-h-screen lg:w-1/2 lg:p-14 xl:p-16"
-            style={{ backgroundColor: '#00834a' }}
-          >
-            {/* 1. Ảnh khuôn viên neo đáy giữa khung, rộng 100% */}
+                    <section className="animate-in relative isolate flex min-h-[620px] flex-col overflow-hidden text-white sm:min-h-[660px] lg:min-h-screen lg:w-1/2">
+            {/* 1. Ảnh nền do người dùng cung cấp, giữ nguyên nội dung ảnh */}
             <img
-              src={CAMPUS_IMAGE}
-              alt="Khuôn viên trường đại học với toà nhà, tháp đồng hồ và cây xanh"
-              className="pointer-events-none absolute inset-x-0 bottom-0 w-full select-none"
-            />
-
-            {/* 2. Đồng xu rơi, hoà dưới lớp nền */}
-            <img
-              src={coinsBg}
+              src={HERO_IMAGE}
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover opacity-60 mix-blend-screen"
+              className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover brightness-[0.72] saturate-[1.05]"
             />
 
-            {/* 3. Lớp phủ xanh xuyên thấu: ảnh chỉ còn gợi ý dưới nền */}
-            <div className="absolute inset-0 bg-[#00834a]/72" />
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[#00351d]/35" />
+            {/* 2. Lớp phủ gradient xanh đậm để chữ trắng đủ tương phản */}
+            <div className="absolute inset-0 bg-[#00371f]/45" />
+            <div className="absolute inset-0 bg-black/25" />
 
-            {/* 4. Nội dung nằm trên cùng */}
-            <div className="relative z-10 flex h-full flex-col justify-between gap-12">
-              <Link to="/" className="flex items-center gap-3.5">
-                <span className="grid h-14 w-14 place-items-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur">
-                  <PiggyBank className="h-7 w-7" />
+            {/* 3. Nội dung trên ảnh */}
+            <div className="relative z-10 flex min-h-full flex-1 flex-col gap-8 p-7 sm:p-10 lg:p-12 xl:p-14">
+              <Link to="/" className="flex items-center gap-3 self-start">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/30">
+                  <PiggyBank className="h-6 w-6 text-[#8bf3c7]" />
                 </span>
-                <span className="text-2xl font-extrabold tracking-tight">UniSave</span>
+                <span className="text-[1.45rem] font-extrabold leading-none tracking-[-0.03em]">
+                  <span className="text-white">Uni</span>
+                  <span className="text-[#8bf3c7]">Save</span>
+                </span>
               </Link>
 
-              <div className="max-w-xl">
-                <p className="hero-eyebrow mb-5">Chào mừng đến với UniSave</p>
-
-                <h2 className="text-balance text-[clamp(1.6rem,6.6vw,3.4rem)] font-extrabold uppercase leading-[1.03] tracking-[-0.02em]">
-                  Quản lý tiền gọn,
-                  <br />
-                  <span className="text-[#ffb48f]">sống thoải mái.</span>
+              <div className="my-auto max-w-[34rem]">
+                <h2 className="text-balance text-[clamp(1.55rem,5.4vw,2.6rem)] font-extrabold uppercase leading-[1.08] tracking-[-0.02em]">
+                  <span className="block text-white">Quản lý tiền gọn,</span>
+                  <span className="mt-1 block text-[#8bf3c7]">Sống thoải mái.</span>
                 </h2>
-                <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/90">
-                  Theo dõi chi tiêu, nuôi heo đất và săn kèo gom đơn cùng hàng nghìn sinh viên khác.
+
+                <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/85 sm:text-[16px]">
+                  Cùng UniSave quản lý chi tiêu thông minh, tiết kiệm hiệu quả và hiện thực hóa mục
+                  tiêu tài chính của bạn ngay hôm nay!
                 </p>
 
-                <ul className="mt-9 space-y-4">
-                  {[
-                    { icon: ShieldCheck, text: 'Quản trị viên duyệt sinh viên thật, chống lừa đảo' },
-                    { icon: Sparkles, text: 'Heo đất tự động lớn mỗi ngày' },
-                    { icon: Landmark, text: 'Kèo gom đơn tiết kiệm đến 40%' },
-                  ].map(({ icon: Icon, text }) => (
-                    <li
-                      key={text}
-                      className="flex items-start gap-3.5 text-[16px] leading-relaxed text-white/95"
-                    >
-                      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-white/80" />
-                      {text}
+                <ul className="mt-8 space-y-4">
+                  {LOGIN_FEATURES.map(({ icon: Icon, title, note }) => (
+                    <li key={title} className="flex items-start gap-3.5">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/25 text-[#8bf3c7]">
+                        <Icon className="h-[18px] w-[18px]" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-[14px] font-bold leading-snug text-white sm:text-[15px]">
+                          {title}
+                        </span>
+                        <span className="mt-0.5 block text-[13px] leading-relaxed text-white/70">
+                          {note}
+                        </span>
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <p className="text-[13px] font-medium text-white/75">
-                © 2026 UniSave. Dành cho sinh viên Việt Nam.
+              <p className="text-[12px] font-medium text-white/60">
+                UniSave © 2025. Tiết kiệm hôm nay, vững vàng tương lai.
               </p>
             </div>
           </section>
@@ -208,7 +273,21 @@ export default function LoginPage() {
                 Đăng nhập để tiếp tục hành trình tiết kiệm.
               </p>
 
-              <form onSubmit={handleSubmit} className="mt-7">
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={googleLoading || loading}
+                className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl border-2 border-ink-200 bg-white px-4 py-3 text-[15px] font-bold text-ink-800 transition hover:border-ink-300 hover:bg-ink-50 disabled:opacity-60"
+              >
+                <GoogleMark />
+                {googleLoading ? 'Đang chuyển sang Google…' : 'Đăng nhập bằng Google'}
+              </button>
+
+              <p className="my-4 text-center text-[12px] font-semibold uppercase tracking-wide text-ink-500">
+                hoặc đăng nhập bằng email
+              </p>
+
+              <form onSubmit={handleSubmit} className="mt-0">
                 <Input
                   label="Email"
                   type="email"

@@ -214,12 +214,21 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, full_name, student_code, campus, verification_status)
+  insert into public.profiles (id, full_name, student_code, campus, avatar_url, verification_status)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data ->> 'full_name', new.email),
+    coalesce(
+      new.raw_user_meta_data ->> 'full_name',
+      new.raw_user_meta_data ->> 'name',
+      new.email
+    ),
     new.raw_user_meta_data ->> 'student_code',
     coalesce(new.raw_user_meta_data ->> 'campus', 'khac'),
+    coalesce(
+      new.raw_user_meta_data ->> 'avatar_url',
+      new.raw_user_meta_data ->> 'picture',
+      ''
+    ),
     'pending'
   )
   on conflict (id) do nothing;
