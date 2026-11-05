@@ -100,6 +100,20 @@ const MEASURE = `(() => {
     b.textContent.includes('Google')
   );
   const footer = paragraphs.find((p) => p.textContent.includes('©'));
+  const heroImage = hero?.querySelector('img');
+  let imageInfo = null;
+  if (heroImage && heroImage.naturalWidth) {
+    const box = heroImage.getBoundingClientRect();
+    const scale = Math.max(box.width / heroImage.naturalWidth, box.height / heroImage.naturalHeight);
+    const renderedW = heroImage.naturalWidth * scale;
+    const renderedH = heroImage.naturalHeight * scale;
+    imageInfo = {
+      natural: heroImage.naturalWidth + 'x' + heroImage.naturalHeight,
+      visibleWidthPercent: Math.round((box.width / renderedW) * 100),
+      visibleHeightPercent: Math.round((box.height / renderedH) * 100),
+      currentSrc: heroImage.currentSrc.split('/').pop(),
+    };
+  }
 
   const textOverflow = [];
   if (hero) {
@@ -132,6 +146,7 @@ const MEASURE = `(() => {
     heroOverlapsForm: overlaps(box(hero), box(form)),
     featuresBelowHeadline: features.length ? features[0].getBoundingClientRect().top > h2.getBoundingClientRect().bottom : null,
     textOverflow,
+    imageInfo,
   });
 })()`;
 
@@ -179,6 +194,7 @@ try {
     console.log(`  biểu mẫu: ${JSON.stringify(data.form)} | nút Google: ${JSON.stringify(data.googleButton)}`);
     console.log(`  chồng lấn khối giới thiệu/biểu mẫu: ${data.heroOverlapsForm ? 'CÓ' : 'không'}`);
     console.log(`  chữ bị cắt: ${data.textOverflow.length ? data.textOverflow.join(' | ') : 'không'}`);
+    console.log(`  ảnh nền: ${JSON.stringify(data.imageInfo)}`);
   }
 
   client.close();

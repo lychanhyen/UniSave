@@ -89,6 +89,14 @@ const BRAND_SCALE = {
  */
 const HERO_IMAGE = '/assets/images/login/login-hero.png';
 
+/**
+ * Ảnh riêng cho điện thoại (khung dọc cao hơn nhiều so với desktop).
+ * Đặt tệp vào public/assets/images/login/login-hero-mobile.png rồi bật cờ dưới lên true
+ * là trình duyệt điện thoại tự dùng ảnh này; desktop vẫn dùng ảnh chính.
+ */
+const HERO_IMAGE_MOBILE = '/assets/images/login/login-hero-mobile.png';
+const HAS_HERO_IMAGE_MOBILE = false;
+
 /** Ba tính năng nổi bật bên trái trang đăng nhập. */
 const LOGIN_FEATURES = [
   { icon: TrendingUp, title: 'Theo dõi chi tiêu', note: 'Dễ dàng, trực quan' },
@@ -203,12 +211,17 @@ export default function LoginPage() {
           {/* ----------------------------------------------------- Khối hình ảnh */}
                     <section className="animate-in relative isolate flex min-h-[620px] flex-col overflow-hidden text-white sm:min-h-[660px] lg:min-h-screen lg:w-1/2">
             {/* 1. Ảnh nền do người dùng cung cấp, giữ nguyên nội dung ảnh */}
-            <img
-              src={HERO_IMAGE}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover brightness-[0.72] saturate-[1.05]"
-            />
+            <picture>
+              {HAS_HERO_IMAGE_MOBILE && (
+                <source media="(max-width: 639px)" srcSet={HERO_IMAGE_MOBILE} />
+              )}
+              <img
+                src={HERO_IMAGE}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover object-center brightness-[0.72] saturate-[1.05]"
+              />
+            </picture>
 
             {/* 2. Lớp phủ gradient xanh đậm để chữ trắng đủ tương phản */}
             <div className="absolute inset-0 bg-[#00371f]/45" />
