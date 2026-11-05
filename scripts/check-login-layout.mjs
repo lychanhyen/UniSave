@@ -147,6 +147,13 @@ const MEASURE = `(() => {
     featuresBelowHeadline: features.length ? features[0].getBoundingClientRect().top > h2.getBoundingClientRect().bottom : null,
     textOverflow,
     imageInfo,
+    heroResources: performance.getEntriesByType('resource')
+      .filter((entry) => entry.name.includes('login-hero'))
+      .map((entry) => ({
+        file: entry.name.split('/').pop(),
+        transferKB: Math.round(entry.transferSize / 1024),
+        encodedKB: Math.round(entry.encodedBodySize / 1024),
+      })),
   });
 })()`;
 
@@ -195,6 +202,7 @@ try {
     console.log(`  chồng lấn khối giới thiệu/biểu mẫu: ${data.heroOverlapsForm ? 'CÓ' : 'không'}`);
     console.log(`  chữ bị cắt: ${data.textOverflow.length ? data.textOverflow.join(' | ') : 'không'}`);
     console.log(`  ảnh nền: ${JSON.stringify(data.imageInfo)}`);
+    console.log(`  dữ liệu tải: ${JSON.stringify(data.heroResources)}`);
   }
 
   client.close();

@@ -87,15 +87,15 @@ const BRAND_SCALE = {
  * Ảnh nền minh hoạ khuôn viên trường, neo đáy giữa khung.
  * CSS tương đương: background: #00834a url(...) center bottom / 100% auto no-repeat.
  */
-const HERO_IMAGE = '/assets/images/login/login-hero.png';
+const HERO_IMAGE = '/assets/images/login/login-hero.webp';
 
 /**
  * Ảnh riêng cho điện thoại (khung dọc cao hơn nhiều so với desktop).
- * Đặt tệp vào public/assets/images/login/login-hero-mobile.png rồi bật cờ dưới lên true
+ * Tệp nằm ở public/assets/images/login/login-hero-mobile.webp, tỉ lệ 5:8 cho khung điện thoại.
  * là trình duyệt điện thoại tự dùng ảnh này; desktop vẫn dùng ảnh chính.
  */
-const HERO_IMAGE_MOBILE = '/assets/images/login/login-hero-mobile.png';
-const HAS_HERO_IMAGE_MOBILE = false;
+const HERO_IMAGE_MOBILE = '/assets/images/login/login-hero-mobile.webp';
+const HAS_HERO_IMAGE_MOBILE = true;
 
 /** Ba tính năng nổi bật bên trái trang đăng nhập. */
 const LOGIN_FEATURES = [
