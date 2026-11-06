@@ -326,8 +326,8 @@ def main():
     )
     NOTE(
         document,
-        "Phụ lục này không thay thế phiên thử với người dùng ngoài nhóm. Các chỉ số ở mục 2.3.3 vẫn để trống ở "
-        "những dòng chờ phiên thử chính thức; nhóm ghi rõ giới hạn này thay vì điền số ước đoán.",
+        "Phụ lục này không thay thế phiên thử với người dùng ngoài nhóm. Các chỉ số ở mục 2.3.3 để trống ở "
+        "những dòng chờ phiên thử chính thức, thay vì điền số ước đoán.",
     )
 
 '''
@@ -630,6 +630,29 @@ def main():
         "mục 4.1 theo cấu trúc yêu cầu",
     )
 
+
+    # Sửa lời ghi chú 1.3.1 và 3.1: bỏ câu dạng "việc cần làm", giữ giọng báo cáo
+    at = A.read_text(encoding="utf-8")
+    at = at.replace(
+        "Bước tiếp theo là mở rộng lên 50–100 phản hồi để kiểm chứng ",
+        "Bước tiếp theo của nhóm là mở rộng mẫu lên 50–100 phản hồi nhằm kiểm chứng ",
+        1,
+    )
+    A.write_text(at, encoding="utf-8")
+
+    ct = C.read_text(encoding="utf-8")
+    ct = ct.replace(
+        "chưa khảo sát đủ mẫu. Khi có báo cáo chính thức ",
+        "chưa khảo sát đủ mẫu. ",
+        1,
+    )
+    ct = ct.replace(
+        "của trường hoặc của Bộ GD&ĐT, thay số và giữ nguyên cách tính để bảng vẫn kiểm chứng được.",
+        "Cách tính được trình bày ngay trong bảng để người đọc kiểm chứng lại từng dòng.",
+        1,
+    )
+    C.write_text(ct, encoding="utf-8")
+    print("đã sửa lời ghi chú 1.3.1 và 3.1")
 
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
