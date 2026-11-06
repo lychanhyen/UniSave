@@ -466,6 +466,90 @@ def main():
         "phân vai thuyết trình theo tên",
     )
 
+    # Trang bìa kiểu báo cáo thường: chữ căn giữa, không dùng bảng
+    bia_moi = r"""def cover(document):
+    for _ in range(2):
+        document.add_paragraph()
+
+    for dong in ("TRƯỜNG ĐẠI HỌC ĐÔNG Á", "KHOA NGÔN NGỮ VÀ VĂN HOÁ TRUNG QUỐC"):
+        paragraph = document.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        paragraph.paragraph_format.first_line_indent = Cm(0)
+        paragraph.paragraph_format.space_after = Pt(2)
+        set_run(paragraph.add_run(dong), size=14, bold=True)
+
+    for _ in range(3):
+        document.add_paragraph()
+
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.first_line_indent = Cm(0)
+    set_run(paragraph.add_run("BÁO CÁO THIẾT KẾ Ý TƯỞNG SẢN PHẨM"), size=15, bold=True)
+
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.first_line_indent = Cm(0)
+    paragraph.paragraph_format.space_before = Pt(10)
+    set_run(
+        paragraph.add_run("UNISAVE\nNỀN TẢNG QUẢN LÝ TÀI CHÍNH\nVÀ CHỢ ĐỒ CŨ DÀNH CHO SINH VIÊN"),
+        size=19,
+        bold=True,
+    )
+
+    for _ in range(2):
+        document.add_paragraph()
+
+    for dong in ("Môn: Thiết kế ý tưởng", "Nhóm: 17 – Lớp CL24D", "GVHD: Th.S Trần Phước Đại"):
+        paragraph = document.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        paragraph.paragraph_format.first_line_indent = Cm(0)
+        paragraph.paragraph_format.space_after = Pt(2)
+        set_run(paragraph.add_run(dong), size=13, bold=False)
+
+    for _ in range(2):
+        document.add_paragraph()
+
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.first_line_indent = Cm(0)
+    paragraph.paragraph_format.space_after = Pt(4)
+    set_run(paragraph.add_run("Thành viên nhóm"), size=13, bold=True)
+
+    thanh_vien = [
+        "Nguyễn Thị Thanh Yên – 109096",
+        "Đỗ Thị Như Ý – 109410",
+        "Nguyễn Thị Thu Thúy – 118348",
+        "Trần Thị Phương Thu – 108967",
+        "Lê Phương Thảo – 108949",
+        "Nguyễn Thị Ngọc Kim – 109083",
+        "Nguyễn Thị Thanh Thanh – 109025",
+    ]
+    for so, ten in enumerate(thanh_vien, 1):
+        paragraph = document.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        paragraph.paragraph_format.first_line_indent = Cm(0)
+        paragraph.paragraph_format.space_after = Pt(1)
+        set_run(paragraph.add_run(f"{so}. {ten}"), size=12.5, bold=False)
+
+    for _ in range(3):
+        document.add_paragraph()
+
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.first_line_indent = Cm(0)
+    set_run(paragraph.add_run("Đà Nẵng, ngày 6 tháng 11 năm 2026"), size=13, bold=True)
+
+
+"""
+    t_a = A.read_text(encoding="utf-8")
+    dau = t_a.find("def cover(document):")
+    cuoi = t_a.find("def loi_cam_on(document):")
+    if dau < 0 or cuoi < 0:
+        print("KHÔNG THẤY hàm cover để thay")
+    else:
+        A.write_text(t_a[:dau] + bia_moi + t_a[cuoi:], encoding="utf-8")
+        print("đã thay trang bìa kiểu báo cáo thường")
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
