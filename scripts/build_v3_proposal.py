@@ -443,28 +443,49 @@ def main():
     A.write_text("\n".join(dong_moi), encoding="utf-8")
     print(f"thông tin nhóm: {len(thanh_vien)} thành viên, đã thay bảng phân công: {da_chen_vai_tro}")
 
-    patch(
-        C,
-        [
-            (
-                '["0:00 – 1:30", "Thành viên 1", "Mở đầu, vấn đề và insight"],',
-                '["0:00 – 1:30", "Nguyễn Thị Thanh Yên", "Mở đầu, vấn đề và insight"],',
-            ),
-            (
-                '["1:30 – 4:00", "Thành viên 2", "Giải pháp và demo trực tiếp trên sản phẩm"],',
-                '["1:30 – 4:00", "Nguyễn Thị Thu Thúy", "Giải pháp và demo trực tiếp trên sản phẩm"],',
-            ),
-            (
-                '["4:00 – 6:30", "Thành viên 3", "Thị trường, cạnh tranh, mô hình kinh doanh"],',
-                '["4:00 – 6:30", "Lê Phương Thảo", "Thị trường, cạnh tranh, mô hình kinh doanh"],',
-            ),
-            (
-                '["6:30 – 8:30", "Thành viên 1", "Kết quả kiểm chứng, minh chứng trước/sau"],',
-                '["6:30 – 8:30", "Đỗ Thị Như Ý", "Kết quả kiểm chứng, minh chứng trước/sau"],',
-            ),
-        ],
-        "phân vai thuyết trình theo tên",
+    block_42 = """    H2(document, "4.2. Kế hoạch phối hợp nhóm khi thuyết trình (11 phút)")
+    P(
+        document,
+        "Nhóm để một thành viên đại diện trình bày toàn bộ tám slide nhằm giữ mạch nói liền và không phải đổi "
+        "người giữa các ý nhỏ. Phần hỏi đáp thì cả nhóm cùng tham gia: câu hỏi thuộc phần nào do thành viên phụ "
+        "trách phần đó trả lời, nên người trình bày không phải gánh toàn bộ.",
     )
+    TABLE(
+        document,
+        [
+            ["Thời lượng", "Người phụ trách", "Nội dung"],
+            [
+                "0:00 – 8:00",
+                "Một thành viên đại diện",
+                "Trình bày toàn bộ tám slide: vấn đề và insight, giải pháp, demo trực tiếp, thị trường, cạnh "
+                "tranh, mô hình kinh doanh, kết quả kiểm chứng, lời kêu gọi",
+            ],
+            [
+                "8:00 – 9:30",
+                "Cả nhóm",
+                "Trả lời câu hỏi phản biện; mỗi câu do người phụ trách phần tương ứng trả lời",
+            ],
+            [
+                "9:30 – 11:00",
+                "Cả nhóm",
+                "Chốt ba ý người nghe cần nhớ và nêu kế hoạch ba tháng tiếp theo",
+            ],
+        ],
+        [3.0, 4.6, 8.3],
+        caption="Kế hoạch phối hợp khi thuyết trình trong 11 phút",
+        source="Nguồn: nhóm thực hiện",
+        size=10.5,
+    )
+
+"""
+    replace_block(
+        C,
+        '    H2(document, "4.2. Phân vai và thời lượng thuyết trình")',
+        '    H2(document, "4.3. Kịch bản phản biện',
+        block_42,
+        "mục 4.2 một người trình bày",
+    )
+
 
     # Trang bìa kiểu báo cáo thường: chữ căn giữa, không dùng bảng
     bia_moi = r"""def cover(document):
