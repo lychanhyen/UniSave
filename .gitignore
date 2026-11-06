@@ -52,3 +52,5 @@ supabase/.temp
 
 # Đầu ra của tasteskill inspector (ảnh chụp, report)
 .taste-skill/
+docs/assets/source/
+.dsh-office-*/
