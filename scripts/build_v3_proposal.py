@@ -693,6 +693,22 @@ def main():
     C.write_text(ct, encoding="utf-8")
     print("đã đặt giãn dòng 1.5, thêm Mind Map, đổi tên Perceptual Map, nâng chữ 12 lên 13")
 
+    # bỏ đoạn tự giải thích ở TLTK
+    ct = C.read_text(encoding="utf-8")
+    cu = (
+        '    P(\n'
+        '        document,\n'
+        '        "Sản phẩm của nhóm không đưa vào danh mục tham khảo vì đây là kết quả của bài tập, không phải tài liệu "\n'
+        '        "trích dẫn. Đường dẫn bản chạy thử được đặt ở Phụ lục C.",\n'
+        '    )\n'
+    )
+    if cu in ct:
+        ct = ct.replace(cu, "", 1)
+        C.write_text(ct, encoding="utf-8")
+        print("đã bỏ đoạn giải thích ở TLTK")
+    else:
+        print("KHÔNG THẤY đoạn giải thích ở TLTK")
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
