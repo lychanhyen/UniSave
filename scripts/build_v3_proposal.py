@@ -502,13 +502,17 @@ def main():
         set_run(paragraph.add_run(dong), size=14, bold=True)
 
     paragraph = document.add_paragraph()
-    paragraph.paragraph_format.space_after = Pt(0)
-    paragraph.paragraph_format.line_spacing = 1.15
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.first_line_indent = Cm(0)
+    paragraph.paragraph_format.space_before = Pt(4)
+    paragraph.paragraph_format.space_after = Pt(2)
+    paragraph.paragraph_format.line_spacing = 1.0
+    paragraph.add_run().add_picture("docs/assets/logo-truong.jpg", height=Cm(2.5))
 
     paragraph = document.add_paragraph()
     paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     paragraph.paragraph_format.first_line_indent = Cm(0)
-    paragraph.paragraph_format.space_before = Pt(6)
+    paragraph.paragraph_format.space_before = Pt(4)
     paragraph.paragraph_format.space_after = Pt(4)
     paragraph.paragraph_format.line_spacing = 1.15
     set_run(paragraph.add_run("BÁO CÁO THIẾT KẾ Ý TƯỞNG SẢN PHẨM"), size=15, bold=True)
