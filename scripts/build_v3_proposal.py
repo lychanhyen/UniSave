@@ -585,6 +585,58 @@ def main():
         A.write_text(t_a[:dau] + bia_moi + t_a[cuoi:], encoding="utf-8")
         print("đã thay trang bìa kiểu báo cáo thường")
 
+    block_41 = """    H2(document, "4.1. Bố cục bài thuyết trình theo hướng dẫn và mục tương ứng trong báo cáo")
+    P(
+        document,
+        "Danh mục dưới đây là bố cục chi tiết dùng cho file trình chiếu, không phải bố cục của báo cáo Word. Nhóm "
+        "giữ nguyên mười tám nội dung theo hướng dẫn và ghi kèm mục tương ứng trong báo cáo, để slide và báo cáo "
+        "nói cùng một câu chuyện và người làm slide không phải viết lại nội dung.",
+    )
+    TABLE(
+        document,
+        [
+            ["Nội dung theo hướng dẫn", "Slide", "Mục tương ứng trong báo cáo"],
+            ["Giới thiệu", "1", "Trang bìa; mục I.1"],
+            ["Tên dự án, thành viên, slogan/logo (nếu có)", "1", "Trang bìa; tên và logo sản phẩm ở trang chủ"],
+            ["Bối cảnh và lý do chọn đề tài", "1–2", "Mục I.2"],
+            ["Vấn đề ban đầu và đối tượng người dùng", "2", "Mục 1.1 và bảng 5W1H ở mục 1.2"],
+            ["Phương pháp nghiên cứu người dùng", "3", "Ba bước xác định vấn đề ở mục I.2; khảo sát ở mục 1.3.1"],
+            ["Kết quả nghiên cứu và vấn đề của người dùng", "3", "Bảng 4 ở mục 1.3.1; Phụ lục A và Phụ lục D"],
+            ["Insight và nhu cầu chưa được đáp ứng", "4", "Mục 1.3.2"],
+            ["Phát biểu vấn đề và cơ sở thiết kế giải pháp", "4", "Mục 1.4.1 (POV, câu hỏi cơ hội); Persona ở mục 1.4.2"],
+            ["Quá trình hình thành ý tưởng", "5", "Mục 2.1.1 (SCAMPER, mười hai ý tưởng ban đầu)"],
+            ["Tiêu chí lựa chọn giải pháp", "5", "Mục 2.1.2 (ma trận quyết định)"],
+            ["Giải pháp được lựa chọn và giá trị khác biệt", "5", "Mục 2.1.3; UVP ở mục 1.4.3; so sánh đối thủ ở mục 3.2.1"],
+            ["Cách giải pháp hoạt động", "6", "Mục 2.2.1 và sơ đồ luồng ở Hình 1"],
+            ["Prototype và hành trình trải nghiệm người dùng", "6", "Mục 2.2.2 đến 2.2.5, ảnh chụp màn hình ở Hình 2 đến Hình 6"],
+            ["Phương pháp và kịch bản kiểm thử", "7", "Mục 2.3.2 (quy trình ba bước)"],
+            ["Kết quả kiểm thử và phản hồi", "7", "Bảng chỉ số ở mục 2.3.3; Phụ lục D"],
+            ["Những thay đổi sau kiểm thử", "8", "Mục 2.4.1 (bốn vòng PDCA); ảnh trước và sau ở Hình 7 đến Hình 10"],
+            ["Tính khả thi, hạn chế và hướng phát triển", "9", "Mục 3.4 (mô hình doanh thu); mục III.2 và III.3"],
+            ["Kết luận", "10", "Mục III.1"],
+        ],
+        [6.3, 1.5, 8.1],
+        caption="Mười tám nội dung của bài thuyết trình và mục tương ứng trong báo cáo",
+        source="Nguồn: nhóm thực hiện, theo bố cục hướng dẫn của giảng viên",
+        size=9.5,
+    )
+    NOTE(
+        document,
+        "Mười tám nội dung được gom thành mười slide để vừa 11 phút. Nếu giảng viên cho trình bày dài hơn, tách "
+        "slide 3 (phương pháp và kết quả nghiên cứu) và slide 7 (kịch bản và kết quả kiểm thử) thành bốn slide, "
+        "thành mười hai slide mà không phải viết lại nội dung.",
+    )
+
+"""
+    replace_block(
+        C,
+        '    H2(document, "4.1. Cấu trúc bài thuyết trình 8 slide")',
+        '    H2(document, "4.2. Kế hoạch phối hợp nhóm khi thuyết trình (11 phút)")',
+        block_41,
+        "mục 4.1 theo cấu trúc yêu cầu",
+    )
+
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
