@@ -367,6 +367,34 @@ def main():
     C.write_text(ct, encoding="utf-8")
     print("đã cập nhật link bản chạy thật ở Phụ lục C")
 
+    # Ảnh hoạt động nhóm ở Phụ lục E
+    patch(
+        C,
+        [
+            (
+                '    P(\n'
+                '        document,\n'
+                '        "Phần này dành cho ảnh chụp các buổi làm việc nhóm, ảnh phỏng vấn sinh viên và ảnh phiên thử nghiệm. "\n'
+                '        "Nhóm dán ảnh kèm chú thích ngày, địa điểm và người tham gia. Nếu không có ảnh, ghi rõ lý do thay vì "\n'
+                '        "bỏ trống mục này.",\n'
+                '    )\n',
+                '    P(\n'
+                '        document,\n'
+                '        "Ảnh dưới đây ghi lại buổi làm việc nhóm tại Trường Đại học Đông Á, có mặt toàn bộ thành viên trong nhóm. "\n'
+                '        "Nhóm dùng buổi này để chốt lại vấn đề, phân công nhiệm vụ và rà soát các đầu việc còn thiếu trước khi nộp.",\n'
+                '    )\n'
+                '    FIG(\n'
+                '        document,\n'
+                '        "docs/assets/nhom/anh-lam-nhom.jpg",\n'
+                '        "Buổi làm việc nhóm tại Trường Đại học Đông Á, thứ Sáu ngày 6/11/2026; thành viên tham gia: toàn bộ nhóm",\n'
+                '        "Nguồn: ảnh chụp của nhóm",\n'
+                '        width=15.0,\n'
+                '    )\n',
+            ),
+        ],
+        "ảnh nhóm Phụ lục E",
+    )
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
