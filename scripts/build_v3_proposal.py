@@ -22,7 +22,8 @@ SURVEY = Path("docs/assets/survey")
 A = Path("scripts/idea_content_a.py")
 B = Path("scripts/idea_content_b.py")
 C = Path("scripts/idea_content_c.py")
-MODULES = [A, B, C]
+HELPERS = Path("scripts/idea_docx_helpers.py")
+MODULES = [A, B, C, HELPERS]
 
 
 def patch(path, pairs, label):
@@ -52,7 +53,7 @@ def replace_block(path, start_anchor, end_anchor, new_block, label):
 def main():
     if "--revert" in sys.argv:
         subprocess.run(["git", "checkout", "--", *[str(m) for m in MODULES]], check=False)
-        print("đã trả 3 module nội dung về trạng thái git")
+        print("đã trả các module nội dung về trạng thái git")
         return
 
     # ------------------------------------------------------------------ A
@@ -636,6 +637,17 @@ def main():
         "mục 4.1 theo cấu trúc yêu cầu",
     )
 
+
+    # TẮT Ô GHI CHÚ: bỏ toàn bộ ô nền xanh lá nhạt theo yêu cầu
+    ht = HELPERS.read_text(encoding="utf-8")
+    if "def NOTE(document, text):" in ht and "return  # đã tắt" not in ht:
+        ht = ht.replace(
+            "def NOTE(document, text):",
+            "def NOTE(document, text):\n    return  # đã tắt: không tạo ô ghi chú",
+            1,
+        )
+        HELPERS.write_text(ht, encoding="utf-8")
+        print("đã tắt ô ghi chú (xanh lá nhạt)")
 
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
