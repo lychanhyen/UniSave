@@ -555,23 +555,28 @@ def main():
     paragraph.paragraph_format.line_spacing = 1.15
     set_run(paragraph.add_run("Thành viên nhóm"), size=13, bold=True)
 
-    thanh_vien = [
-        "Nguyễn Thị Thanh Yên – 109096 – 100%",
-        "Đỗ Thị Như Ý – 109410 – 98%",
-        "Nguyễn Thị Thu Thúy – 118348 – 100%",
-        "Trần Thị Phương Thu – 108967 – 100%",
-        "Lê Phương Thảo – 108949 – 100%",
-        "Nguyễn Thị Ngọc Kim – 109083 – 98%",
-        "Nguyễn Thị Thanh Thanh – 109025 – 98%",
+    danh_sach_thanh_vien = [
+        ("Nguyễn Thị Thanh Yên", "109096", "100%"),
+        ("Đỗ Thị Như Ý", "109410", "98%"),
+        ("Nguyễn Thị Thu Thúy", "118348", "100%"),
+        ("Trần Thị Phương Thu", "108967", "100%"),
+        ("Lê Phương Thảo", "108949", "100%"),
+        ("Nguyễn Thị Ngọc Kim", "109083", "98%"),
+        ("Nguyễn Thị Thanh Thanh", "109025", "98%"),
     ]
-    for so, ten in enumerate(thanh_vien, 1):
-        paragraph = document.add_paragraph()
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        paragraph.paragraph_format.left_indent = Cm(4.2)
-        paragraph.paragraph_format.first_line_indent = Cm(0)
-        paragraph.paragraph_format.space_after = Pt(0)
-        paragraph.paragraph_format.line_spacing = 1.15
-        set_run(paragraph.add_run(f"{so}. {ten}"), size=12.5, bold=False)
+    rows = [["Họ và tên", "MSSV", "% hoàn thành"]]
+    for ten, mssv, phan_tram in danh_sach_thanh_vien:
+        rows.append([ten, mssv, phan_tram])
+    TABLE(document, rows, [6.1, 2.3, 2.6], caption=None, source=None, size=12)
+    bang = document.tables[-1]
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+
+    tbl_pr = bang._tbl.tblPr
+    ind = OxmlElement("w:tblInd")
+    ind.set(qn("w:w"), "2381")
+    ind.set(qn("w:type"), "dxa")
+    tbl_pr.append(ind)
 
     paragraph = document.add_paragraph()
     paragraph.paragraph_format.space_after = Pt(0)
