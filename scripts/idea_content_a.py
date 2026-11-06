@@ -154,31 +154,83 @@ def phan_i(document):
         source="Nguồn: nhóm thực hiện",
     )
 
-    H2(document, "I.2. Lý do chọn đề tài")
+    H2(document, "I.2. Lý do chọn đề tài và cách xác định vấn đề")
     P(
         document,
         "Sinh viên sống xa nhà thường nhận một khoản tiền cố định từ gia đình theo tháng hoặc theo đợt. Khoản "
-        "tiền đó phải trả cho tiền trọ, ăn uống, sách vở, đi lại và cả những khoản phát sinh không báo trước "
-        "như ốm, hỏng xe, đám cưới bạn cùng lớp. Vì không ai theo dõi hộ, sinh viên chỉ biết mình đã tiêu quá "
-        "tay khi trong ví còn vài chục nghìn mà tháng chưa hết.",
+        "tiền đó phải trả cho tiền trọ, ăn uống, sách vở, đi lại và cả những khoản phát sinh không báo trước như "
+        "ốm, hỏng xe, đám cưới bạn cùng lớp. Vì không ai theo dõi hộ, sinh viên chỉ biết mình đã tiêu quá tay khi "
+        "trong ví còn vài chục nghìn mà tháng chưa hết.",
     )
     P(
         document,
         "Trong lúc trao đổi với các bạn trong trường, nhóm nhận thấy nỗi lo lớn nhất không phải là kiếm thêm "
-        "tiền, mà là không biết tiền đang đi đâu và không dám nhìn vào con số thật. Nỗi lo đó lặp lại mỗi "
-        "tháng, kèm theo tâm lý ngại ghi chép vì cho rằng ghi chép mất thời gian và mau bỏ.",
+        "tiền, mà là không biết tiền đang đi đâu và không dám nhìn vào con số thật. Nỗi lo đó lặp lại mỗi tháng, "
+        "kèm theo tâm lý ngại ghi chép vì cho rằng ghi chép mất thời gian và mau bỏ. Bên cạnh đó, hai nhu cầu "
+        "khác cũng phổ biến: mua bán đồ cũ (giáo trình, quần áo, đồ điện) và mua chung để được giá sỉ. Cả hai "
+        "đang diễn ra rải rác trên nhóm mạng xã hội, người mua không kiểm chứng được người bán, còn việc chia "
+        "tiền mua chung thì tính tay bằng tin nhắn nên hay nhầm.",
     )
     P(
         document,
-        "Bên cạnh đó, hai nhu cầu khác cũng rất phổ biến trong trường: mua bán đồ cũ (giáo trình, quần áo, đồ "
-        "điện) và mua chung để được giá sỉ. Cả hai đang diễn ra rải rác trên nhóm mạng xã hội, người mua không "
-        "kiểm chứng được người bán, còn việc chia tiền mua chung thì tính tay bằng tin nhắn nên hay nhầm.",
+        "Nhóm không bắt đầu bằng một ý tưởng sản phẩm, mà bằng việc xác định vấn đề theo ba bước. Bước một là "
+        "quan sát trực tiếp: theo dõi cách sinh viên trong ký túc xá và khu trọ ghi chép chi tiêu (chụp màn hình "
+        "chuyển khoản, ghi vào ghi chú điện thoại, hoặc không ghi gì), cách họ tìm đồ cũ và cách họ chia tiền khi "
+        "mua chung. Bước hai là phỏng vấn thấu cảm ba sinh viên đại diện cho ba hoàn cảnh khác nhau: ở ký túc xá, "
+        "ở trọ, và đi làm thêm. Bước ba là khảo sát bằng biểu mẫu trực tuyến để kiểm tra xem những gì quan sát "
+        "được có lặp lại ở nhóm rộng hơn hay không.",
     )
     P(
         document,
-        "Vì vậy nhóm chọn xây dựng một sản phẩm giải quyết cả ba việc trên trong một tài khoản sinh viên: quản "
-        "lý chi tiêu, mua bán đồ cũ và gom đơn. Điểm chung của cả ba là đều bắt đầu từ một câu hỏi rất cụ thể "
-        "mà sinh viên phải trả lời mỗi ngày: hôm nay mình còn tiêu được bao nhiêu.",
+        "Một vấn đề chỉ được giữ lại khi thoả đồng thời bốn tiêu chí dưới đây; vấn đề nào không thoả thì loại, dù "
+        "nghe có vẻ hợp lý.",
+    )
+    TABLE(
+        document,
+        [
+            ["Tiêu chí", "Cách kiểm tra", "Vấn đề bị loại vì không đạt"],
+            [
+                "Lặp lại ở nhiều người",
+                "Xuất hiện trong ít nhất 3 cuộc phỏng vấn và được chọn trong khảo sát",
+                "“Sinh viên muốn học cách đầu tư” — chỉ 1 người nhắc tới",
+            ],
+            [
+                "Giải quyết được bằng một thao tác trên điện thoại",
+                "Hình dung được màn hình và số bước thực hiện dưới 3 bước",
+                "“Sinh viên cần được dạy kỹ năng quản lý tiền” — cần khoá học, không phải ứng dụng",
+            ],
+            [
+                "Đo được mức độ cải thiện",
+                "Có chỉ số đếm được trước và sau khi dùng",
+                "“Sinh viên cần bớt lo lắng về tiền” — không đo được trực tiếp",
+            ],
+            [
+                "Chưa được giải quyết trọn vẹn",
+                "So sánh với công cụ và cách làm hiện có",
+                "“Sinh viên cần ghi chép chi tiêu” — ứng dụng khác đã làm tốt, không còn chỗ khác biệt",
+            ],
+        ],
+        [4.1, 6.2, 5.6],
+        caption="Bốn tiêu chí lọc vấn đề và ví dụ vấn đề bị loại",
+        source="Nguồn: nhóm thực hiện",
+        size=10.5,
+    )
+    P(
+        document,
+        "Trước khi dựng sản phẩm, nhóm viết ra ba giả định và chấp nhận rằng cả ba có thể sai. Giả định thứ nhất: "
+        "sinh viên chịu ghi một khoản chi mỗi ngày nếu việc đó chỉ tốn ba thao tác. Giả định thứ hai: sinh viên "
+        "dám chuyển tiền trước cho chủ kèo khi nhìn thấy bảng chia tiền rõ ràng. Giả định thứ ba: người bán đồ cũ "
+        "chấp nhận đăng tin dù vị trí bị làm mờ để bảo vệ chỗ ở. Cách kiểm tra không phải hỏi “bạn có muốn dùng "
+        "không”, mà là đưa bản mẫu chạy được cho người dùng thao tác thật rồi quan sát phản ứng: họ dừng ở đâu, "
+        "bấm sai chỗ nào, có quay lại lần sau không.",
+    )
+    P(
+        document,
+        "Việc thu thập dữ liệu người dùng trong phạm vi bài tập là khả thi: kênh tiếp cận có sẵn (nhóm lớp, nhóm "
+        "ký túc xá), biểu mẫu 10 câu trả lời trong khoảng 3 phút, mỗi phiên thử nghiệm 25 phút. Giới hạn nằm ở "
+        "số lượng: trong 5 ngày nhóm thu được 11 phản hồi hợp lệ, đủ để thấy xu hướng nhưng chưa đủ để đại diện "
+        "cho toàn trường. Vì vậy dữ liệu định lượng chỉ dùng để chọn hướng thiết kế, còn các kết luận về hành vi "
+        "được đối chiếu chéo với quan sát và phỏng vấn.",
     )
 
     H2(document, "I.3. Tóm tắt mục tiêu dự án theo tiến trình thiết kế")
@@ -186,7 +238,7 @@ def phan_i(document):
         document,
         [
             ["Giai đoạn", "Việc nhóm đã làm", "Sản phẩm đầu ra"],
-            ["Đồng cảm", "Trao đổi với sinh viên trong trường, quan sát cách các bạn ghi chép và mua bán đồ cũ", "Ghi chép phỏng vấn, bảng hỏi khảo sát"],
+            ["Đồng cảm", "Quan sát cách sinh viên ghi chép và mua bán đồ cũ; phỏng vấn 3 sinh viên; khảo sát trực tuyến", "Ghi chép quan sát, biên bản phỏng vấn, 11 phản hồi khảo sát"],
             ["Xác định vấn đề", "Gom các câu trả lời thành 5 vấn đề lặp lại nhiều nhất, viết POV và chân dung người dùng", "POV, Persona, danh sách 5 vấn đề"],
             ["Tạo ý tưởng", "Đề xuất 12 ý tưởng, chấm điểm và chọn 4 hướng khả thi", "Bảng SCAMPER, ma trận chọn giải pháp"],
             ["Dựng nguyên mẫu", "Thiết kế luồng và dựng ứng dụng chạy được cho 4 phân hệ chính", "Ứng dụng web dùng được, wireframe"],

@@ -110,8 +110,7 @@ def cau_3(document):
             [
                 "O1. Sinh viên có nhu cầu tiết kiệm cao, chi tiêu ngày càng đắt\n"
                 "O2. Trường và KTX có nhu cầu số hoá hoạt động mua bán nội bộ\n"
-                "O3. Các nhà cung cấp địa phương quanh trường cần kênh bán nhóm\n"
-                "O4. Chi phí dùng hạ tầng đám mây ngày càng thấp",
+                "O3. Chi phí dùng hạ tầng đám mây ngày càng thấp",
                 "T1. Ứng dụng tài chính miễn phí đã có nhiều và mạnh\n"
                 "T2. Sinh viên dễ bỏ ứng dụng sau vài tuần\n"
                 "T3. Rủi ro lừa đảo trong mua bán đồ cũ ảnh hưởng uy tín nền tảng\n"
@@ -127,38 +126,42 @@ def cau_3(document):
     H3(document, "3.3.2. Chiến lược TOWS và hành động cụ thể")
     P(
         document,
-        "Mỗi chiến lược dưới đây gắn với việc làm cụ thể, có thời hạn và có chỉ số kiểm tra, thay vì chỉ nêu "
-        "phương hướng chung.",
+        "Mỗi chiến lược dưới đây gắn với việc làm cụ thể, thời hạn và một chỉ số đo được ngay bằng dữ liệu ứng "
+        "dụng có sẵn (lượt mở ứng dụng, số kèo, số tin, số báo cáo), không dùng chỉ số cảm tính.",
     )
     TABLE(
         document,
         [
-            ["Chiến lược", "Hành động cụ thể (làm gì, khi nào)", "Chỉ số kiểm tra"],
+            ["Chiến lược", "Hành động cụ thể (làm gì, khi nào)", "Chỉ số kiểm tra", "Cách đo và mốc thời gian"],
             [
-                "SO: Dùng cộng đồng để giữ chân người dùng",
-                "Mỗi tuần đẩy một kèo gom đơn gợi ý theo trường; hiển thị kèo sắp hết hạn ngay màn hình đầu tiên. Làm trong tháng đầu.",
+                "SO: dùng cộng đồng để giữ người dùng ở lại",
+                "Mỗi tuần đẩy một kèo gom đơn gợi ý theo trường; đưa kèo sắp hết hạn lên màn hình đầu tiên. Làm trong 4 tuần đầu.",
                 "≥ 30% người dùng mở ứng dụng 3 ngày/tuần",
+                "Đếm số ngày có truy cập trong tuần thứ 4, tính trên số người đã đăng ký",
             ],
             [
-                "WO: Khi ít vốn và người dùng ham rẻ, tập trung vào gom đơn",
-                "Không xây ứng dụng di động riêng ở giai đoạn đầu; dùng bản web chạy trên điện thoại. Ưu tiên phát triển phần chia tiền và xác nhận thanh toán vì đây là phần tạo giá trị rõ nhất.",
+                "WO: ít vốn, tập trung vào gom đơn thay vì làm ứng dụng riêng",
+                "Không làm ứng dụng di động riêng ở giai đoạn này; dùng bản web chạy trên điện thoại; dồn công sức vào bảng chia tiền và xác nhận thanh toán.",
                 "≥ 50% kèo đủ người trong 7 ngày",
+                "Đếm số kèo đạt đủ số người tối thiểu trên tổng số kèo tạo trong tuần",
             ],
             [
-                "ST: Chống thách thức từ ứng dụng tài chính lớn",
-                "Không cạnh tranh ở báo cáo tài chính chuyên sâu. Nhấn vào điều ứng dụng lớn không có: xác minh sinh viên, chợ nội bộ trường, gom đơn cùng bạn học. Đưa bằng chứng này lên trang giới thiệu.",
-                "≥ 40% người mới đăng ký nêu lý do \"mua bán trong trường\"",
+                "ST: chống lại ứng dụng tài chính lớn bằng thứ họ không có",
+                "Không cạnh tranh ở báo cáo tài chính chuyên sâu; nhấn vào ba thứ chỉ trường mới có: xác minh sinh viên, chợ nội bộ, gom đơn cùng bạn học. Đưa lên trang giới thiệu trong tháng đầu.",
+                "≥ 40% người đăng ký mới chọn lý do “mua bán trong trường”",
+                "Thêm một câu hỏi chọn lý do vào biểu mẫu đăng ký, đếm trong 4 tuần",
             ],
             [
-                "WT: Giảm rủi ro bị bỏ và rủi ro lừa đảo",
-                "Nhắc ghi chi tiêu một lần mỗi tối bằng thông báo ngắn; bắt buộc xác minh sinh viên trước khi đăng tin; cho phép tố cáo kèo và tin đăng, admin phản hồi trong 24 giờ.",
+                "WT: giảm rủi ro bị bỏ và rủi ro lừa đảo",
+                "Nhắc ghi chi tiêu một lần mỗi tối bằng thông báo ngắn; bắt buộc xác minh sinh viên trước khi đăng tin; cho phép tố cáo và xử lý trong 24 giờ.",
                 "≥ 60% người dùng còn hoạt động sau 4 tuần; 100% báo cáo được xử lý trong 24 giờ",
+                "Đếm người có ít nhất một thao tác ở tuần thứ 4; đo thời gian từ lúc nhận báo cáo đến lúc xử lý",
             ],
         ],
-        [4.2, 7.9, 3.8],
-        caption="Bốn chiến lược TOWS kèm hành động và chỉ số kiểm tra",
+        [3.3, 6.3, 3.4, 2.9],
+        caption="Bốn chiến lược TOWS kèm hành động, chỉ số và cách đo",
         source="Nguồn: nhóm thực hiện",
-        size=10,
+        size=9.5,
     )
 
     H2(document, "3.4. Mô hình kinh doanh (BMC) và các giả thuyết rủi ro")
@@ -347,7 +350,22 @@ def phan_iii(document):
         "quay lại sửa vì người dùng không hiểu hoặc không tìm thấy.",
     )
 
-    H2(document, "III.2. Kế hoạch hành động tiếp theo")
+    H2(document, "III.2. Hạn chế của báo cáo")
+    P(
+        document,
+        "Báo cáo có ba hạn chế cần nói rõ. Thứ nhất, mẫu khảo sát chỉ có 11 phản hồi trong 5 ngày, đủ để thấy "
+        "xu hướng nhưng chưa đủ để đại diện cho sinh viên toàn trường; mọi tỉ lệ trong báo cáo nên đọc theo "
+        "hướng tham khảo. Thứ hai, phiên thử nghiệm chính thức với 5 sinh viên ngoài nhóm chưa hoàn tất, nên "
+        "phần lớn minh chứng hiện tại đến từ kiểm thử nội bộ và các vòng sửa thực tế. Thứ ba, mô hình doanh thu "
+        "vẫn là giả thuyết, chưa có nhà cung cấp nào trả phí và chưa có dữ liệu chứng minh khả năng thu.",
+    )
+    P(
+        document,
+        "Nhóm ghi rõ ba hạn chế này thay vì trình bày kết quả như đã hoàn thiện, vì chúng chính là đầu việc của "
+        "giai đoạn tiếp theo.",
+    )
+
+    H2(document, "III.3. Kế hoạch hành động tiếp theo")
     TABLE(
         document,
         [
@@ -366,23 +384,30 @@ def phan_iii(document):
 def references(document):
     H1(document, "TÀI LIỆU THAM KHẢO")
     items = [
-        "[1] Bộ Giáo dục và Đào tạo. Số liệu thống kê giáo dục đại học. Truy cập tháng 10/2026, từ https://moet.gov.vn",
+        "[1] Bộ Giáo dục và Đào tạo. Thống kê giáo dục đại học. Truy cập tháng 10/2026, từ https://moet.gov.vn/thong-ke",
         "[2] Tổng cục Thống kê. Niên giám thống kê: dân số và giáo dục. Truy cập tháng 10/2026, từ https://www.gso.gov.vn",
-        "[3] Nielsen Norman Group. Usability 101: Introduction to Usability. Truy cập tháng 10/2026, từ https://www.nngroup.com/articles/usability-101-introduction-to-usability/",
-        "[4] W3C. Web Content Accessibility Guidelines (WCAG) 2.1. Truy cập tháng 10/2026, từ https://www.w3.org/TR/WCAG21/",
-        "[5] Money Lover. Trang sản phẩm và mô tả tính năng trên Google Play. Truy cập tháng 10/2026, từ https://play.google.com",
-        "[6] MISA. Sổ thu chi MISA – giới thiệu tính năng. Truy cập tháng 10/2026, từ https://www.misa.vn",
-        "[7] OpenStreetMap contributors. Dữ liệu bản đồ mở dùng cho chức năng vị trí. Truy cập tháng 10/2026, từ https://www.openstreetmap.org",
+        "[3] Nielsen Norman Group. (2020). Usability 101: Introduction to Usability. Truy cập tháng 10/2026, từ https://www.nngroup.com/articles/usability-101-introduction-to-usability/",
+        "[4] W3C. (2018). Web Content Accessibility Guidelines (WCAG) 2.1. Truy cập tháng 10/2026, từ https://www.w3.org/TR/WCAG21/",
+        "[5] Money Lover. Trang ứng dụng trên Google Play. Truy cập tháng 10/2026, từ https://play.google.com/store/apps/details?id=com.moneylover",
+        "[6] MISA. Sổ thu chi MISA: giới thiệu tính năng. Truy cập tháng 10/2026, từ https://www.misa.vn",
+        "[7] OpenStreetMap contributors. (2026). OpenStreetMap. Truy cập tháng 10/2026, từ https://www.openstreetmap.org",
     ]
     for item in items:
         paragraph = document.add_paragraph()
-        paragraph.paragraph_format.first_line_indent = Cm(0)
         paragraph.paragraph_format.left_indent = Cm(1.0)
         paragraph.paragraph_format.first_line_indent = Cm(-1.0)
         paragraph.paragraph_format.space_after = Pt(4)
         run = paragraph.add_run(item)
         run.font.name = "Times New Roman"
         run.font.size = Pt(12)
+
+    P(
+        document,
+        "Ghi chú: danh mục xếp theo thứ tự ABC của tên tác giả hoặc tên tổ chức. Các con số thị trường ở mục "
+        "3.1 (2,1 triệu sinh viên, 3,5 triệu đồng/tháng, tỉ lệ 8%) là ước tính của nhóm dựa trên số liệu công "
+        "khai, không phải số liệu trích nguyên từ các nguồn trên; vì vậy bảng TAM – SAM – SOM ghi rõ cách tính "
+        "và mức độ chắc chắn của từng dòng.",
+    )
 
 
 def phu_luc(document):

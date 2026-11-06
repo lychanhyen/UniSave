@@ -195,36 +195,49 @@ def cau_2(document):
         size=10,
     )
 
-    H3(document, "2.3.2. Kịch bản thử nghiệm")
+    H3(document, "2.3.2. Kịch bản thử nghiệm ba bước")
     P(
         document,
-        "Nhóm dự kiến mời 5 sinh viên ngoài nhóm, mỗi người một phiên 25 phút, thực hiện bốn nhiệm vụ theo thứ "
-        "tự từ dễ đến khó. Người thử dùng điện thoại của chính mình, nhóm chỉ quan sát và ghi lại, không hướng dẫn.",
+        "Phiên thử nghiệm được tổ chức theo ba bước cố định để kết quả giữa các phiên so sánh được với nhau. "
+        "Nhóm không hướng dẫn trong lúc người thử thao tác, chỉ ghi lại điều quan sát được.",
     )
+    P(document, "Bước 1 – Chuẩn bị: xác định mẫu, đối tượng và nhiệm vụ.", indent=True, bold=True)
+    for item in [
+        "Mẫu: 5 sinh viên ngoài nhóm (3 nam, 2 nữ), năm 1 đến năm 3, trong đó ít nhất 1 bạn ở ký túc xá.",
+        "Đối tượng loại trừ: thành viên nhóm và người đã xem trước giao diện, để tránh kết quả bị lệch.",
+        "Nhiệm vụ: bốn nhiệm vụ từ dễ đến khó, mỗi nhiệm vụ có tiêu chí hoàn thành rõ ràng.",
+        "Vật dụng: điện thoại của chính người thử, phiếu ghi thời gian và bảng ghi nhận ở Phụ lục D.",
+    ]:
+        B(document, item)
     TABLE(
         document,
         [
-            ["Nội dung", "Chi tiết"],
-            ["Số người thử", "5 sinh viên (3 nam, 2 nữ), năm 1 đến năm 3, có ít nhất 1 bạn ở KTX"],
-            ["Thời lượng", "25 phút mỗi phiên, không tính thời gian giới thiệu"],
-            ["Nhiệm vụ 1", "Đặt ngân sách tháng là 3.000.000 đồng và cho biết hôm nay còn tiêu được bao nhiêu"],
-            ["Nhiệm vụ 2", "Ghi một khoản chi 35.000 đồng cho bữa trưa"],
-            ["Nhiệm vụ 3", "Tạo một kèo gom đơn 5 người và xem số tiền mình phải chuyển"],
-            ["Nhiệm vụ 4", "Đăng một tin bán giáo trình cũ kèm vị trí nhận hàng"],
-            ["Cách ghi nhận", "Bảng dữ liệu thô ở Phụ lục D: thời gian từng nhiệm vụ, số lần bấm sai, góp ý nguyên văn"],
-            ["Cách đánh giá", "Hoàn thành độc lập hay cần trợ giúp; số lỗi chặn luồng; mức hài lòng 1–5"],
+            ["Nhiệm vụ", "Yêu cầu", "Tiêu chí hoàn thành"],
+            ["1. Đặt ngân sách", "Nhập ngân sách tháng 3.000.000 đồng và cho biết hôm nay còn tiêu được bao nhiêu", "Đọc đúng con số hạn mức của ngày"],
+            ["2. Ghi khoản chi", "Ghi một khoản 35.000 đồng cho bữa trưa", "Khoản chi xuất hiện trong danh sách, hạn mức ngày giảm tương ứng"],
+            ["3. Tạo kèo gom đơn", "Tạo kèo 5 người và xem số tiền mình phải chuyển", "Đọc đúng số tiền phải chuyển trong bảng chia tiền"],
+            ["4. Đăng tin bán đồ", "Đăng một tin bán giáo trình cũ kèm vị trí nhận hàng", "Tin hiện trong danh sách chợ với vị trí đã chọn"],
         ],
-        [3.6, 12.3],
-        caption="Kịch bản thử nghiệm với người dùng ngoài nhóm",
-        source="Nguồn: nhóm thiết kế kịch bản; kết quả ghi theo mẫu ở Phụ lục D",
-        size=11,
+        [3.4, 7.0, 5.5],
+        caption="Bốn nhiệm vụ và tiêu chí hoàn thành",
+        source="Nguồn: nhóm thực hiện",
+        size=10,
     )
-    NOTE(
-        document,
-        "Trạng thái thực tế: các vòng sửa ở mục 2.4 dựa trên kiểm thử nội bộ của nhóm và phản hồi trực tiếp "
-        "trong quá trình dựng sản phẩm. Phiên thử nghiệm chính thức với 5 sinh viên ngoài nhóm được ghi vào "
-        "Phụ lục D khi hoàn tất; bảng đó hiện là khung ghi nhận, không phải kết quả đã có.",
-    )
+    P(document, "Bước 2 – Tiến hành thử: đo thao tác thật, không gợi ý.", indent=True, bold=True)
+    for item in [
+        "Mỗi phiên 25 phút, tính từ lúc người thử cầm điện thoại; 2 phút đầu chỉ giới thiệu mục tiêu, không chỉ chỗ bấm.",
+        "Nhóm ghi ba loại số liệu: thời gian từng nhiệm vụ, số lần bấm sai, và câu nói đầu tiên khi gặp chỗ khó.",
+        "Nếu người thử dừng quá 60 giây ở một bước, nhóm ghi nhận là điểm tắc và chỉ trợ giúp khi họ chủ động hỏi.",
+    ]:
+        B(document, item)
+    P(document, "Bước 3 – Thu phản hồi và chuyển thành việc sửa.", indent=True, bold=True)
+    for item in [
+        "Sau phiên, hỏi 4 câu ngắn: chỗ nào khó hiểu nhất, chỗ nào thừa, có dùng lại không, muốn thêm gì.",
+        "Ghi nguyên văn góp ý vào bảng dữ liệu thô (Phụ lục D), không diễn giải lại theo ý nhóm.",
+        "Phân loại phản hồi thành ba nhóm: lỗi chặn luồng, chỗ khó hiểu, và góp ý tính năng; hai nhóm đầu chuyển thành đầu việc sửa ở vòng PDCA kế tiếp.",
+        "Đối chiếu với chỉ số ở mục 2.3.3 để quyết định sửa hay giữ nguyên thiết kế.",
+    ]:
+        B(document, item)
 
     H3(document, "2.3.3. Chỉ số đo lường và ngưỡng thành công")
     TABLE(
