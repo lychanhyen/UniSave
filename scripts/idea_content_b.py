@@ -60,6 +60,14 @@ def cau_2(document):
     )
 
     H2(document, "2.2. Thiết kế nguyên mẫu và trình diễn luồng")
+    P(
+        document,
+        "Nhóm đã dựng thành công bản MVP chạy được trên nền tảng web, không phải bản vẽ hay nguyên mẫu "
+        "tĩnh. Người dùng có thể đăng ký, đăng nhập, nhập ngân sách tháng, ghi từng khoản chi, đăng tin bán "
+        "đồ cũ kèm vị trí, tạo kèo gom đơn và xem thực đơn đi chợ; dữ liệu được lưu lại và hiển thị lại sau "
+        "khi tải trang. Toàn bộ hình ảnh trong mục này là ảnh chụp trực tiếp từ ứng dụng đang chạy, không "
+        "phải ảnh dựng lại bằng công cụ thiết kế.",
+    )
     H3(document, "2.2.1. Kiến trúc thông tin và luồng trải nghiệm")
     P(
         document,
@@ -84,7 +92,7 @@ def cau_2(document):
     FIG(
         document,
         SCREENS / "tong-quan.png",
-        "Màn hình Tổng quan: thẻ ngân sách tháng, hạn mức hôm nay, lịch chi tiêu và các lối tắt",
+        "Màn hình Tổng quan: hạn mức còn lại của ngày hôm nay hiện ngay đầu trang, kèm lịch chi tiêu và các lối tắt — người dùng quyết định tiêu tiếp hay dừng lại trong một cái nhìn",
         "Nguồn: ảnh chụp màn hình ứng dụng UniSave (phiên dùng thử với dữ liệu mẫu)",
         width=15.5,
     )
@@ -96,7 +104,7 @@ def cau_2(document):
     FIG(
         document,
         SCREENS / "chi-tieu.png",
-        "Màn hình Chi tiêu: tổng chi tháng, ô nhập nhanh và danh sách khoản chi gần đây",
+        "Màn hình Chi tiêu: một khoản chi được ghi trong ba thao tác, số còn lại của ngày cập nhật ngay sau khi lưu",
         "Nguồn: ảnh chụp màn hình ứng dụng UniSave (phiên dùng thử với dữ liệu mẫu)",
         width=15.5,
     )
@@ -111,7 +119,7 @@ def cau_2(document):
     FIG(
         document,
         SCREENS / "gom-don.png",
-        "Màn hình Gom đơn: danh sách kèo dạng thẻ tóm tắt, bấm vào để xem chi tiết và bảng chia tiền",
+        "Màn hình Gom đơn: thẻ kèo tóm tắt giá, số người đã tham gia và hạn chót; bấm vào mở trang chi tiết có sẵn bảng chia tiền từng người",
         "Nguồn: ảnh chụp màn hình ứng dụng UniSave (phiên dùng thử với dữ liệu mẫu)",
         width=15.5,
     )
@@ -131,7 +139,7 @@ def cau_2(document):
     FIG(
         document,
         SCREENS / "cho-do-cu.png",
-        "Màn hình Chợ đồ cũ: khối giới thiệu, bộ lọc theo trường và danh sách tin gần vị trí",
+        "Màn hình Chợ đồ cũ: lọc theo trường, mỗi tin hiện giá, vị trí nhận hàng đã làm mờ và huy hiệu đã xác minh của người bán",
         "Nguồn: ảnh chụp màn hình ứng dụng UniSave (phiên dùng thử với dữ liệu mẫu)",
         width=15.5,
     )
@@ -151,7 +159,7 @@ def cau_2(document):
     FIG(
         document,
         SCREENS / "dinh-duong.png",
-        "Màn hình Dinh dưỡng: thực đơn theo số ngày, danh sách đi chợ và bảng so sánh chi phí",
+        "Màn hình Dinh dưỡng: thực đơn nhiều ngày kèm danh sách đi chợ gộp sẵn và bảng so sánh giữa chi phí dự kiến với số tiền thực trả",
         "Nguồn: ảnh chụp màn hình ứng dụng UniSave (phiên dùng thử với dữ liệu mẫu)",
         width=15.5,
     )

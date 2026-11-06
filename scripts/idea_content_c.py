@@ -27,10 +27,10 @@ def cau_3(document):
                 "Số sinh viên lấy theo số liệu công bố của Bộ GD&ĐT (làm tròn); mức chi tiêu là ước tính của nhóm",
             ],
             [
-                "SAM – sinh viên tại TP.HCM và lân cận",
-                "≈ 700 nghìn sinh viên × 3,5 triệu × 12",
-                "≈ 29.400 tỉ đồng mỗi năm",
-                "Số sinh viên là ước tính từ tỉ trọng dân số và số trường; cần kiểm chứng lại",
+                "SAM – sinh viên tại TP. Đà Nẵng và các tỉnh lân cận",
+                "≈ 110 nghìn sinh viên × 3,5 triệu × 12",
+                "≈ 4.620 tỉ đồng mỗi năm",
+                "Số sinh viên là ước tính theo số trường đại học, cao đẳng trên địa bàn Đà Nẵng và miền Trung; cần kiểm chứng lại",
             ],
             [
                 "SOM – sinh viên Trường ĐH Đông Á trong năm đầu",
@@ -167,9 +167,9 @@ def cau_3(document):
         document,
         [
             ["Khối", "Nội dung của UniSave"],
-            ["Phân khúc khách hàng", "Sinh viên ở trọ/KTX tại TP.HCM, ưu tiên sinh viên Trường ĐH Đông Á; nhà cung cấp nhỏ quanh trường (quán ăn, tạp hoá, photocopy)"],
+            ["Phân khúc khách hàng", "Sinh viên ở trọ/KTX tại TP. Đà Nẵng, ưu tiên sinh viên Trường ĐH Đông Á; nhà cung cấp nhỏ quanh trường (quán ăn, tạp hoá, photocopy)"],
             ["Giá trị đề xuất", "Biết ngay hôm nay còn tiêu được bao nhiêu; giảm chi phí nhờ gom đơn; mua bán đồ cũ an toàn trong trường"],
-            ["Kênh tiếp cận", "Nhóm lớp, nhóm KTX, câu lạc bộ trong trường, trang giới thiệu công khai có đánh giá của người dùng"],
+            ["Kênh tiếp cận", "Nhóm lớp, nhóm KTX, câu lạc bộ của Trường ĐH Đông Á, trang giới thiệu công khai có đánh giá của người dùng"],
             ["Quan hệ khách hàng", "Tự phục vụ, hỗ trợ qua trang đánh giá công khai và báo cáo; admin duyệt hồ sơ sinh viên"],
             ["Dòng tiền", "Miễn phí cho sinh viên; thu từ quảng cáo của nhà cung cấp quanh trường và phí giới thiệu đơn gom (giả thuyết, chưa triển khai)"],
             ["Nguồn lực chính", "Bốn phân hệ đã chạy được; dữ liệu món ăn và giá tham khảo; cộng đồng sinh viên đã xác minh"],

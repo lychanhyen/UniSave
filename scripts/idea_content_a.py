@@ -75,7 +75,7 @@ def cover(document):
     paragraph = document.add_paragraph()
     paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     paragraph.paragraph_format.first_line_indent = Cm(0)
-    set_run(paragraph.add_run("TP. Hồ Chí Minh, tháng 11 năm 2026"), size=13, bold=True)
+    set_run(paragraph.add_run("TP. Đà Nẵng, tháng 11 năm 2026"), size=13, bold=True)
 
 
 def loi_cam_on(document):
@@ -133,10 +133,13 @@ def phan_i(document):
     H2(document, "I.1. Tên dự án và thông tin nhóm thực hiện")
     P(
         document,
-        "UniSave là ứng dụng web giúp sinh viên Việt Nam biết mình còn tiêu được bao nhiêu trong ngày, mua "
-        "bán đồ cũ trong cùng trường, gom đơn mua chung có chia tiền tự động và gợi ý thực đơn đi chợ theo số "
-        "tiền đang có. Sản phẩm hướng tới nhóm sinh viên sống xa nhà, nhận trợ cấp theo tháng và phải tự lo "
-        "toàn bộ chi tiêu sinh hoạt.",
+        "UniSave là ứng dụng web giúp sinh viên Trường Đại học Đông Á (TP. Đà Nẵng) biết mình còn tiêu "
+        "được bao nhiêu trong ngày, mua bán đồ cũ trong cùng trường, gom đơn mua chung có chia tiền tự "
+        "động và gợi ý thực đơn đi chợ theo số tiền đang có. Sản phẩm hướng tới nhóm sinh viên sống xa nhà, "
+        "nhận trợ cấp theo tháng và phải tự lo toàn bộ chi tiêu sinh hoạt — nhóm ở trọ hoặc ký túc xá quanh "
+        "khu vực trường. Toàn bộ hoạt động khảo sát, phỏng vấn và thử nghiệm trong báo cáo đều diễn ra tại "
+        "TP. Đà Nẵng.",
+
     )
     TABLE(
         document,
@@ -202,16 +205,18 @@ def cau_1(document):
     H3(document, "1.1.1. Đối tượng người dùng")
     P(
         document,
-        "Nhóm tập trung vào sinh viên năm nhất đến năm ba, sống ở trọ hoặc ký túc xá, cách nhà trên 50 km. "
-        "Thu nhập hằng tháng của nhóm này chủ yếu đến từ trợ cấp của gia đình, khoảng 2 đến 5 triệu đồng, cộng "
-        "thêm thu nhập không đều từ làm thêm. Các bạn dùng điện thoại thông minh hằng ngày, quen mua sắm qua "
-        "mạng xã hội và sẵn sàng dùng công cụ miễn phí nếu đăng nhập nhanh.",
+        "Nhóm tập trung vào sinh viên Trường Đại học Đông Á (TP. Đà Nẵng), chủ yếu năm nhất đến năm ba, "
+        "sống ở trọ hoặc ký túc xá trong bán kính vài ki-lô-mét quanh trường, có bạn cách nhà trên 50 km. "
+        "Thu nhập hằng tháng chủ yếu đến từ trợ cấp của gia đình, phần lớn ở mức dưới 4 triệu đồng, cộng thêm "
+        "thu nhập không đều từ làm thêm. Các bạn dùng điện thoại thông minh hằng ngày, quen mua sắm qua mạng "
+        "xã hội và sẵn sàng dùng công cụ miễn phí nếu đăng nhập nhanh.",
     )
     P(
         document,
-        "Điểm chung của nhóm này là tự quản lý tiền lần đầu, chưa có thói quen ghi chép, và chịu áp lực tâm lý "
-        "khi thấy bạn bè chi tiêu thoải mái hơn mình. Đây cũng là nhóm có nhu cầu mua bán đồ cũ cao nhất vì đồ "
-        "dùng chỉ cần trong một học kỳ.",
+        "Điểm chung của nhóm này là lần đầu tự quản lý tiền, chưa có thói quen ghi chép, và chịu áp lực tâm "
+        "lý khi thấy bạn bè cùng lớp chi tiêu thoải mái hơn mình. Đây cũng là nhóm có nhu cầu mua bán đồ cũ "
+        "cao nhất, vì giáo trình và đồ dùng chỉ cần trong một học kỳ; các giao dịch quen thuộc thường diễn ra "
+        "trong nhóm lớp, nhóm ký túc xá và khu vực quanh trường.",
     )
 
     H3(document, "1.1.2. Bối cảnh thực tế phát sinh các rủi ro tài chính")
@@ -280,31 +285,46 @@ def cau_1(document):
     H3(document, "1.3.1. Dữ liệu khảo sát và phỏng vấn")
     P(
         document,
-        "Nhóm thu thập phản hồi qua bảng hỏi trực tuyến 10 câu (Phụ lục A) gửi trong nhóm lớp và nhóm KTX, "
-        "kết hợp trao đổi trực tiếp với những bạn đồng ý nói chuyện lâu hơn. Bảng dưới là các chỉ số nhóm dùng "
-        "để ra quyết định thiết kế.",
+        "Nhóm thu thập phản hồi bằng biểu mẫu Google Form gửi tới sinh viên Trường Đại học Đông Á trong 5 ngày, "
+        "thu được 11 phản hồi hợp lệ, kết hợp trao đổi trực tiếp với những bạn đồng ý nói chuyện lâu hơn. Mẫu 11 "
+        "người là nhỏ so với quy mô của trường, do giới hạn thời gian làm bài; vì vậy nhóm dùng kết quả này để "
+        "định hướng thiết kế chứ không dùng để suy rộng cho toàn bộ sinh viên.",
+    )
+    P(
+        document,
+        "Điều khiến nhóm tin vào kết quả không phải số lượng mà là độ tập trung của câu trả lời. Trong câu hỏi về "
+        "lý do khó tiết kiệm, bốn trong số năm phương án đều được chọn nhiều lần, và hai lý do dẫn đầu — mua sắm "
+        "bốc đồng do sale online (4/11 người) và chưa biết chia ngân sách theo ngày (3/11 người) — chiếm 7 trong "
+        "tổng số 13 lượt chọn, tức 53,8%, trùng đúng với những gì nhóm quan sát được khi trò chuyện trực tiếp. "
+        "Vì mẫu chỉ có 11 người, mỗi phản hồi tương ứng 9,1 "
+        "điểm phần trăm, nên nhóm chỉ đọc theo hướng xu hướng, không so sánh những chênh lệch nhỏ giữa các phương "
+        "án.",
     )
     TABLE(
         document,
         [
-            ["Chỉ số khảo sát", "Kết quả", "Ý nghĩa với thiết kế"],
-            ["Không ghi lại khoản chi nào", "≈ 7/10 người được hỏi", "Ghi chép phải cực nhanh, nếu không sẽ bỏ"],
-            ["Chỉ nhận ra đã tiêu quá tay vào cuối tháng", "≈ 8/10", "Cần hiển thị hạn mức còn lại của hôm nay, ngay khi mở ứng dụng"],
-            ["Từng mua hoặc bán đồ cũ trong trường", "≈ 6/10", "Chợ nội bộ trường là nhu cầu thật, không phải ý tưởng thêm"],
-            ["Từng góp tiền mua chung và phải tính tay", "≈ 4/10", "Chia tiền tự động giải quyết đúng điểm đau"],
-            ["Sẵn sàng dùng công cụ miễn phí, đăng nhập nhanh", "≈ 9/10", "Không đặt rào cản trả phí ở giai đoạn đầu"],
-            ["Lo lộ thông tin khi mua bán đồ cũ", "≈ 5/10", "Cần xác minh sinh viên và làm mờ vị trí"],
+            ["Chỉ số khảo sát", "Kết quả (n = 11)", "Ý nghĩa với thiết kế"],
+            ["Thu nhập dưới 2,5 triệu đồng/tháng", "4/11 (36,4%)", "Ngân sách rất mỏng: hạn mức ngày phải tính theo số tiền thực có, và gợi ý ăn uống giá rẻ nên là mặc định chứ không phải tuỳ chọn"],
+            ["Thu nhập trên 4 triệu đồng/tháng", "3/11 (27,3%)", "Nhóm có dư địa: cần cơ chế trích tiết kiệm ngay khi nhận tiền (10%), thay vì chờ cuối tháng xem còn bao nhiêu"],
+            ["Thu nhập 2,5 – 4 triệu đồng/tháng", "2/11 (18,2%)", "Nhóm ở giữa: cách chia phải linh hoạt theo tuần, không chỉ theo tháng"],
+            ["Không nêu mức thu nhập", "2/11 (18,2%)", "Dữ liệu còn thiếu: không dùng nhóm này để kết luận về thu nhập, chỉ ghi nhận để lần khảo sát sau bổ sung"],
+            ["Lý do 1: mua sắm bốc đồng do sale online", "4/11 (36,4%)", "Lý do được chọn nhiều nhất: người dùng phải thấy hạn mức còn lại trước khi bấm mua, không chỉ xem báo cáo sau khi đã tiêu"],
+            ["Lý do 2: chưa biết chia ngân sách theo ngày", "3/11 (27,3%)", "Không thể yêu cầu người dùng tự chia: ứng dụng chia hộ thành hạn mức từng ngày, người dùng chỉ đọc kết quả"],
+            ["Lý do 3: chi phí ăn uống, đi chợ tốn kém", "3/11 (27,3%)", "Cần gợi ý thực đơn rẻ và danh sách đi chợ gộp sẵn — đây là lý do phân hệ Dinh dưỡng tồn tại"],
+            ["Lý do 4: ngại ghi chép", "1/11 (9,1%)", "Ít người tự nhận, nhưng đây chính là lý do khiến họ bỏ giữa chừng: mỗi khoản chi chỉ được phép tốn tối đa 3 thao tác"],
+            ["Lý do 5: giáo trình mua một lần quá đắt", "2/11 (18,2%)", "Cơ hội rõ cho chợ đồ cũ: sinh viên sẵn sàng mua lại giáo trình của khoá trước trong cùng trường"],
         ],
-        [7.4, 3.8, 4.7],
+        [6.2, 3.0, 6.7],
         caption="Các chỉ số khảo sát dùng để ra quyết định thiết kế",
-        source="Nguồn: nhóm tự ước lượng từ quan sát và trao đổi nhanh trong trường; cần thay bằng tỉ lệ chính thức khi có kết quả khảo sát đầy đủ",
-        size=11,
+        source="Nguồn: khảo sát Google Form của nhóm với 11 sinh viên Trường Đại học Đông Á (tháng 11/2026); câu hỏi về lý do cho chọn nhiều phương án nên tổng tỉ lệ lớn hơn 100%",
+        size=10.5,
     )
     NOTE(
         document,
-        "Ghi chú phương pháp: các tỉ lệ trên là ước lượng của nhóm dựa trên quan sát trực tiếp và ghi chép "
-        "trao đổi, chưa phải kết quả khảo sát định lượng đủ mẫu. Khi có kết quả khảo sát chính thức, thay số "
-        "tương ứng và giữ nguyên cấu trúc bảng. Đường dẫn biểu mẫu khảo sát và ảnh chụp biểu mẫu đặt ở Phụ lục A.",
+        "Ghi chú phương pháp: mẫu gồm 11 phản hồi hợp lệ, thu trong 5 ngày qua biểu mẫu trực tuyến; đường dẫn "
+        "biểu mẫu và ảnh chụp để ở Phụ lục A. Với mẫu nhỏ, kết quả dùng để chọn hướng thiết kế và đặt giả thuyết, "
+        "không dùng để tuyên bố về toàn bộ sinh viên. Bước tiếp theo là mở rộng lên 50–100 phản hồi để kiểm chứng "
+        "lại hai lý do dẫn đầu.",
     )
 
     H3(document, "1.3.2. Insight quan trọng")
@@ -312,8 +332,10 @@ def cau_1(document):
         document,
         "Insight thứ nhất là sinh viên không thiếu hiểu biết về tài chính, mà thiếu phản hồi tức thì. Ai cũng "
         "biết nên tiết kiệm, nhưng chỉ khi nhìn thấy con số còn lại của hôm nay giảm xuống thì hành vi mới đổi. "
-        "Vì vậy thông tin quan trọng nhất trên màn hình đầu tiên không phải tổng chi cả tháng, mà là số tiền "
-        "được tiêu trong ngày còn lại.",
+        "Con số 36,4% người nêu mua sắm bốc đồng là lý do khó tiết kiệm cho thấy vấn đề nằm ở phút quyết định "
+        "chứ không nằm ở kiến thức: người dùng biết mình nên dừng, nhưng không có gì nhắc họ dừng đúng lúc. Vì "
+        "vậy thông tin quan trọng nhất trên màn hình đầu tiên không phải tổng chi cả tháng, mà là số tiền được "
+        "tiêu trong ngày còn lại.",
     )
     P(
         document,
@@ -348,7 +370,7 @@ def cau_1(document):
             ["Thuộc tính", "Nội dung"],
             ["Họ tên (đại diện)", "Nguyễn Hoàng Anh"],
             ["Tuổi, năm học", "19 tuổi, sinh viên năm nhất"],
-            ["Nơi ở, trường", "Phòng trọ cách trường 3 km, TP. Hồ Chí Minh"],
+            ["Nơi ở, trường", "Phòng trọ cách Trường Đại học Đông Á 3 km, TP. Đà Nẵng"],
             ["Thu nhập", "3,2 triệu đồng/tháng từ gia đình, thêm 500 nghìn khi làm thêm cuối tuần"],
             ["Mục tiêu", "Không phải vay tiền vào cuối tháng; để dành 500 nghìn mỗi tháng"],
             ["Nỗi đau", "Không nhớ đã tiêu gì; thấy tiền biến mất sau mỗi lần lướt mạng xã hội"],
