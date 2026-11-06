@@ -17,6 +17,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+SURVEY = Path("docs/assets/survey")
+
 A = Path("scripts/idea_content_a.py")
 B = Path("scripts/idea_content_b.py")
 C = Path("scripts/idea_content_c.py")
@@ -224,6 +226,15 @@ def main():
         "khoảng 15 phút, ghi ngay sau khi kết thúc để không mất chi tiết; tên người tham gia được ẩn hoặc viết tắt "
         "khi đưa vào báo cáo.",
     )
+
+    for index in range(1, 5):
+        FIG(
+            document,
+            f"docs/assets/survey/phan-hoi-{index}.png",
+            f"Ảnh chụp phần tổng hợp phản hồi trên Google Form (trang {index}/4)",
+            "Nguồn: tab Responses của biểu mẫu, chụp tháng 11/2026; biểu mẫu không thu thập email người trả lời",
+            width=15.4,
+        )
 
 '''
     replace_block(C, '    H2(document, "Phụ lục A: Bảng câu hỏi khảo sát và biên bản trao đổi")',
