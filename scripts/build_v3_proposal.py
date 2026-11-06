@@ -539,7 +539,9 @@ def main():
         paragraph.paragraph_format.first_line_indent = Cm(0)
         paragraph.paragraph_format.space_after = Pt(1)
         paragraph.paragraph_format.line_spacing = 1.15
-        set_run(paragraph.add_run(dong), size=13, bold=False)
+        nhan, gia_tri = dong.split(": ", 1)
+        set_run(paragraph.add_run(nhan + ": "), size=13, bold=True)
+        set_run(paragraph.add_run(gia_tri), size=13, bold=False)
 
     paragraph = document.add_paragraph()
     paragraph.paragraph_format.space_after = Pt(0)
