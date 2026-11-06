@@ -557,12 +557,12 @@ def main():
 
     danh_sach_thanh_vien = [
         ("Nguyễn Thị Thanh Yên", "109096", "100%"),
-        ("Đỗ Thị Như Ý", "109410", "98%"),
+        ("Đỗ Thị Như Ý", "109410", "100%"),
         ("Nguyễn Thị Thu Thúy", "118348", "100%"),
-        ("Trần Thị Phương Thu", "108967", "100%"),
-        ("Lê Phương Thảo", "108949", "100%"),
-        ("Nguyễn Thị Ngọc Kim", "109083", "98%"),
-        ("Nguyễn Thị Thanh Thanh", "109025", "98%"),
+        ("Trần Thị Phương Thu", "108967", "90%"),
+        ("Lê Phương Thảo", "108949", "90%"),
+        ("Nguyễn Thị Ngọc Kim", "109083", "90%"),
+        ("Nguyễn Thị Thanh Thanh", "109025", "100%"),
     ]
     rows = [["Họ và tên", "MSSV", "% hoàn thành"]]
     for ten, mssv, phan_tram in danh_sach_thanh_vien:
