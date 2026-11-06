@@ -621,13 +621,6 @@ def main():
         source="Nguồn: nhóm thực hiện, theo bố cục hướng dẫn của giảng viên",
         size=9.5,
     )
-    NOTE(
-        document,
-        "Mười tám nội dung được gom thành mười slide để vừa 11 phút. Nếu giảng viên cho trình bày dài hơn, tách "
-        "slide 3 (phương pháp và kết quả nghiên cứu) và slide 7 (kịch bản và kết quả kiểm thử) thành bốn slide, "
-        "thành mười hai slide mà không phải viết lại nội dung.",
-    )
-
 """
     replace_block(
         C,
@@ -637,17 +630,6 @@ def main():
         "mục 4.1 theo cấu trúc yêu cầu",
     )
 
-
-    # TẮT Ô GHI CHÚ: bỏ toàn bộ ô nền xanh lá nhạt theo yêu cầu
-    ht = HELPERS.read_text(encoding="utf-8")
-    if "def NOTE(document, text):" in ht and "return  # đã tắt" not in ht:
-        ht = ht.replace(
-            "def NOTE(document, text):",
-            "def NOTE(document, text):\n    return  # đã tắt: không tạo ô ghi chú",
-            1,
-        )
-        HELPERS.write_text(ht, encoding="utf-8")
-        print("đã tắt ô ghi chú (xanh lá nhạt)")
 
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
