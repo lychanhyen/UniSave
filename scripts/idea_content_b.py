@@ -195,64 +195,59 @@ def cau_2(document):
         size=10,
     )
 
-    H3(document, "2.3.2. Kịch bản thử nghiệm ba bước")
+    H3(document, "2.3.2. Quy trình kiểm chứng ba bước")
     P(
         document,
-        "Phiên thử nghiệm được tổ chức theo ba bước cố định để kết quả giữa các phiên so sánh được với nhau. "
-        "Nhóm không hướng dẫn trong lúc người thử thao tác, chỉ ghi lại điều quan sát được.",
+        "Quy trình kiểm chứng của nhóm gồm ba bước và đã thực hiện xong hai bước đầu với dữ liệu thật; bước thứ ba "
+        "đang tiếp tục. Nhóm ghi rõ phần nào đã làm, phần nào còn dự kiến, để không nhận những kết quả mình chưa "
+        "có.",
     )
-    P(document, "Bước 1 – Chuẩn bị: xác định mẫu, đối tượng và nhiệm vụ.", indent=True, bold=True)
+    P(document, "Bước 1 – Chuẩn bị: xác định đối tượng, câu hỏi và bản mẫu để thử.", indent=True, bold=True)
     for item in [
-        "Mẫu: 5 sinh viên ngoài nhóm (3 nam, 2 nữ), năm 1 đến năm 3, trong đó ít nhất 1 bạn ở ký túc xá.",
-        "Đối tượng loại trừ: thành viên nhóm và người đã xem trước giao diện, để tránh kết quả bị lệch.",
-        "Nhiệm vụ: bốn nhiệm vụ từ dễ đến khó, mỗi nhiệm vụ có tiêu chí hoàn thành rõ ràng.",
-        "Vật dụng: điện thoại của chính người thử, phiếu ghi thời gian và bảng ghi nhận ở Phụ lục D.",
+        "Xác định đối tượng: sinh viên Trường Đại học Đông Á, ở trọ hoặc ký túc xá, năm 1 đến năm 3.",
+        "Dựng xong bản chạy được để đưa cho người dùng thao tác, thay vì chỉ cho xem ảnh thiết kế.",
+        "Soạn biểu mẫu 10 câu (Phụ lục A) để hỏi đúng những chỗ bản mẫu chưa rõ, không hỏi chung chung.",
+        "Chuẩn bị phiếu ghi nhận gồm bốn cột: thời gian, số lần bấm sai, điểm tắc, góp ý nguyên văn.",
     ]:
         B(document, item)
-    TABLE(
-        document,
-        [
-            ["Nhiệm vụ", "Yêu cầu", "Tiêu chí hoàn thành"],
-            ["1. Đặt ngân sách", "Nhập ngân sách tháng 3.000.000 đồng và cho biết hôm nay còn tiêu được bao nhiêu", "Đọc đúng con số hạn mức của ngày"],
-            ["2. Ghi khoản chi", "Ghi một khoản 35.000 đồng cho bữa trưa", "Khoản chi xuất hiện trong danh sách, hạn mức ngày giảm tương ứng"],
-            ["3. Tạo kèo gom đơn", "Tạo kèo 5 người và xem số tiền mình phải chuyển", "Đọc đúng số tiền phải chuyển trong bảng chia tiền"],
-            ["4. Đăng tin bán đồ", "Đăng một tin bán giáo trình cũ kèm vị trí nhận hàng", "Tin hiện trong danh sách chợ với vị trí đã chọn"],
-        ],
-        [3.4, 7.0, 5.5],
-        caption="Bốn nhiệm vụ và tiêu chí hoàn thành",
-        source="Nguồn: nhóm thực hiện",
-        size=10,
-    )
-    P(document, "Bước 2 – Tiến hành thử: đo thao tác thật, không gợi ý.", indent=True, bold=True)
+    P(document, "Bước 2 – Tiến hành: cho dùng thử và ghi nhận phản ứng thật.", indent=True, bold=True)
     for item in [
-        "Mỗi phiên 25 phút, tính từ lúc người thử cầm điện thoại; 2 phút đầu chỉ giới thiệu mục tiêu, không chỉ chỗ bấm.",
-        "Nhóm ghi ba loại số liệu: thời gian từng nhiệm vụ, số lần bấm sai, và câu nói đầu tiên khi gặp chỗ khó.",
-        "Nếu người thử dừng quá 60 giây ở một bước, nhóm ghi nhận là điểm tắc và chỉ trợ giúp khi họ chủ động hỏi.",
+        "Đã làm: gửi biểu mẫu trực tuyến trong 5 ngày, thu 11 phản hồi hợp lệ (kết quả ở mục 1.3.1).",
+        "Đã làm: thành viên nhóm và một số bạn cùng lớp dùng thử trực tiếp các luồng chính trên điện thoại; nhóm ghi lại chỗ dừng, chỗ bấm sai và câu hỏi lặp lại.",
+        "Chi tiết cách đo: mỗi nhiệm vụ ghi thời gian, đếm số lần bấm sai, và ghi câu nói đầu tiên của người thử khi gặp chỗ khó.",
+        "Dự kiến ở phiên chính thức: 5 sinh viên ngoài nhóm, 25 phút mỗi phiên, bốn nhiệm vụ từ đặt ngân sách đến đăng tin bán đồ.",
     ]:
         B(document, item)
-    P(document, "Bước 3 – Thu phản hồi và chuyển thành việc sửa.", indent=True, bold=True)
+    P(document, "Bước 3 – Phản hồi người dùng và cải tiến.", indent=True, bold=True)
     for item in [
-        "Sau phiên, hỏi 4 câu ngắn: chỗ nào khó hiểu nhất, chỗ nào thừa, có dùng lại không, muốn thêm gì.",
-        "Ghi nguyên văn góp ý vào bảng dữ liệu thô (Phụ lục D), không diễn giải lại theo ý nhóm.",
-        "Phân loại phản hồi thành ba nhóm: lỗi chặn luồng, chỗ khó hiểu, và góp ý tính năng; hai nhóm đầu chuyển thành đầu việc sửa ở vòng PDCA kế tiếp.",
-        "Đối chiếu với chỉ số ở mục 2.3.3 để quyết định sửa hay giữ nguyên thiết kế.",
+        "Đã làm: chuyển các lỗi ghi nhận được thành đầu việc sửa và theo dõi theo bốn vòng ở mục 2.4.1.",
+        "Ba lỗi thực tế đã sửa theo phản hồi: thẻ kèo che mất số tiền phải chuyển, khối giới thiệu trang Chợ khó đọc, tài khoản chưa xác minh vẫn bình luận được.",
+        "Cách phân loại phản hồi: lỗi chặn luồng (sửa ngay), chỗ khó hiểu (sửa trong vòng kế tiếp), góp ý tính năng (ghi lại, chọn lọc sau).",
+        "Dự kiến: sau 5 phiên chính thức, ghi kết quả vào bảng dữ liệu thô ở Phụ lục D rồi đối chiếu với ngưỡng ở mục 2.3.3.",
     ]:
         B(document, item)
 
     H3(document, "2.3.3. Chỉ số đo lường và ngưỡng thành công")
+    P(
+        document,
+        "Bảng dưới là các chỉ số nhóm dùng để biết bản mẫu có giải quyết được vấn đề hay không, kèm ngưỡng đặt ra "
+        "trước khi thử. Cột cuối ghi trạng thái thật: chỉ số nào đã đo được bằng dữ liệu hiện có, chỉ số nào còn "
+        "chờ phiên thử chính thức.",
+    )
     TABLE(
         document,
         [
-            ["Chỉ số", "Cách đo", "Ngưỡng đạt", "Kết quả kiểm thử nội bộ"],
-            ["Hoàn thành nhiệm vụ không trợ giúp", "Quan sát, đếm số nhiệm vụ làm được một mình", "≥ 3/4 nhiệm vụ", "4/4 ở lần thử thứ ba"],
-            ["Số thao tác để ghi một khoản chi", "Đếm trên giao diện", "≤ 3", "3"],
-            ["Số bước để biết tiền phải chuyển trong kèo", "Đếm trên giao diện", "≤ 1", "1 (sau khi sửa)"],
-            ["Lỗi chặn luồng", "Đếm lỗi khiến người dùng dừng lại", "0", "0 sau khi sửa"],
-            ["Mức hài lòng", "Hỏi 1–5 sau phiên", "≥ 4", "4 (tự đánh giá nội bộ)"],
+            ["Chỉ số", "Cách đo", "Ngưỡng thành công", "Trạng thái hiện tại"],
+            ["Hoàn thành nhiệm vụ không cần trợ giúp", "Quan sát trong phiên thử, đếm số nhiệm vụ làm được một mình", "≥ 3/4 nhiệm vụ", "Chưa đo đủ mẫu (chờ 5 phiên)"],
+            ["Số thao tác để ghi một khoản chi", "Đếm trực tiếp trên giao diện", "≤ 3 thao tác", "Đã đạt: 3 thao tác"],
+            ["Số bước để biết tiền phải chuyển trong kèo", "Đếm số lần bấm từ thẻ kèo đến khi thấy số tiền", "≤ 1 bước", "Đã đạt: 1 bước (sau khi tách trang chi tiết)"],
+            ["Số lỗi chặn luồng", "Đếm lỗi khiến người dùng dừng lại hoặc phải hỏi", "0 lỗi", "Đã sửa 3 lỗi phát hiện khi dùng thử nội bộ"],
+            ["Thời gian thu thập một phản hồi khảo sát", "Đo thời gian trung bình hoàn thành biểu mẫu 10 câu", "≤ 3 phút", "Đã đạt: khoảng 3 phút"],
+            ["Mức hài lòng sau phiên", "Hỏi 1–5 ngay sau phiên thử", "≥ 4/5", "Chưa đo (chờ 5 phiên)"],
         ],
-        [5.0, 5.2, 2.6, 3.1],
-        caption="Chỉ số đo lường và ngưỡng thành công",
-        source="Nguồn: nhóm tự đo trên bản chạy thử; kết quả chính thức cập nhật từ Phụ lục D",
+        [4.6, 5.0, 3.0, 3.3],
+        caption="Chỉ số đo lường, ngưỡng thành công và trạng thái thật",
+        source="Nguồn: nhóm thực hiện; các chỉ số đã đạt được đo trên bản chạy thử, các chỉ số còn lại chờ phiên thử 5 sinh viên",
         size=10,
     )
 
@@ -266,21 +261,21 @@ def cau_2(document):
                 "1",
                 "Thẻ kèo gom đơn phải cho xem đủ thông tin quan trọng",
                 "Dồn mô tả, thành viên, bảng chia tiền vào một thẻ",
-                "Mô tả bị cắt còn 2 dòng, bảng chia tiền phải bấm mới hiện; người thử không tìm thấy số tiền phải chuyển",
+                "Mô tả bị cắt còn 2 dòng, bảng chia tiền phải bấm mới hiện; khi dùng thử, nhóm không tìm thấy số tiền phải chuyển trên thẻ",
                 "Tách thẻ tóm tắt và trang chi tiết, mở sẵn bảng chia tiền",
             ],
             [
                 "2",
                 "Khối giới thiệu trang Chợ phải dễ đọc",
                 "Dùng nền tối, chữ trắng để nổi bật",
-                "Chữ xám trên nền đen khó đọc, tương phản thấp ở màn hình ngoài trời",
+                "Chữ xám trên nền đen khó đọc, tương phản thấp khi xem ngoài trời",
                 "Đổi sang nền xanh rất nhạt, chữ đậm, số liệu đặt trên nền trắng",
             ],
             [
                 "3",
                 "Chỉ sinh viên đã xác minh mới được bình luận",
                 "Đặt quy tắc chặn ở phía máy chủ",
-                "Ba tài khoản chưa xác minh vẫn gửi được bình luận, lỗi hiện ra khó hiểu với người dùng",
+                "Ba tài khoản chưa xác minh vẫn gửi được bình luận; thông báo lỗi hiện ra khó hiểu",
                 "Chặn đúng và hiện thông báo màu vàng giải thích cần xác minh trước",
             ],
             [

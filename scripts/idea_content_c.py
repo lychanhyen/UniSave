@@ -110,7 +110,8 @@ def cau_3(document):
             [
                 "O1. Sinh viên có nhu cầu tiết kiệm cao, chi tiêu ngày càng đắt\n"
                 "O2. Trường và KTX có nhu cầu số hoá hoạt động mua bán nội bộ\n"
-                "O3. Chi phí dùng hạ tầng đám mây ngày càng thấp",
+                "O3. Các nhà cung cấp địa phương quanh trường cần kênh bán nhóm\n"
+                "O4. Chi phí dùng hạ tầng đám mây ngày càng thấp",
                 "T1. Ứng dụng tài chính miễn phí đã có nhiều và mạnh\n"
                 "T2. Sinh viên dễ bỏ ứng dụng sau vài tuần\n"
                 "T3. Rủi ro lừa đảo trong mua bán đồ cũ ảnh hưởng uy tín nền tảng\n"
@@ -370,9 +371,9 @@ def phan_iii(document):
         document,
         [
             ["Giai đoạn", "Việc chính", "Chỉ số cần đạt"],
-            ["Tháng 1", "Chạy thử với 5 sinh viên, ghi dữ liệu thô vào Phụ lục D, sửa các lỗi chặn luồng", "Hoàn thành 4/4 nhiệm vụ không trợ giúp"],
-            ["Tháng 2", "Mở cho một trường, tổ chức 2 kèo gom đơn mỗi tuần, cập nhật giá nguyên liệu", "≥ 100 người dùng, ≥ 30% quay lại 3 ngày/tuần"],
-            ["Tháng 3", "Mời 10 nhà cung cấp quanh trường, thử mô hình phí giới thiệu đơn gom", "≥ 2 nhà cung cấp ký thử; ≥ 50% kèo đủ người"],
+            ["Tháng 11/2026", "Chạy thử với 5 sinh viên, ghi dữ liệu thô vào Phụ lục D, sửa các lỗi chặn luồng", "Hoàn thành 4/4 nhiệm vụ không trợ giúp"],
+            ["Tháng 12/2026", "Mở cho một trường, tổ chức 2 kèo gom đơn mỗi tuần, cập nhật giá nguyên liệu", "≥ 100 người dùng, ≥ 30% quay lại 3 ngày/tuần"],
+            ["Tháng 01/2027", "Mời 10 nhà cung cấp quanh trường, thử mô hình phí giới thiệu đơn gom", "≥ 2 nhà cung cấp ký thử, ≥ 50% kèo đủ người"],
         ],
         [3.0, 8.6, 4.3],
         caption="Roadmap ba tháng sau khi bảo vệ",
@@ -384,13 +385,13 @@ def phan_iii(document):
 def references(document):
     H1(document, "TÀI LIỆU THAM KHẢO")
     items = [
-        "[1] Bộ Giáo dục và Đào tạo. Thống kê giáo dục đại học. Truy cập tháng 10/2026, từ https://moet.gov.vn/thong-ke",
-        "[2] Tổng cục Thống kê. Niên giám thống kê: dân số và giáo dục. Truy cập tháng 10/2026, từ https://www.gso.gov.vn",
-        "[3] Nielsen Norman Group. (2020). Usability 101: Introduction to Usability. Truy cập tháng 10/2026, từ https://www.nngroup.com/articles/usability-101-introduction-to-usability/",
-        "[4] W3C. (2018). Web Content Accessibility Guidelines (WCAG) 2.1. Truy cập tháng 10/2026, từ https://www.w3.org/TR/WCAG21/",
-        "[5] Money Lover. Trang ứng dụng trên Google Play. Truy cập tháng 10/2026, từ https://play.google.com/store/apps/details?id=com.moneylover",
-        "[6] MISA. Sổ thu chi MISA: giới thiệu tính năng. Truy cập tháng 10/2026, từ https://www.misa.vn",
-        "[7] OpenStreetMap contributors. (2026). OpenStreetMap. Truy cập tháng 10/2026, từ https://www.openstreetmap.org",
+        "[1] Bộ Giáo dục và Đào tạo. Cổng thông tin điện tử. Truy cập tháng 10/2026, từ https://moet.gov.vn",
+        "[2] Tổng cục Thống kê. Cổng thông tin điện tử. Truy cập tháng 10/2026, từ https://www.gso.gov.vn",
+        "[3] Nielsen Norman Group. Usability 101: Introduction to Usability. Truy cập tháng 10/2026, từ https://www.nngroup.com/articles/usability-101-introduction-to-usability/",
+        "[4] W3C. Web Content Accessibility Guidelines (WCAG) 2.1. Truy cập tháng 10/2026, từ https://www.w3.org/TR/WCAG21/",
+        "[5] Money Lover. Trang ứng dụng trên Google Play. Truy cập tháng 10/2026, từ https://play.google.com",
+        "[6] MISA. Trang chủ và giới thiệu sản phẩm. Truy cập tháng 10/2026, từ https://www.misa.vn",
+        "[7] OpenStreetMap contributors. OpenStreetMap. Truy cập tháng 10/2026, từ https://www.openstreetmap.org",
     ]
     for item in items:
         paragraph = document.add_paragraph()
@@ -403,10 +404,15 @@ def references(document):
 
     P(
         document,
-        "Ghi chú: danh mục xếp theo thứ tự ABC của tên tác giả hoặc tên tổ chức. Các con số thị trường ở mục "
-        "3.1 (2,1 triệu sinh viên, 3,5 triệu đồng/tháng, tỉ lệ 8%) là ước tính của nhóm dựa trên số liệu công "
-        "khai, không phải số liệu trích nguyên từ các nguồn trên; vì vậy bảng TAM – SAM – SOM ghi rõ cách tính "
-        "và mức độ chắc chắn của từng dòng.",
+        "Ghi chú về nguồn: danh mục xếp theo thứ tự ABC. Đây là các nguồn nhóm dùng để tham khảo cách làm và "
+        "đối chiếu tính năng, không phải nguồn của số liệu thị trường. Các con số ở mục 3.1 (2,1 triệu sinh viên, "
+        "3,5 triệu đồng/tháng, tỉ lệ 8%) là ước tính của nhóm dựa trên số liệu công khai; bảng TAM – SAM – SOM đã "
+        "ghi rõ cách tính và mức độ chắc chắn của từng dòng.",
+    )
+    P(
+        document,
+        "Sản phẩm của nhóm không đưa vào danh mục tham khảo vì đây là kết quả của bài tập, không phải tài liệu "
+        "trích dẫn. Đường dẫn bản chạy thử được đặt ở Phụ lục C.",
     )
 
 

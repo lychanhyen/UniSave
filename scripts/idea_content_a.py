@@ -224,14 +224,6 @@ def phan_i(document):
         "không”, mà là đưa bản mẫu chạy được cho người dùng thao tác thật rồi quan sát phản ứng: họ dừng ở đâu, "
         "bấm sai chỗ nào, có quay lại lần sau không.",
     )
-    P(
-        document,
-        "Việc thu thập dữ liệu người dùng trong phạm vi bài tập là khả thi: kênh tiếp cận có sẵn (nhóm lớp, nhóm "
-        "ký túc xá), biểu mẫu 10 câu trả lời trong khoảng 3 phút, mỗi phiên thử nghiệm 25 phút. Giới hạn nằm ở "
-        "số lượng: trong 5 ngày nhóm thu được 11 phản hồi hợp lệ, đủ để thấy xu hướng nhưng chưa đủ để đại diện "
-        "cho toàn trường. Vì vậy dữ liệu định lượng chỉ dùng để chọn hướng thiết kế, còn các kết luận về hành vi "
-        "được đối chiếu chéo với quan sát và phỏng vấn.",
-    )
 
     H2(document, "I.3. Tóm tắt mục tiêu dự án theo tiến trình thiết kế")
     TABLE(
@@ -337,7 +329,9 @@ def cau_1(document):
     H3(document, "1.3.1. Dữ liệu khảo sát và phỏng vấn")
     P(
         document,
-        "Nhóm thu thập phản hồi bằng biểu mẫu Google Form gửi tới sinh viên Trường Đại học Đông Á trong 5 ngày, "
+        "Việc thu thập dữ liệu là khả thi trong phạm vi bài tập: kênh tiếp cận có sẵn (nhóm lớp, nhóm ký túc xá), "
+        "biểu mẫu 10 câu trả lời trong khoảng 3 phút. Nhóm thu phản hồi bằng Google Form gửi tới sinh viên "
+        "Trường Đại học Đông Á trong 5 ngày, "
         "thu được 11 phản hồi hợp lệ, kết hợp trao đổi trực tiếp với những bạn đồng ý nói chuyện lâu hơn. Mẫu 11 "
         "người là nhỏ so với quy mô của trường, do giới hạn thời gian làm bài; vì vậy nhóm dùng kết quả này để "
         "định hướng thiết kế chứ không dùng để suy rộng cho toàn bộ sinh viên.",
