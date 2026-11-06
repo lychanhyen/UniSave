@@ -507,7 +507,7 @@ def main():
     paragraph.paragraph_format.space_before = Pt(4)
     paragraph.paragraph_format.space_after = Pt(2)
     paragraph.paragraph_format.line_spacing = 1.0
-    paragraph.add_run().add_picture("docs/assets/logo-truong-cat.png", height=Cm(4.2))
+    paragraph.add_run().add_picture("docs/assets/logo-dhdn.png", width=Cm(12.5))
 
     paragraph = document.add_paragraph()
     paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
