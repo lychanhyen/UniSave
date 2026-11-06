@@ -1,5 +1,6 @@
 """Lắp ghép tài liệu Thiết kế ý tưởng: mục lục có số trang, danh mục bảng/hình, xuất bản Word."""
 
+import argparse
 import os
 import shutil
 import subprocess
@@ -140,7 +141,14 @@ def convert_to_pdf(docx_path, pdf_path):
 
 
 def main():
-    work = Path("docs/.build-idea")
+    parser = argparse.ArgumentParser(description="Sinh báo cáo Thiết kế ý tưởng")
+    parser.add_argument("--out", default=str(OUT), help="đường dẫn tệp docx đầu ra")
+    parser.add_argument("--no-copy", action="store_true", help="không chép đè tệp trong Downloads")
+    args = parser.parse_args()
+
+    out_path = Path(args.out)
+    OUT_LOCAL = out_path
+    work = Path("docs/.build-" + out_path.stem)
     work.mkdir(parents=True, exist_ok=True)
 
     _, headings = build()
@@ -159,10 +167,10 @@ def main():
 
     final_entries = [(level, text, labels.get(text, "??")) for level, text in headings]
     final_document, _ = build(final_entries)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    final_document.save(OUT)
+    OUT_LOCAL.parent.mkdir(parents=True, exist_ok=True)
+    final_document.save(OUT_LOCAL)
 
-    convert_to_pdf(OUT, work / "verify.pdf")
+    convert_to_pdf(OUT_LOCAL, work / "verify.pdf")
     total_final, entries_final = read_pdf_outline(work / "verify.pdf")
     labels_final = {title: str(page) for title, page in entries_final}
     drift = [(text, labels.get(text), labels_final.get(text)) for _, text in headings if labels.get(text) != labels_final.get(text)]
@@ -171,7 +179,7 @@ def main():
         print("lệch số trang, dựng lại:", drift[:5])
         final_entries = [(level, text, labels_final.get(text, "??")) for level, text in headings]
         final_document, _ = build(final_entries)
-        final_document.save(OUT)
+        final_document.save(OUT_LOCAL)
 
     # Chép bản hoàn chỉnh về thư mục Downloads với đúng tên tệp gốc
     candidates = [
@@ -180,11 +188,13 @@ def main():
         if name.startswith("Thi") and name.endswith(".docx") and "(" not in name
     ]
     target_name = candidates[0] if candidates else None
-    if target_name:
-        shutil.copyfile(OUT, DOWNLOADS / target_name)
+    if target_name and not args.no_copy:
+        shutil.copyfile(OUT_LOCAL, DOWNLOADS / target_name)
         print("đã cập nhật tệp gốc:", DOWNLOADS / target_name)
+    elif args.no_copy:
+        print("bỏ qua bước chép vào Downloads (--no-copy)")
 
-    print("đã tạo:", OUT.resolve())
+    print("đã tạo:", OUT_LOCAL.resolve())
     print("số trang:", total_final, "| số tiêu đề:", len(headings), "| bảng:", helpers.TABLE_INDEX, "| hình:", helpers.FIGURE_INDEX)
 
 
