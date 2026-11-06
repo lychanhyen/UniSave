@@ -556,13 +556,13 @@ def main():
     set_run(paragraph.add_run("Thành viên nhóm"), size=13, bold=True)
 
     thanh_vien = [
-        "Nguyễn Thị Thanh Yên – 109096",
-        "Đỗ Thị Như Ý – 109410",
-        "Nguyễn Thị Thu Thúy – 118348",
-        "Trần Thị Phương Thu – 108967",
-        "Lê Phương Thảo – 108949",
-        "Nguyễn Thị Ngọc Kim – 109083",
-        "Nguyễn Thị Thanh Thanh – 109025",
+        "Nguyễn Thị Thanh Yên – 109096 – 100%",
+        "Đỗ Thị Như Ý – 109410 – 98%",
+        "Nguyễn Thị Thu Thúy – 118348 – 100%",
+        "Trần Thị Phương Thu – 108967 – 100%",
+        "Lê Phương Thảo – 108949 – 100%",
+        "Nguyễn Thị Ngọc Kim – 109083 – 98%",
+        "Nguyễn Thị Thanh Thanh – 109025 – 98%",
     ]
     for so, ten in enumerate(thanh_vien, 1):
         paragraph = document.add_paragraph()
