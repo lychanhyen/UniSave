@@ -227,13 +227,20 @@ def main():
         "khi đưa vào báo cáo.",
     )
 
-    for index in range(1, 5):
+    CAU_HOI = [
+        ("phan-hoi-1.png", "Tổng hợp phản hồi câu 1: nơi ở và mức thu nhập hằng tháng"),
+        ("phan-hoi-2.png", "Tổng hợp phản hồi câu 2: thời điểm bắt đầu hụt tiền trong tháng"),
+        ("phan-hoi-3.png", "Tổng hợp phản hồi câu 3: lý do khó tiết kiệm hoặc dễ thâm hụt"),
+        ("phan-hoi-4.png", "Tổng hợp phản hồi câu 4: tính năng người trả lời quan tâm nhất"),
+        ("phan-hoi-5.png", "Tổng hợp phản hồi câu 5: câu trả lời mở về lần hết tiền gần nhất"),
+    ]
+    for file_name, caption in CAU_HOI:
         FIG(
             document,
-            f"docs/assets/survey/phan-hoi-{index}.png",
-            f"Ảnh chụp phần tổng hợp phản hồi trên Google Form (trang {index}/4)",
-            "Nguồn: tab Responses của biểu mẫu, chụp tháng 11/2026; biểu mẫu không thu thập email người trả lời",
-            width=15.4,
+            f"docs/assets/survey/{file_name}",
+            caption,
+            "Nguồn: tab Responses của biểu mẫu Google Form, chụp tháng 11/2026; biểu mẫu không thu thập email người trả lời",
+            width=13.6,
         )
 
 '''
@@ -335,6 +342,31 @@ def main():
     )
     C.write_text(text, encoding="utf-8")
     print("idea_content_c.py: đã cập nhật Phụ lục A, Phụ lục D, BMC và roadmap")
+    # Ảnh chụp từ bản chạy thật và link deploy
+    bt = B.read_text(encoding="utf-8")
+    old_src = '"Nguồn: ảnh chụp màn hình ứng dụng UniSave (phiên dùng thử với dữ liệu mẫu)"'
+    new_src = '"Nguồn: ảnh chụp trực tiếp từ bản chạy thật https://unisave-theta.vercel.app với dữ liệu người dùng thật (tháng 11/2026)"'
+    so_lan = bt.count(old_src)
+    bt = bt.replace(old_src, new_src)
+    bt = bt.replace(
+        '"kỹ phần giúp kiểm tra giả thuyết.",',
+        '"kỹ phần giúp kiểm tra giả thuyết. Bản chạy thật đặt tại https://unisave-theta.vercel.app và đang có dữ liệu của "\n'
+        '        "người dùng thật, không phải dữ liệu mẫu.",',
+        1,
+    )
+    B.write_text(bt, encoding="utf-8")
+    print(f"nguồn ảnh thật: {so_lan} chú thích")
+
+    ct = C.read_text(encoding="utf-8")
+    ct = ct.replace(
+        '"tương tác: [dán link Figma hoặc link bản chạy thử tại đây].",',
+        '"tương tác: bản chạy thật đặt tại https://unisave-theta.vercel.app; nhóm dùng tài khoản thử để xem dữ liệu thật "\n'
+        '        "khi chấm. Bản vẽ wireframe ở hình bên dưới.",',
+        1,
+    )
+    C.write_text(ct, encoding="utf-8")
+    print("đã cập nhật link bản chạy thật ở Phụ lục C")
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
