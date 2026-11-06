@@ -545,7 +545,8 @@ def main():
     paragraph.paragraph_format.line_spacing = 1.15
 
     paragraph = document.add_paragraph()
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    paragraph.paragraph_format.left_indent = Cm(4.2)
     paragraph.paragraph_format.first_line_indent = Cm(0)
     paragraph.paragraph_format.space_after = Pt(2)
     paragraph.paragraph_format.line_spacing = 1.15
