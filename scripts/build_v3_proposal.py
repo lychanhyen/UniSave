@@ -534,7 +534,8 @@ def main():
 
     for dong in ("Môn: Thiết kế ý tưởng", "Nhóm: 17 – Lớp CL24D", "GVHD: Th.S Trần Phước Đại"):
         paragraph = document.add_paragraph()
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        paragraph.paragraph_format.left_indent = Cm(4.2)
         paragraph.paragraph_format.first_line_indent = Cm(0)
         paragraph.paragraph_format.space_after = Pt(1)
         paragraph.paragraph_format.line_spacing = 1.15
