@@ -395,6 +395,77 @@ def main():
         "ảnh nhóm Phụ lục E",
     )
 
+    # Thông tin nhóm thật: khoa, nhóm 17, 7 thành viên, lớp, giảng viên
+    thanh_vien = [
+        ("Nguyễn Thị Thanh Yên", "109096"),
+        ("Đỗ Thị Như Ý", "109410"),
+        ("Nguyễn Thị Thu Thúy", "118348"),
+        ("Trần Thị Phương Thu", "108967"),
+        ("Lê Phương Thảo", "108949"),
+        ("Nguyễn Thị Ngọc Kim", "109083"),
+        ("Nguyễn Thị Thanh Thanh", "109025"),
+    ]
+    phan_cong = [
+        ("Nguyễn Thị Thanh Yên", "109096", "Nhóm trưởng", "Điều phối chung, Câu 1: vấn đề, POV, Persona, UVP"),
+        ("Đỗ Thị Như Ý", "109410", "Thành viên", "Câu 2: phân tích ý tưởng, SCAMPER, ma trận chọn giải pháp"),
+        ("Nguyễn Thị Thu Thúy", "118348", "Thành viên", "Câu 2: dựng bản mẫu, chụp ảnh minh chứng, kiểm thử nội bộ"),
+        ("Trần Thị Phương Thu", "108967", "Thành viên", "Câu 3: thị trường, TAM – SAM – SOM, phân tích đối thủ"),
+        ("Lê Phương Thảo", "108949", "Thành viên", "Câu 3: SWOT, TOWS, mô hình kinh doanh BMC"),
+        ("Nguyễn Thị Ngọc Kim", "109083", "Thành viên", "Câu 4: kịch bản pitching, bộ câu hỏi phản biện, thuyết trình"),
+        ("Nguyễn Thị Thanh Thanh", "109025", "Thành viên", "Khảo sát, xử lý dữ liệu, phụ lục minh chứng, định dạng bản in"),
+    ]
+
+    danh_sach = "\\n".join(f"{i}. {ten} – {mssv}" for i, (ten, mssv) in enumerate(thanh_vien, 1))
+
+    dong_moi = []
+    da_chen_vai_tro = False
+    for dong in A.read_text(encoding="utf-8").split("\n"):
+        s = dong.strip()
+        if "KHOA CÔNG NGHỆ THÔNG TIN" in s:
+            dong_moi.append(dong.replace("KHOA CÔNG NGHỆ THÔNG TIN", "KHOA NGÔN NGỮ VÀ VĂN HOÁ TRUNG QUỐC"))
+        elif s == '["Nhóm thực hiện", "Nhóm 04"],':
+            dong_moi.append(dong.replace("Nhóm 04", "Nhóm 17"))
+        elif s.startswith('["Thành viên",'):
+            dong_moi.append('            ["Thành viên", "' + danh_sach + '"],')
+        elif s == '["Lớp", "[Lớp]"],':
+            dong_moi.append(dong.replace("[Lớp]", "CL24D"))
+        elif s.startswith('["Giảng viên hướng dẫn"'):
+            dong_moi.append(dong.replace("[Họ tên giảng viên]", "Th.S Trần Phước Đại"))
+        elif s.startswith('["[Họ tên]",'):
+            if not da_chen_vai_tro:
+                for ten, mssv, vai_tro, viec in phan_cong:
+                    dong_moi.append(
+                        '            ["' + ten + '", "' + mssv + '", "' + vai_tro + '", "' + viec + '"],'
+                    )
+                da_chen_vai_tro = True
+        else:
+            dong_moi.append(dong)
+    A.write_text("\n".join(dong_moi), encoding="utf-8")
+    print(f"thông tin nhóm: {len(thanh_vien)} thành viên, đã thay bảng phân công: {da_chen_vai_tro}")
+
+    patch(
+        C,
+        [
+            (
+                '["0:00 – 1:30", "Thành viên 1", "Mở đầu, vấn đề và insight"],',
+                '["0:00 – 1:30", "Nguyễn Thị Thanh Yên", "Mở đầu, vấn đề và insight"],',
+            ),
+            (
+                '["1:30 – 4:00", "Thành viên 2", "Giải pháp và demo trực tiếp trên sản phẩm"],',
+                '["1:30 – 4:00", "Nguyễn Thị Thu Thúy", "Giải pháp và demo trực tiếp trên sản phẩm"],',
+            ),
+            (
+                '["4:00 – 6:30", "Thành viên 3", "Thị trường, cạnh tranh, mô hình kinh doanh"],',
+                '["4:00 – 6:30", "Lê Phương Thảo", "Thị trường, cạnh tranh, mô hình kinh doanh"],',
+            ),
+            (
+                '["6:30 – 8:30", "Thành viên 1", "Kết quả kiểm chứng, minh chứng trước/sau"],',
+                '["6:30 – 8:30", "Đỗ Thị Như Ý", "Kết quả kiểm chứng, minh chứng trước/sau"],',
+            ),
+        ],
+        "phân vai thuyết trình theo tên",
+    )
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
