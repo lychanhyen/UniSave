@@ -654,6 +654,45 @@ def main():
     C.write_text(ct, encoding="utf-8")
     print("đã sửa lời ghi chú 1.3.1 và 3.1")
 
+    # Định dạng theo yêu cầu đề bài: giãn dòng 1.5, chữ 13; thêm Mind Map và tên Perceptual Map
+    ht = HELPERS.read_text(encoding="utf-8")
+    ht = ht.replace("    fmt.line_spacing = 1.3", "    fmt.line_spacing = 1.5", 1)
+    ht = ht.replace("giãn dòng 1,3", "giãn dòng 1,5", 1)
+    HELPERS.write_text(ht, encoding="utf-8")
+
+    ct = C.read_text(encoding="utf-8")
+    ct = ct.replace(
+        '"Phụ lục B: Bản đồ thấu cảm"',
+        '"Phụ lục B: Bản đồ thấu cảm (Empathy Map) và sơ đồ tư duy (Mind Map)"',
+        1,
+    )
+    ct = ct.replace(
+        '    H2(document, "Phụ lục C: Wireframe và nguyên mẫu số")',
+        '    FIG(\n'
+        '        document,\n'
+        '        IDEA / "mind-map.png",\n'
+        '        "Sơ đồ tư duy các nhóm vấn đề của người dùng mục tiêu",\n'
+        '        "Nguồn: nhóm tổng hợp từ ghi chép quan sát, phỏng vấn và kết quả khảo sát",\n'
+        '        width=15.4,\n'
+        '    )\n\n'
+        '    H2(document, "Phụ lục C: Wireframe và nguyên mẫu số")',
+        1,
+    )
+    ct = ct.replace(
+        'H2(document, "3.2.2. Bản đồ định vị và tuyên bố định vị")',
+        'H2(document, "3.2.2. Bản đồ nhận thức (Perceptual Map) và tuyên bố định vị")',
+        1,
+    )
+    ct = ct.replace(
+        '"Bản đồ định vị UniSave so với các lựa chọn hiện có"',
+        '"Bản đồ nhận thức (Perceptual Map) về vị trí của UniSave so với các lựa chọn hiện có"',
+        1,
+    )
+    ct = ct.replace("run.font.size = Pt(12)", "run.font.size = Pt(13)")
+    ct = ct.replace("run2.font.size = Pt(12)", "run2.font.size = Pt(13)")
+    C.write_text(ct, encoding="utf-8")
+    print("đã đặt giãn dòng 1.5, thêm Mind Map, đổi tên Perceptual Map, nâng chữ 12 lên 13")
+
     print("hoàn tất áp dụng chỉnh sửa cho v3")
 
 
